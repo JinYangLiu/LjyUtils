@@ -24,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_glide_util:
                 startActivity(new Intent(mContext, GlideUtilActivity.class));
                 break;
+            case R.id.btn_setViewSize:
+                startActivity(new Intent(mContext, ViewSizeActivity.class));
+                break;
             default:
                 break;
         }

@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Mr.LJY on 2017/12/25.
  */
 
-public class LjyActivityUtil {
+public class LjySystemUtil {
 
     /**
      * 判断当前栈顶的activity
@@ -39,5 +39,28 @@ public class LjyActivityUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dp2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
+     */
+    public static int px2dp(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+    /**
+     * 获取dpi
+     */
+    public static float getDPI(Context context) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return scale;
     }
 }
