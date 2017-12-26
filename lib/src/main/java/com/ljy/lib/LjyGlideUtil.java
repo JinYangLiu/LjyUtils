@@ -185,11 +185,11 @@ public class LjyGlideUtil {
      *
      * @author LJY
      */
-    public class CircleTransform extends BitmapTransformation {
+    public static class CircleTransform extends BitmapTransformation {
 
 
         public CircleTransform(Context context) {
-            super(context);
+            super(context.getApplicationContext());
         }
 
         @Override
@@ -229,7 +229,7 @@ public class LjyGlideUtil {
     /**
      * 圆角
      */
-    public class GlideRoundTransform extends BitmapTransformation {
+    public static class GlideRoundTransform extends BitmapTransformation {
 
         private float radius = 0f;
 
@@ -238,7 +238,7 @@ public class LjyGlideUtil {
         }
 
         public GlideRoundTransform(Context context, float dp) {
-            super(context);
+            super(context.getApplicationContext());
             this.radius = dp;
         }
 
