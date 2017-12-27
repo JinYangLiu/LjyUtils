@@ -1,8 +1,12 @@
 package com.ljy.lib;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 
 import java.util.List;
@@ -64,5 +68,40 @@ public class LjySystemUtil {
     public static float getDPI(Context context) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return scale;
+    }
+
+    /**
+     * 判断当前手机api系统版本是否>=指定版本
+     * @param versionCode
+     * @return
+     */
+    public static boolean checkSdkVersion(int versionCode){
+        return Build.VERSION.SDK_INT >= versionCode;
+    }
+
+    /**
+     *判断当前应用是否有指定权限，运行时权限的检测
+     * @param context
+     * @param permission
+     * @return
+     */
+    public static boolean hasPermission(Activity context, String permission) {
+        boolean ifSdk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        boolean ifPer = ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED;
+        if (ifSdk && ifPer) {
+            return false;
+        }
+        return true;
+
+    }
+
+    /**
+     * 动态申请指定权限，配合hasPermission使用,注意在使用的activity中调用onRequestPermissionsResult权限申请结果的回调
+     * @param context
+     * @param permissions
+     * @param requestCode
+     */
+    public static void requestPermission(final Activity context, final String[] permissions, final int requestCode) {
+        ActivityCompat.requestPermissions(context, permissions, requestCode);
     }
 }

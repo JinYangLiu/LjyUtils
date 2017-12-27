@@ -28,7 +28,10 @@ Step 2. Add the dependency
 isForeground: 判断当前栈顶的activity\
 dp2px: 单位dp转成为px\
 px2dp: 单位px转成为dp\
-getDPI: 获取手机dpi
+getDPI: 获取手机dpi\
+checkSdkVersion: 判断当前手机api系统版本是否>=指定版本\
+hasPermission: 判断当前应用是否有指定权限\
+requestPermission：动态申请指定权限
 
 + LjyViewUtil:
 
@@ -43,11 +46,11 @@ setViewSize: View的宽高=屏幕的宽高*scaleW/H
 字符串操作的工具类\
 isNumber: 判断字符串是否纯数字\
 keepAfterPoint: 使用BigDecimal进行精确运算\
-byte2hex:byte[]转Hex(16进制)字符串\
-hex2byte:Hex(16进制)字符串 转 byte[]\
-byte2base64:byte[]转Base64字符串\
-base642byte:Base64字符串 转 byte[]\
-getRandomStr:生成随机数，可以当做动态的密钥 
+byte2hex: byte[]转Hex(16进制)字符串\
+hex2byte: Hex(16进制)字符串 转 byte[]\
+byte2base64: byte[]转Base64字符串\
+base642byte: Base64字符串 转 byte[]\
+getRandomStr: 生成随机数，可以当做动态的密钥
 
 + LjyTimeUtil:
 
@@ -62,7 +65,7 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 
 + LjyEncryUtil:
 
-各种数据加密的工具类,包括:Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode\
+各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode\
 
 
 
