@@ -1,4 +1,4 @@
-package com.ljy.ljyutils;
+package com.ljy.ljyutils.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljy.lib.LjyViewUtil;
+import com.ljy.ljyutils.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

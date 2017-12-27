@@ -1,4 +1,4 @@
-package com.ljy.ljyutils;
+package com.ljy.ljyutils.activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,6 +15,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.ljy.lib.LjyGlideUtil;
 import com.ljy.lib.LjyLogUtil;
+import com.ljy.ljyutils.R;
 
 import java.lang.ref.WeakReference;
 

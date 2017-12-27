@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.ljy.ljyutils.activity.GlideUtilActivity;
+import com.ljy.ljyutils.activity.UseUtilsActivity;
+import com.ljy.ljyutils.activity.ViewSizeActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     private Context mContext = this;

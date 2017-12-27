@@ -17,10 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".UseUtilsActivity"/>
-        <activity android:name=".GlideUtilActivity"/>
-        <activity android:name=".ViewSizeActivity">
-        </activity>
+        <activity android:name=".activity.UseUtilsActivity"/>
+        <activity android:name=".activity.GlideUtilActivity"/>
+        <activity android:name=".activity.ViewSizeActivity"/>
     </application>
 
 </manifest>

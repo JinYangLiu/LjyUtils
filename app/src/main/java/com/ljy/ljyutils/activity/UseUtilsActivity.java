@@ -1,4 +1,4 @@
-package com.ljy.ljyutils;
+package com.ljy.ljyutils.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.ljy.lib.LjyStringUtil;
 import com.ljy.lib.LjySystemUtil;
 import com.ljy.lib.LjyTimeUtil;
 import com.ljy.lib.LjyViewUtil;
+import com.ljy.ljyutils.R;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
