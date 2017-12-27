@@ -10,6 +10,8 @@ import android.widget.RelativeLayout;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
+ *
+ * 提供view相关方法
  */
 
 public class LjyViewUtil {

@@ -1,21 +1,17 @@
 package com.ljy.lib;
 
 import android.graphics.Bitmap;
-import android.text.TextUtils;
-import android.util.Base64;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
-import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -26,6 +22,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
+ *
+ * 各种数据加密的工具类
  */
 
 public class LjyEncryUtil {
@@ -50,7 +48,7 @@ public class LjyEncryUtil {
      */
     public static String encodeCaesar(String value, int key) {
         byte[] bytes = encodeCaesar(value.getBytes(), key);
-        return byte2hex(bytes);
+        return LjyStringUtil.byte2hex(bytes);
     }
 
     public static byte[] encodeCaesar(byte[] value, int key) {
@@ -68,7 +66,7 @@ public class LjyEncryUtil {
      * @return 返回解密后的数据
      */
     public static String decodeCaesar(String value, int key) {
-        byte[] bytes = decodeCaesar(hex2byte(value), key);
+        byte[] bytes = decodeCaesar(LjyStringUtil.hex2byte(value), key);
         return new String(bytes);
     }
 
@@ -79,31 +77,13 @@ public class LjyEncryUtil {
         return value;
     }
 
-    static String e = "9238513401340235";
-
-    private static final String SHA1PRNG = "SHA1PRNG";//// SHA1PRNG 强随机种子算法, 要区别4.2以上版本的调用方法
-
 
     public static String getAESKey() {
-        return getRandomStr(8);
+        return LjyStringUtil.getRandomStr(8);
     }
 
     public static String getDESIV() {
-        return getRandomStr(4);
-    }
-
-    /**
-     * 生成随机数，可以当做动态的密钥 加密和解密的密钥必须一致，不然将不能解密
-     */
-    public static String getRandomStr(int len) {
-        try {
-            SecureRandom localSecureRandom = SecureRandom.getInstance(SHA1PRNG);
-            byte[] bytes_key = new byte[len];
-            localSecureRandom.nextBytes(bytes_key);
-            return byte2hex(bytes_key);
-        } catch (Exception e) {
-            return null;
-        }
+        return LjyStringUtil.getRandomStr(4);
     }
 
     /**
@@ -116,9 +96,10 @@ public class LjyEncryUtil {
      */
     public static String encodeAES(String value, String key, boolean isHex) {
         byte[] bytes = encodeAES(value.getBytes(), key);
-        return isHex?byte2hex(bytes):byte2base64(bytes);
+        return isHex?LjyStringUtil.byte2hex(bytes):LjyStringUtil.byte2base64(bytes);
     }
 
+    static String e = "9238513401340235";
     public static byte[] encodeAES(byte[] value, String key) {
         if (key == null)
             return null;
@@ -145,7 +126,7 @@ public class LjyEncryUtil {
      * @return
      */
     public static String decodeAES(String value, String key, boolean isHex) {
-        byte[] bytes=decodeAES(isHex?hex2byte(value):base642byte(value),key);
+        byte[] bytes=decodeAES(isHex?LjyStringUtil.hex2byte(value):LjyStringUtil.base642byte(value),key);
         return new String(bytes);
     }
 
@@ -175,7 +156,7 @@ public class LjyEncryUtil {
      */
     public static String encodeDES(String value, String key, String ivStr) {
         byte[] bytes=encodeDES(value.getBytes(),key,ivStr);
-        return byte2hex(bytes);
+        return LjyStringUtil.byte2hex(bytes);
     }
 
     public static byte[] encodeDES(byte[] value, String key, String ivStr) {
@@ -203,7 +184,7 @@ public class LjyEncryUtil {
      * @return
      */
     public static String decodeDES(String value, String key, String ivStr) {
-        byte[] bytes=decodeDES(hex2byte(value),key,ivStr);
+        byte[] bytes=decodeDES(LjyStringUtil.hex2byte(value),key,ivStr);
         return new String(bytes);
     }
 
@@ -237,7 +218,7 @@ public class LjyEncryUtil {
     //公钥加密
     public static String encodeRSA(String value, PublicKey publicKey) {
         byte[] bytes=encodeRSA(value.getBytes(),publicKey);
-        return byte2hex(bytes);
+        return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] encodeRSA(byte[] value, PublicKey publicKey) {
         try {
@@ -251,7 +232,7 @@ public class LjyEncryUtil {
 
     //私钥解密
     public static String decodeRSA(String value, PrivateKey privateKey) {
-        byte[] bytes=decodeRSA(hex2byte(value),privateKey);
+        byte[] bytes=decodeRSA(LjyStringUtil.hex2byte(value),privateKey);
         return new String(bytes);
     }
     public static byte[] decodeRSA(byte[] value, PrivateKey privateKey) {
@@ -273,7 +254,7 @@ public class LjyEncryUtil {
      */
     public static String getMD5(String value) {
         byte[] bytes=getMD5(value.getBytes());
-        return byte2hex(bytes);
+        return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] getMD5(byte[] value) {
         MessageDigest md5;
@@ -298,7 +279,7 @@ public class LjyEncryUtil {
      */
     public static String getSHA(String value, String encName) {
         byte[] bytes=getSHA(value.getBytes(),encName);
-        return byte2hex(bytes);
+        return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] getSHA(byte[] value, String encName) {
         try {
@@ -351,80 +332,6 @@ public class LjyEncryUtil {
     }
 
 
-    /**
-     * byte[]转Hex(16进制)字符串
-     *
-     * @param b
-     * @return
-     */
-    public static String byte2hex(byte[] b) {
-        String hs = "";
-        String stmp;
-        for (int n = 0; n < b.length; n++) {
-            stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
-            if (stmp.length() == 1) {
-                hs = hs + "0" + stmp;
-            } else {
-                hs = hs + stmp;
-            }
-        }
-        return hs.toUpperCase();
-    }
 
-    /**
-     * Hex(16进制)字符串 转 byte[]
-     *
-     * @param strhex
-     * @return
-     */
-    public static byte[] hex2byte(String strhex) {
-        if (strhex == null) {
-            return null;
-        }
-        int l = strhex.length();
-        if (l % 2 == 1) {
-            return null;
-        }
-        byte[] b = new byte[l / 2];
-        for (int i = 0; i != l / 2; i++) {
-            b[i] = (byte) Integer.parseInt(strhex.substring(i * 2, i * 2 + 2),
-                    16);
-        }
-        return b;
-    }
-
-    /**
-     * byte[]转Base64
-     *
-     * @param val
-     * @return
-     */
-    public static String byte2base64(byte[] val) {
-        return Base64.encodeToString(val, Base64.DEFAULT);
-    }
-
-    /**
-     * Base64 转 byte[]
-     *
-     * @param val
-     * @return
-     */
-    public static byte[] base642byte(String val) {
-        return Base64.decode(val, Base64.DEFAULT);
-    }
-
-    public static byte[] StringToByte(String str, String charEncode) {
-        try {
-            byte[] destObj = null;
-            if (null == str || str.trim().equals("")) {
-                destObj = new byte[0];
-            } else {
-                destObj = str.getBytes(TextUtils.isEmpty(charEncode) ? "UTF-8" : charEncode);
-            }
-            return destObj;
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-    }
 
 }

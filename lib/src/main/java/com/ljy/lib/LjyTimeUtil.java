@@ -7,11 +7,13 @@ import java.util.Date;
 
 /**
  * Created by Mr.LJY on 2017/12/25.
+ *
+ * 时间&日期相关工具类
  */
 
 public class LjyTimeUtil {
     /**
-     * 将时间戳转换为指定格式字符串,
+     * 将时间戳转换为指定格式字符串
      *
      * @param time
      * @param pattern 如yyyy-MM-dd HH:mm:ss
@@ -28,7 +30,7 @@ public class LjyTimeUtil {
     }
 
     /**
-     * 判断存储的时间戳与当前时间戳是否同一天
+     * 判断两个时间戳是否同一天
      *
      */
     public static boolean isSameDay( long lastTimeMill, long currentTimeMill) {

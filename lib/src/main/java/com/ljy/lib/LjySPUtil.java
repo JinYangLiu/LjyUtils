@@ -8,6 +8,8 @@ import java.util.Set;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
+ *
+ * SharedPreferences工具类
  */
 
 public class LjySPUtil {

@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * Created by Mr.LJY on 2017/12/25.
+ *
+ * 提供系统相关方法
  */
 
 public class LjySystemUtil {
