@@ -3,16 +3,20 @@ package com.ljy.ljyutils.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.ljy.lib.LjyEncryUtil;
-import com.ljy.lib.LjyLogUtil;
-import com.ljy.lib.LjySPUtil;
-import com.ljy.lib.LjyStringUtil;
-import com.ljy.lib.LjySystemUtil;
-import com.ljy.lib.LjyTimeUtil;
-import com.ljy.lib.LjyViewUtil;
 import com.ljy.ljyutils.R;
+import com.ljy.util.LjyEncryUtil;
+import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjySPUtil;
+import com.ljy.util.LjyStringUtil;
+import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyTimeUtil;
+import com.ljy.util.LjyViewUtil;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
@@ -26,13 +30,19 @@ public class UseUtilsActivity extends AppCompatActivity {
 
     @BindView(R.id.imageView)
     ImageView mImageView;
+    @BindView(R.id.textView)
+    TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_util);
         ButterKnife.bind(this);
+        LjyLogUtil.setAppendLogMsg(true);
         useUtil();
+        LjyLogUtil.clearAllLogMsg();
+        LjyLogUtil.setAppendLogMsg(false);
+        LjyLogUtil.i("--->"+LjyLogUtil.getAllLogMsg());
     }
 
     private void useUtil() {
@@ -96,22 +106,33 @@ public class UseUtilsActivity extends AppCompatActivity {
         LjyLogUtil.i("encodeAES_hex:" + encodeAES);
         LjyLogUtil.i("decodeAES_hex:" + LjyEncryUtil.decodeAES(encodeAES, aesKey, true));
         //des加密
-        String ivStr=LjyEncryUtil.getDESIV();
-        String encodeDES = LjyEncryUtil.encodeDES(str1, aesKey,ivStr);
+        String ivStr = LjyEncryUtil.getDESIV();
+        String encodeDES = LjyEncryUtil.encodeDES(str1, aesKey, ivStr);
         LjyLogUtil.i("encodeDES:" + encodeDES);
-        LjyLogUtil.i("decodeDES:" + LjyEncryUtil.decodeDES(encodeDES, aesKey,ivStr));
+        LjyLogUtil.i("decodeDES:" + LjyEncryUtil.decodeDES(encodeDES, aesKey, ivStr));
         //RSA
         KeyPair key = LjyEncryUtil.getRsaKey(1024);
-        String  encodeRSA= LjyEncryUtil.encodeRSA(str1, key.getPublic());
-        LjyLogUtil.i("encodeRSA:"+encodeRSA);
-        LjyLogUtil.i("decodeRSA:" + LjyEncryUtil.decodeRSA(encodeRSA,key.getPrivate()));
+        String encodeRSA = LjyEncryUtil.encodeRSA(str1, key.getPublic());
+        LjyLogUtil.i("encodeRSA:" + encodeRSA);
+        LjyLogUtil.i("decodeRSA:" + LjyEncryUtil.decodeRSA(encodeRSA, key.getPrivate()));
         //MD5
         LjyLogUtil.i("getMD5:" + LjyEncryUtil.getMD5(str1));
         //SHA
-        LjyLogUtil.i("getSHA256:" + LjyEncryUtil.getSHA(str1,LjyEncryUtil.SHA_256));
-        LjyLogUtil.i("getSHA512:" + LjyEncryUtil.getSHA(str1,LjyEncryUtil.SHA_512));
+        LjyLogUtil.i("getSHA256:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_256));
+        LjyLogUtil.i("getSHA512:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_512));
         //二维码
-        int size=LjySystemUtil.dp2px(mContext,200f);
-        mImageView.setImageBitmap(LjyEncryUtil.getQrCode(str1,size,size,true));
+        int size = LjySystemUtil.dp2px(mContext, 200f);
+        mImageView.setImageBitmap(LjyEncryUtil.getQrCode(str1, size, size, true));
+        mImageView.setClickable(true);
+        //一个view左右晃动的动画
+        final Animation mShakeAnim = AnimationUtils.loadAnimation(this, R.anim.shake_x);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mImageView.startAnimation(mShakeAnim);
+            }
+        });
+        //显示上面log的叠加
+        mTextView.setText(LjyLogUtil.getAllLogMsg());
     }
 }

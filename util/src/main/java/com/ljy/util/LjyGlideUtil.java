@@ -1,4 +1,4 @@
-package com.ljy.lib;
+package com.ljy.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

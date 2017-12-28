@@ -1,4 +1,4 @@
-package com.ljy.lib;
+package com.ljy.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

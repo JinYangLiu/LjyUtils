@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.ljy.lib.LjyGlideUtil;
-import com.ljy.lib.LjyLogUtil;
+import com.ljy.util.LjyGlideUtil;
+import com.ljy.util.LjyLogUtil;
 import com.ljy.ljyutils.R;
 
 import java.lang.ref.WeakReference;

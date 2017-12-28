@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ljy.lib.LjyViewUtil;
+import com.ljy.util.LjyViewUtil;
 import com.ljy.ljyutils.R;
 
 import butterknife.BindView;

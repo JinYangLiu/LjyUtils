@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GlideUtilActivity">
+    tools:context=".activity.GlideUtilActivity">
 
     <HorizontalScrollView
         android:id="@+id/top"
@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
-            <ImageView
+            <com.ljy.view.PinchImageView
                 android:id="@+id/iv_1"
                 android:layout_width="match_parent"
                 android:background="@color/colorAccent"
