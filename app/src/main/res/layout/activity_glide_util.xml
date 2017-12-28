@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
-            <com.ljy.view.PinchImageView
+            <com.ljy.view.LjyZoomImageView
                 android:id="@+id/iv_1"
                 android:layout_width="match_parent"
                 android:background="@color/colorAccent"

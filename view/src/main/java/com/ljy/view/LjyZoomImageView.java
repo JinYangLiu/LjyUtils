@@ -21,7 +21,7 @@ import java.util.Queue;
  * Created by Mr.LJY on 2017/12/28.
  */
 
-public class PinchImageView extends ImageView {
+public class LjyZoomImageView extends ImageView {
 
     ////////////////////////////////配置参数////////////////////////////////
 
@@ -353,7 +353,7 @@ public class PinchImageView extends ImageView {
          * @see #getCurrentImageMatrix(Matrix)
          * @see #getImageBound(RectF)
          */
-        void onOuterMatrixChanged(PinchImageView pinchImageView);
+        void onOuterMatrixChanged(LjyZoomImageView pinchImageView);
     }
 
     /**
@@ -515,17 +515,17 @@ public class PinchImageView extends ImageView {
 
     ////////////////////////////////初始化////////////////////////////////
 
-    public PinchImageView(Context context) {
+    public LjyZoomImageView(Context context) {
         super(context);
         initView();
     }
 
-    public PinchImageView(Context context, AttributeSet attrs) {
+    public LjyZoomImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public PinchImageView(Context context, AttributeSet attrs, int defStyle) {
+    public LjyZoomImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }
@@ -718,7 +718,7 @@ public class PinchImageView extends ImageView {
      * <p>
      * 在onTouchEvent末尾被执行.
      */
-    private GestureDetector mGestureDetector = new GestureDetector(PinchImageView.this.getContext(), new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector mGestureDetector = new GestureDetector(LjyZoomImageView.this.getContext(), new GestureDetector.SimpleOnGestureListener() {
 
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             //只有在单指模式结束之后才允许执行fling
@@ -731,7 +731,7 @@ public class PinchImageView extends ImageView {
         public void onLongPress(MotionEvent e) {
             //触发长按
             if (mOnLongClickListener != null) {
-                mOnLongClickListener.onLongClick(PinchImageView.this);
+                mOnLongClickListener.onLongClick(LjyZoomImageView.this);
             }
         }
 
@@ -746,7 +746,7 @@ public class PinchImageView extends ImageView {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             //触发点击
             if (mOnClickListener != null) {
-                mOnClickListener.onClick(PinchImageView.this);
+                mOnClickListener.onClick(LjyZoomImageView.this);
             }
             return true;
         }

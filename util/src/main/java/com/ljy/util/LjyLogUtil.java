@@ -69,7 +69,7 @@ public class LjyLogUtil {
      * @param msg
      * @param logType
      */
-    public static void log(String tag, CharSequence msg,LogType logType) {
+    private static void log(String tag, CharSequence msg,LogType logType) {
         //判断是否打印log
         if (isLog()) {
             //判断是否有tag，没有则用默认的 LJY_LOG

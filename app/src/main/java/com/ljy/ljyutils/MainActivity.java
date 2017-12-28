@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_setViewSize:
                 startActivity(new Intent(mContext, ViewSizeActivity.class));
+                break;
+            case R.id.btn_gestureLockView:
+                startActivity(new Intent(mContext, GestureLockActivity.class));
                 break;
             default:
                 break;

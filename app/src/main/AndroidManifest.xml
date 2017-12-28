@@ -20,6 +20,8 @@
         <activity android:name=".activity.UseUtilsActivity"/>
         <activity android:name=".activity.GlideUtilActivity"/>
         <activity android:name=".activity.ViewSizeActivity"/>
+        <activity android:name=".activity.GestureLockActivity">
+        </activity>
     </application>
 
 </manifest>
