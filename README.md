@@ -65,7 +65,7 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 
 + LjyEncryUtil:
 
-各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode\
+各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode
 
 
 
