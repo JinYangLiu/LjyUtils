@@ -40,6 +40,13 @@
                 android:layout_width="match_parent"
                 android:onClick="onMainBtnClick"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_radarView"
+                android:text="雷达图view的使用"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:onClick="onMainBtnClick"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

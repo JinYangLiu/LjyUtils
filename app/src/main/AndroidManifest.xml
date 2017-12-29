@@ -22,6 +22,10 @@
         <activity android:name=".activity.ViewSizeActivity"/>
         <activity android:name=".activity.GestureLockActivity">
         </activity>
+        <activity android:name=".activity.RadarViewActivity">
+        </activity>
+        <activity android:name=".activity.Radar2Activity">
+        </activity>
     </application>
 
 </manifest>

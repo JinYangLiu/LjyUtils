@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
+import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_gestureLockView:
                 startActivity(new Intent(mContext, GestureLockActivity.class));
+                break;
+                case R.id.btn_radarView:
+                startActivity(new Intent(mContext, RadarViewActivity.class));
                 break;
             default:
                 break;

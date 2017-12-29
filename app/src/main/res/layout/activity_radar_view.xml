@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.RadarViewActivity">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="仿王者荣耀能力分布图" />
+    <com.ljy.view.LjyRadarView
+        android:layout_below="@+id/title"
+        android:id="@+id/radarView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:count="6"
+        app:enabledBorder="true"
+        app:borderColor="#D29307"
+        app:singleColor="#88D29307"
+        app:borderWidth="2dp"
+        app:radiusColor="#ff000000"
+        app:lineColor="#ff000000"
+        app:enabledShowPoint="true"
+        app:pointColor="#D29307"
+        app:layerCount="4"
+        app:startColor="#ffffff"
+        app:endColor="#ffffff"
+    />
+
+    <TextView
+        android:id="@+id/jump"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:background="#cccccc"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:text="更多使用" />
+
+</RelativeLayout>
