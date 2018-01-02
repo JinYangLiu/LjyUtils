@@ -6,11 +6,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
+import com.ljy.ljyutils.activity.RefreshListViewActivity;
+import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
+import com.ljy.ljyutils.activity.VoteActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
                 break;
                 case R.id.btn_radarView:
                 startActivity(new Intent(mContext, RadarViewActivity.class));
+                break;
+            case R.id.btn_argueView:
+                startActivity(new Intent(mContext, ArgueProgressActivity.class));
+                break;
+            case R.id.btn_vote:
+                startActivity(new Intent(mContext, VoteActivity.class));
+                break;
+            case R.id.btn_refreshListView:
+                startActivity(new Intent(mContext, RefreshListViewActivity.class));
+                break;
+            case R.id.btn_refreshRecycleView:
+                startActivity(new Intent(mContext, RefreshRecyclerViewActivity.class));
                 break;
             default:
                 break;

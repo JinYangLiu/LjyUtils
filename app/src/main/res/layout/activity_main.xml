@@ -47,6 +47,34 @@
                 android:layout_width="match_parent"
                 android:onClick="onMainBtnClick"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_argueView"
+                android:text="辩论view的使用"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:onClick="onMainBtnClick"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_vote"
+                android:text="投票view的使用"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:onClick="onMainBtnClick"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_refreshListView"
+                android:text="刷新和加载更多ListView的使用"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:onClick="onMainBtnClick"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_refreshRecycleView"
+                android:text="刷新和加载更多RecycleView的使用"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:onClick="onMainBtnClick"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

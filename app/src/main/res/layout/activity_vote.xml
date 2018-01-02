@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.VoteActivity">
+    <LinearLayout
+        android:id="@+id/linear_vote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+        <TextView
+            android:id="@+id/textView_voteType"
+            android:layout_width="match_parent"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:textColor="#333333"
+            android:layout_height="wrap_content"/>
+
+        <com.ljy.view.LjyVoteCheckBox
+            android:id="@+id/myCheckBoxs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+        />
+        <TextView
+            android:id="@+id/textView_voteType2"
+            android:layout_width="match_parent"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:textColor="#333333"
+            android:layout_height="wrap_content"/>
+        <com.ljy.view.LjyVoteRadioGroup
+            android:id="@+id/myRadioButtons"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_height="wrap_content"
+        />
+
+        <Button
+            android:text="submit"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="50dp"
+            android:id="@+id/button_submit"/>
+    </LinearLayout>
+</ScrollView>
