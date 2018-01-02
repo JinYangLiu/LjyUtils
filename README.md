@@ -16,7 +16,7 @@ Step 2. Add the dependency
 	        compile 'com.github.JinYangLiu:LjyUtils:v1.0.2'
 	}
 	
-### 工具类介绍：
+### 工具类介绍：（具体使用demo在app模块中都有）
 
 + LjyLogUtil:
 
@@ -66,6 +66,27 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 + LjyEncryUtil:
 
 各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode
+
+
+### 自定义View介绍：（具体使用demo在app模块中都有）
+
++ LjyArgueProgressView：辩论View（支持红/蓝方）
+
++ LjyVoteCheckBox：多选投票
+
++ LjyVoteRadioGroup：单选投票
+
++ LjyGestureLockView：九宫格图案锁
+
++ LjyPwdInputView：数字密码
+
++ LjyRadarView：雷达图/蛛网图/能力图
+
++ LjySwipeRefreshView：刷新和加载更多view，其中如果是recycleView需要使用LjyRecyclerView，配合LjyBaseAdapter效果
+
++ LjyZoomImageView：支持手势缩放的图片控件
+
+
 
 
 
