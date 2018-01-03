@@ -1,6 +1,6 @@
 package com.ljy.ljyutils.bean;
 
-import com.github.lzyzsd.randomcolor.RandomColor;
+import com.ljy.util.LjyColorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,20 +33,11 @@ public class SwipeCardBean {
             "http://mmbiz.qpic.cn/mmbiz_jpg/iciccsvt6Tiawr9ftibLsY9icR1iaS7urOHUqjiaaILTWUicBX6Jicys1OicDJZRWjp9T5UKKfLhS6sy3gXNE3Y60FNnKGJA/640?wx_fmt=jpeg&wxfrom=5&wx_lazy=1"
     };
 
-    public static List<SwipeCardBean> initData() {
-        List<SwipeCardBean> list = new ArrayList<>();
-        final RandomColor randomColor=new RandomColor();
-        for (int i = 0; i < 5; i++) {
-            list.add(new SwipeCardBean(i+1, "权游__" + (i+1), urls[i],randomColor.randomColor()));
-        }
-        return list;
-    }
     public static List<SwipeCardBean> initData(int startCount,int maxCount) {
         List<SwipeCardBean> list = new ArrayList<>();
-        final RandomColor randomColor=new RandomColor();
         for (int i = startCount; i < maxCount; i++) {
             String imgUrl=i<urls.length? urls[i]:urls[0];
-            list.add(new SwipeCardBean(i+1, "权游__" + (i+1),imgUrl,randomColor.randomColor()));
+            list.add(new SwipeCardBean(i+1, "权游__" + (i+1),imgUrl, LjyColorUtil.getInstance().randomColor()));
         }
         return list;
     }

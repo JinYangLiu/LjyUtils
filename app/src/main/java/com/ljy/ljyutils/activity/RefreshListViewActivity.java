@@ -13,8 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.lzyzsd.randomcolor.RandomColor;
 import com.ljy.ljyutils.R;
+import com.ljy.util.LjyColorUtil;
 import com.ljy.view.LjySwipeRefreshView;
 
 import java.util.ArrayList;
@@ -31,13 +31,11 @@ public class RefreshListViewActivity extends AppCompatActivity {
     private Context mContext = this;
     private MyAdapter mAdapter;
     int start = 1;
-    private RandomColor randomColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refresh_list_view);
-         randomColor=new RandomColor();
         initRefreshView();
         initListView();
     }
@@ -150,7 +148,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
             holder.imgIcon.setImageResource((Integer) data.get("head"));
             holder.textTitle.setText((CharSequence) data.get("name"));
             holder.textInfo.setText((position+1) + "/" + getCount());
-            holder.itemRoot.setBackgroundColor(randomColor.randomColor());
+            holder.itemRoot.setBackgroundColor(LjyColorUtil.getInstance().randomColor());
 
             return convertView;
         }
