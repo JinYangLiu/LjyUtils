@@ -72,15 +72,13 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     public void setNewList(List<T> newList) {
         if (recyclerView != null)
             recyclerView.removeAllViews();
-        this.list.clear();
-        notifyDataSetChanged();
-        this.list.addAll(newList);
+        this.list=newList == null ? new ArrayList<T>() : newList;
         notifyDataSetChanged();
     }
 
-    public void addList(List<T> list) {
-        this.list.addAll(list);
-        notifyItemInserted(this.list.size());
+    public void addList(List<T> addList) {
+        this.list.addAll(addList);
+        notifyItemRangeInserted(this.list.size()-addList.size(),addList.size());
     }
 
     @Override

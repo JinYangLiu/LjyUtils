@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.lzyzsd.randomcolor.RandomColor;
 import com.ljy.ljyutils.R;
 import com.ljy.view.LjySwipeRefreshView;
 
@@ -28,12 +30,14 @@ public class RefreshListViewActivity extends AppCompatActivity {
     private ArrayList<Map<String, Object>> listems;
     private Context mContext = this;
     private MyAdapter mAdapter;
-    int start = 0;
+    int start = 1;
+    private RandomColor randomColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refresh_list_view);
+         randomColor=new RandomColor();
         initRefreshView();
         initListView();
     }
@@ -41,7 +45,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
     private void initListView() {
         listView = findViewById(R.id.listView);
         listems = new ArrayList<>();
-        listems.addAll(initData(start, start +=5));
+        listems.addAll(initData(start, start +=4));
         mAdapter = new MyAdapter(mContext, listems);
         swipeRefreshView.initListViewHeader(listView);
         listView.setAdapter(mAdapter);
@@ -53,7 +57,6 @@ public class RefreshListViewActivity extends AppCompatActivity {
             Map<String, Object> listem = new HashMap<>();
             listem.put("head", R.mipmap.ic_launcher);
             listem.put("name", "name_" + i);
-            listem.put("desc", "desc_" + i);
             list.add(listem);
         }
         return list;
@@ -86,7 +89,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
                 listems.addAll(initData(start+1, start += 5));
                 mAdapter.notifyDataSetChanged();
             }
-        }, 1000 * 2);
+        }, 100 * 8);
     }
 
     private void refreshData() {
@@ -94,12 +97,12 @@ public class RefreshListViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 swipeRefreshView.setRefreshing(false);
-                start = 0;
+                start = 1;
                 listems.clear();
-                listems.addAll(initData(start, start += 5));
+                listems.addAll(initData(start, start += 4));
                 mAdapter.notifyDataSetChanged();
             }
-        }, 1000 * 2);
+        }, 100 * 8);
     }
 
     public class MyAdapter extends BaseAdapter {
@@ -135,17 +138,19 @@ public class RefreshListViewActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             } else {
                 holder = new ViewHolder();
-                convertView = mInflater.inflate(R.layout.simple_item, null);
-                holder.imgIcon=convertView.findViewById(R.id.head);
-                holder.textTitle=convertView.findViewById(R.id.name);
-                holder.textInfo=convertView.findViewById(R.id.desc);
+                convertView = mInflater.inflate(R.layout.layout_item_list, null);
+                holder.imgIcon=convertView.findViewById(R.id.imgIcon);
+                holder.textTitle=convertView.findViewById(R.id.textName);
+                holder.textInfo=convertView.findViewById(R.id.textInfo);
+                holder.itemRoot=convertView.findViewById(R.id.itemRoot);
                 convertView.setTag(holder);
             }
 
             data = mData.get(position);
             holder.imgIcon.setImageResource((Integer) data.get("head"));
             holder.textTitle.setText((CharSequence) data.get("name"));
-            holder.textInfo.setText((CharSequence) data.get("desc"));
+            holder.textInfo.setText((position+1) + "/" + getCount());
+            holder.itemRoot.setBackgroundColor(randomColor.randomColor());
 
             return convertView;
         }
@@ -154,6 +159,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
             private TextView textTitle;
             private TextView textInfo;
             private ImageView imgIcon;
+            public LinearLayout itemRoot;
         }
 
     }

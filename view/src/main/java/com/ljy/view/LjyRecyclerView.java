@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class LjyRecyclerView extends RecyclerView {
 
     public ArrayList<FixedViewInfo> mFooterViewInfos = new ArrayList<>();
+    public ArrayList<FixedViewInfo> mHeaderViewInfos = new ArrayList<>();
     public static final int BASE_HEADER_VIEW_TYPE = -1 << 10;
     public static final int BASE_FOOTER_VIEW_TYPE = -1 << 11;
 
@@ -48,16 +49,40 @@ public class LjyRecyclerView extends RecyclerView {
         }
     }
 
+    public View getFooterView(int position) {
+        if (mFooterViewInfos.isEmpty()) {
+            throw new IllegalStateException("you must add a FooterView before!");
+        }
+        return mFooterViewInfos.get(position).view;
+    }
+
+    public void addHeaderView(View view) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(params);
+
+        FixedViewInfo info = new FixedViewInfo();
+        info.view = view;
+        info.viewType = BASE_FOOTER_VIEW_TYPE + mHeaderViewInfos.size();
+        mHeaderViewInfos.add(info);
+
+        if (getAdapter() != null) {
+            getAdapter().notifyDataSetChanged();
+        }
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         if (!(adapter instanceof WrapperRecyclerViewAdapter))
-            adapter  = new WrapperRecyclerViewAdapter(new ArrayList<FixedViewInfo>(), mFooterViewInfos, adapter);
+            adapter  = new WrapperRecyclerViewAdapter(mHeaderViewInfos, mFooterViewInfos, adapter);
         super.setAdapter(adapter);
 
     }
 
     public  int getFooterViewsCount() {
         return mFooterViewInfos.size();
+    }
+    public  int getHeaderViewsCount() {
+        return mHeaderViewInfos.size();
     }
 
     public class FixedViewInfo {

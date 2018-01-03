@@ -57,13 +57,13 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initRecyclerData(final List listData) {
-        mRecyclerView.setAdapter(mAdapter=new LjyBaseAdapter<SwipeCardBean>(mContext,listData,mRecyclerView , R.layout.layout_item_touchsort) {
+        mRecyclerView.setAdapter(mAdapter=new LjyBaseAdapter<SwipeCardBean>(mContext,listData,mRecyclerView , R.layout.layout_item_list) {
             @Override
             public void convert(LjyViewHolder holder, SwipeCardBean item) {
                 holder.setBackgroundColor(R.id.itemRoot, item.getCardColor());
-                holder.setText(R.id.textViewSwipeCardName, item.getName());
-                holder.setText(R.id.textViewSwipeCardPosition, item.getPosition() + "/" + listData.size());
-                Picasso.with(mContext).load(item.getUrl()).into((ImageView) holder.getView(R.id.imageViewSwipeCardImg));
+                holder.setText(R.id.textName, item.getName());
+                holder.setText(R.id.textInfo, item.getPosition() + "/" + mAdapter.getItemCount());
+                Picasso.with(mContext).load(item.getUrl()).into((ImageView) holder.getView(R.id.imgIcon));
             }
         });
     }
@@ -75,7 +75,7 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
                 mAdapter.addList(SwipeCardBean.initData(pageCount++*pageSize,pageCount*pageSize));
                 mSwipeRefreshView.setLoadMoreSuccess();
             }
-        }, 1000 * 2);
+        }, 100 * 8);
     }
 
     private void refreshData() {
@@ -86,6 +86,6 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
                 mAdapter.setNewList(SwipeCardBean.initData(pageCount++*pageSize,pageCount*pageSize));
                 mSwipeRefreshView.setRefreshing(false);
             }
-        }, 1000 * 2);
+        }, 100 * 8);
     }
 }

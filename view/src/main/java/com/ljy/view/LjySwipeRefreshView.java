@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -27,7 +28,9 @@ import com.ljy.ljyview.R;
 public class LjySwipeRefreshView extends SwipeRefreshLayout {
 
     private final int mScaledTouchSlop;
-    private LjySwipeFooter mFooterView;
+    private final LinearLayout mListViewFooterParent;
+    private final LjySwipeFooter mListViewFooter;
+    private final LjySwipeFooter mRecyclerViewFooter;
     private ListView mListView;
     private OnLoadMoreListener mListener;
     private int mTouchSlop;
@@ -44,7 +47,11 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
     public LjySwipeRefreshView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // 填充底部加载布局
-        mFooterView = new LjySwipeFooter(context);
+        mRecyclerViewFooter = new LjySwipeFooter(context);
+        mListViewFooter = new LjySwipeFooter(context);
+        mListViewFooterParent = new LinearLayout(context);
+        mListViewFooterParent.setOrientation(LinearLayout.VERTICAL);
+        mListViewFooterParent.addView(mListViewFooter);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         // 表示控件移动的最小距离，手移动的距离大于这个距离才能拖动控件
         mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop() * 5;
@@ -92,14 +99,23 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
 
     /**
      * 此方法解决4.x版本不显示footer问题，需要在listView的setAdapter之前调用
+     *
      * @param listView
      */
     public void initListViewHeader(ListView listView) {
         AbsListView.LayoutParams lp = new AbsListView.LayoutParams(1, 1);
-        View header=new View(getContext());
+        View header = new View(getContext());
         header.setLayoutParams(lp);
         header.setVisibility(View.GONE);
         listView.addHeaderView(header);
+    }
+
+    public void initRecycleViewHeader(LjyRecyclerView recyclerView) {
+        AbsListView.LayoutParams lp = new AbsListView.LayoutParams(1, 1);
+        View header = new View(getContext());
+        header.setLayoutParams(lp);
+        header.setVisibility(View.GONE);
+        recyclerView.addHeaderView(header);
     }
 
     /**
@@ -221,7 +237,6 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
      * 处理加载数据的逻辑
      */
     private void loadData() {
-        System.out.println("加载数据...");
         if (mListener != null) {
             // 设置加载状态，让布局显示出来
             setLoading(true);
@@ -235,7 +250,8 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
     }
 
     public void setLoadMoreProgressColor(int... colors) {
-        mFooterView.setProgressDrawable(colors);
+        mRecyclerViewFooter.setProgressDrawable(colors);
+        mListViewFooter.setProgressDrawable(colors);
     }
 
     public void setRefreshProgressColor(int... colors) {
@@ -252,22 +268,42 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
         isLoading = loading;
         if (isLoading) {
             // 显示布局
-            mFooterView.startProgress();
             if (mListView != null && mListView.getFooterViewsCount() < 1)
-                mListView.addFooterView(mFooterView,null,false);
+                mListView.addFooterView(mListViewFooterParent, null, false);
             if (mRecyclerView != null && mRecyclerView.getFooterViewsCount() < 1)
-                mRecyclerView.addFooterView(mFooterView);
+                mRecyclerView.addFooterView(mRecyclerViewFooter);
+            if (mRecyclerView != null) {
+                ViewGroup.LayoutParams params = mRecyclerView.getFooterView(0).getLayoutParams();
+                params.width = RecyclerView.LayoutParams.MATCH_PARENT;
+                params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+                mRecyclerView.getFooterView(0).setLayoutParams(params);
+                mRecyclerView.getFooterView(0).setVisibility(View.VISIBLE);
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+            if (mListView != null) {
+                mListViewFooter.setVisibility(VISIBLE);
+            }
         } else {
             // 隐藏布局
-            mFooterView.stopProgress();
+            if (mRecyclerView != null) {
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) mRecyclerView.getFooterView(0).getLayoutParams();
+                params.width = 0;
+                params.height = 0;
+                mRecyclerView.getFooterView(0).setLayoutParams(params);
+                mRecyclerView.getFooterView(0).setVisibility(View.GONE);
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+            if (mListView != null) {
+                mListViewFooter.setVisibility(GONE);
+            }
             // 重置滑动的坐标
             mDownY = 0;
             mUpY = 0;
         }
     }
 
-    public LjySwipeFooter getFooter(){
-        return mFooterView;
+    public LjySwipeFooter getFooter() {
+        return mRecyclerViewFooter;
     }
 
 
@@ -362,24 +398,17 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
     public static class LjySwipeFooter extends LinearLayout {
 
         private ProgressBar progressBar;
-        private LinearLayout mFooter;
+        private LjySwipeFooter mFooter;
         private LayoutInflater mLayoutInflater;
 
         public LjySwipeFooter(Context context) {
             super(context);
             mLayoutInflater = LayoutInflater.from(context);
-            mFooter = (LinearLayout) mLayoutInflater.inflate(R.layout.layout_swpie_footer, this, true);
-            progressBar = (ProgressBar) mFooter.findViewById(R.id.loading_progress);
-            startProgress();
-        }
-
-        public void startProgress() {
+            mFooter = (LjySwipeFooter) mLayoutInflater.inflate(R.layout.layout_swpie_footer, this, true);
+            progressBar = mFooter.findViewById(R.id.loading_progress);
             setVisibility(VISIBLE);
         }
 
-        public void stopProgress() {
-            setVisibility(GONE);
-        }
 
         public LjySwipeFooter(Context context, @Nullable AttributeSet attrs) {
             super(context, attrs);

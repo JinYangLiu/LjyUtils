@@ -10,6 +10,8 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
+        android:dividerHeight="0dp"
+        android:divider="#00ffffff"
         android:layout_height="match_parent"/>
 
 </com.ljy.view.LjySwipeRefreshView>
