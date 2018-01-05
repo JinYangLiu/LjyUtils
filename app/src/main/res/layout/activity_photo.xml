@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.PhotoActivity">
+
+
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <com.ljy.view.LjyZoomImageView
+                android:id="@+id/iv_1"
+                android:layout_width="match_parent"
+                android:background="@color/colorAccent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+    <!--</ScrollView>-->
+    <HorizontalScrollView
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/btn_camera"
+                android:text="拍照"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_cameraCut"
+                android:text="拍照裁剪"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_picture"
+                android:text="选取图片"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_pictureCut"
+                android:text="选取图片裁剪"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_picturemore"
+                android:text="选取多图片"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</RelativeLayout>

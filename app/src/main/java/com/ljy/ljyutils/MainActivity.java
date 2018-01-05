@@ -9,6 +9,7 @@ import android.view.View;
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
+import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_refreshRecycleView:
                 startActivity(new Intent(mContext, RefreshRecyclerViewActivity.class));
+                break;
+            case R.id.btn_picture:
+                startActivity(new Intent(mContext, PhotoActivity.class));
                 break;
             default:
                 break;

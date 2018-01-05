@@ -15,10 +15,26 @@ public class LjyColorUtil {
     }
 
     private LjyColorUtil() {
-       random = new Random();
+        random = new Random();
     }
 
-    public int randomColor(){
+    public int randomColor() {
         return 0xff000000 | random.nextInt(0x00ffffff);
+    }
+
+    public static int blue(int color) {
+        return color & 0xFF;
+    }
+
+    public static int green(int color) {
+        return (color >> 8) & 0xFF;
+    }
+
+    public static int red(int color) {
+        return (color >> 16) & 0xFF;
+    }
+
+    public static int alpha(int color) {
+        return (color >> 24) & 0xFF;
     }
 }

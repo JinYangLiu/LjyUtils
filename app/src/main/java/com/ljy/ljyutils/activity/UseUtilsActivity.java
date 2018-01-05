@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyEncryUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjySPUtil;
@@ -132,6 +133,16 @@ public class UseUtilsActivity extends AppCompatActivity {
                 mImageView.startAnimation(mShakeAnim);
             }
         });
+
+        int white=0xffffff;
+        int blue= LjyColorUtil.blue(white);
+        int green= LjyColorUtil.green(white);
+        int red= LjyColorUtil.red(white);
+        LjyLogUtil.i(String.format("white=%d,blue=%d,green=%d,red=%d",white,blue,green,red));
+
+
+
+
         //显示上面log的叠加
         mTextView.setText(LjyLogUtil.getAllLogMsg());
     }
