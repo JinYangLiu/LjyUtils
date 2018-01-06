@@ -81,71 +81,64 @@ public class PhotoActivity extends AppCompatActivity {
         });
     }
 
+    private final int requestCodeCamera = 1001;
+    private final int requestCodeCameraCut = 1002;
+    private final int requestCodePicture = 1003;
+    private final int requestCodePictureCut = 1004;
+    private final int requestCodeMatisse = 1005;
+
+
     //按钮点击事件监听
     public void onPhotoBtnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_camera:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) && LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
+                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     doCamera();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
                 }
                 break;
             case R.id.btn_cameraCut:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) && LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
+                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     doCameraCut();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCameraCut);
                 }
                 break;
             case R.id.btn_picture:
                 if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    photoUtil.getPicture();
+                    doPicture();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            requestCodePicture);
                 }
                 break;
             case R.id.btn_pictureCut:
                 if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-                    String photoPath = picFilesPath + photoName;
-                    photoUtil.getPictureAndCut(photoPath);
+                    doPictureCut();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            requestCodePictureCut);
                 }
                 break;
-            case R.id.btn_picturemore:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    //Matisse，来自知乎的PhotoPicker
-                    Matisse.from(mActivity)
-                        .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
-                        .theme(R.style.Matisse_Dracula)
-                        .countable(false)//是否显示所选的图片是第几个（右上角标），false则以对号标识选中
-                        .maxSelectable(9)
-                        .capture(false)//是否可以拍照，如果允许需要另行配置，具体可查看Matisse相关文章
-                        .imageEngine(new GlideEngine())
-                        .forResult(REQUEST_CODE_CHOOSE);
+            case R.id.btn_Matisse:
+                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
+                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    doMatisse();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeMatisse);
                 }
                 break;
         }
     }
 
-    private void doCameraCut() {
-        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-        String photoPath = picFilesPath + photoName;
-        photoUtil.doCameraAndCut(photoPath);
-    }
-
-    private void doCamera() {
-        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-        String photoPath = picFilesPath + photoName;
-        photoUtil.doCamera(photoPath);
-    }
-
     List<Uri> mSelected;
-    MyHandler mHandler=new MyHandler(this);
+    MyHandler mHandler = new MyHandler(this);
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -182,7 +175,26 @@ public class PhotoActivity extends AppCompatActivity {
         LjySystemUtil.onPermissionResult(grantResults, new LjySystemUtil.PermissionResult() {
             @Override
             public void success() {
-                doCamera();
+                switch (requestCode) {
+                    case requestCodeCamera:
+                        doCamera();
+                        break;
+                    case requestCodeCameraCut:
+                        doCameraCut();
+                        break;
+                    case requestCodePicture:
+                        doPicture();
+                        break;
+                    case requestCodePictureCut:
+                        doPictureCut();
+                        break;
+                    case requestCodeMatisse:
+                        doMatisse();
+                        break;
+                    default:
+                        break;
+
+                }
             }
 
             @Override
@@ -195,23 +207,58 @@ public class PhotoActivity extends AppCompatActivity {
         });
     }
 
-    private static class MyHandler extends Handler{
+    private void doMatisse() {
+        //Matisse，来自知乎的PhotoPicker
+        Matisse.from(mActivity)
+                .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
+                .theme(R.style.Matisse_Dracula)
+                .countable(false)//是否显示所选的图片是第几个（右上角标），false则以对号标识选中
+                .maxSelectable(9)
+                .capture(false)//是否可以拍照，如果允许需要另行配置，具体可查看Matisse相关文章
+                .imageEngine(new GlideEngine())
+                .forResult(REQUEST_CODE_CHOOSE);
+    }
+
+    private void doPictureCut() {
+        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
+        String photoPath = picFilesPath + photoName;
+        photoUtil.getPictureAndCut(photoPath);
+    }
+
+    private void doPicture() {
+        photoUtil.getPicture();
+    }
+
+    private void doCameraCut() {
+        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
+        String photoPath = picFilesPath + photoName;
+        photoUtil.doCameraAndCut(photoPath);
+    }
+
+    private void doCamera() {
+        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
+        String photoPath = picFilesPath + photoName;
+        photoUtil.doCamera(photoPath);
+    }
+
+    private static class MyHandler extends Handler {
         private WeakReference<PhotoActivity> outer;
-        int count=0;
-         MyHandler(PhotoActivity outerAct){
-            outer=new WeakReference<>(outerAct);
+        int count = 0;
+
+        MyHandler(PhotoActivity outerAct) {
+            outer = new WeakReference<>(outerAct);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            PhotoActivity activity=outer==null?null:outer.get();
-            if (msg.what==1){
-                if (activity.mSelected.size()>0) {
-                    if (count>=activity.mSelected.size())
-                        count=0;
+            PhotoActivity activity = outer == null ? null : outer.get();
+            if (msg.what == 1) {
+                if (activity.mSelected.size() > 0) {
+                    if (count >= activity.mSelected.size())
+                        count = 0;
                     Glide.with(activity.mActivity).load(activity.mSelected.get(count++)).into(activity.mImageView1);
-                    sendEmptyMessageDelayed(1,1200);
+                    sendEmptyMessageDelayed(1, 1200);
                 }
             }
         }
