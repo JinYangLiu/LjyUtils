@@ -60,6 +60,36 @@
                 android:onClick="onPhotoBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_quality"
+                android:text="质量压缩"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_size"
+                android:text="尺寸压缩"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_inSampleSize"
+                android:text="采样率压缩"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_Huffman"
+                android:text="哈夫曼压缩"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_mix"
+                android:text="混合压缩"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </HorizontalScrollView>

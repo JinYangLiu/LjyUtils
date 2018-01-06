@@ -12,6 +12,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.ljy.lib.R;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+
 import java.io.File;
 
 /**
@@ -84,6 +89,18 @@ public class LjyPhotoUtil {
     public void getPictureAndCut(String path) {
         fileURL = Uri.fromFile(new File(path));
         activity.startActivityForResult(startTakePicture(), REQUEST_TAKE_PICTURE_CROP_CODE);
+    }
+
+    public void getPictures(Activity mActivity,int requestCode){
+        //Matisse，来自知乎的PhotoPicker
+        Matisse.from(mActivity)
+                .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
+                .theme(R.style.Matisse_Dracula)
+                .countable(false)//是否显示所选的图片是第几个（右上角标），false则以对号标识选中
+                .maxSelectable(9)
+                .capture(false)//是否可以拍照，如果允许需要另行配置，具体可查看Matisse相关文章
+                .imageEngine(new GlideEngine())
+                .forResult(requestCode);
     }
 
 

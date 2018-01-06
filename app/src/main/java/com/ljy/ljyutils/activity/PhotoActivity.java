@@ -12,18 +12,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.ljy.ljyutils.R;
+import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -66,11 +66,49 @@ public class PhotoActivity extends AppCompatActivity {
     private void initPhotoUtil() {
         photoUtil = new LjyPhotoUtil(mActivity, new LjyPhotoUtil.CameraResult() {
             @Override
-            public void onSuccess(String filePath) {
-                LjyLogUtil.i("filePath:" + filePath);
-                File file = new File(filePath);
-                if (file.exists()) {
-                    mImageView1.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
+            public void onSuccess(final String filePath) {
+                if (isZip) {
+                    new Thread() {
+                        public void run() {
+                            String zipPath = "";
+                            switch (zipType) {
+                                case quality:
+                                    zipPath = getNewPicturePathByTimeStamp("quality");
+                                    LjyBitmapUtil.compressQuality(BitmapFactory.decodeFile(filePath), zipPath, 25);
+                                    break;
+                                case size:
+                                    zipPath = getNewPicturePathByTimeStamp("size");
+                                    LjyBitmapUtil.compressSize(BitmapFactory.decodeFile(filePath), zipPath, 4);
+                                    break;
+                                case inSampleSize:
+                                    zipPath = getNewPicturePathByTimeStamp("inSampleSize");
+                                    LjyBitmapUtil.compressSample(filePath, zipPath, 4);
+                                    break;
+                                case huffman:
+                                    zipPath = getNewPicturePathByTimeStamp("huffman");
+                                    LjyBitmapUtil.compressHuffman(BitmapFactory.decodeFile(filePath), zipPath, 25, true);
+                                    break;
+                                case mix:
+                                    zipPath = getNewPicturePathByTimeStamp("mix");
+                                    LjyBitmapUtil.compressMix(BitmapFactory.decodeFile(filePath), zipPath, 90);
+                                    break;
+                            }
+                            if (TextUtils.isEmpty(zipPath))
+                                return;
+                            final String finalZipPath = zipPath;
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mImageView1.setImageBitmap(BitmapFactory.decodeFile(finalZipPath));
+                                }
+                            });
+                        }
+                    }.start();
+                } else {
+                    File file = new File(filePath);
+                    if (file.exists()) {
+                        mImageView1.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
+                    }
                 }
             }
 
@@ -86,6 +124,9 @@ public class PhotoActivity extends AppCompatActivity {
     private final int requestCodePicture = 1003;
     private final int requestCodePictureCut = 1004;
     private final int requestCodeMatisse = 1005;
+
+    private boolean isZip = false;
+    private ZipType zipType;
 
 
     //按钮点击事件监听
@@ -106,7 +147,22 @@ public class PhotoActivity extends AppCompatActivity {
                     doPictureCut();
                     break;
                 case R.id.btn_Matisse:
-                    doMatisse();
+                    doPictures();
+                    break;
+                case R.id.btn_quality:
+                    doZip(ZipType.quality);
+                    break;
+                case R.id.btn_size:
+                    doZip(ZipType.size);
+                    break;
+                case R.id.btn_inSampleSize:
+                    doZip(ZipType.inSampleSize);
+                    break;
+                case R.id.btn_Huffman:
+                    doZip(ZipType.huffman);
+                    break;
+                case R.id.btn_mix:
+                    doZip(ZipType.mix);
                     break;
                 default:
                     break;
@@ -115,6 +171,16 @@ public class PhotoActivity extends AppCompatActivity {
             LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
+    }
+
+    enum ZipType {
+        quality, size, inSampleSize, huffman, mix
+    }
+
+    private void doZip(ZipType zipType) {
+        photoUtil.getPicture();
+        isZip = true;
+        this.zipType = zipType;
     }
 
     List<Uri> mSelected;
@@ -169,7 +235,7 @@ public class PhotoActivity extends AppCompatActivity {
                         doPictureCut();
                         break;
                     case requestCodeMatisse:
-                        doMatisse();
+                        doPictures();
                         break;
                     default:
                         break;
@@ -187,38 +253,35 @@ public class PhotoActivity extends AppCompatActivity {
         });
     }
 
-    private void doMatisse() {
-        //Matisse，来自知乎的PhotoPicker
-        Matisse.from(mActivity)
-                .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
-                .theme(R.style.Matisse_Dracula)
-                .countable(false)//是否显示所选的图片是第几个（右上角标），false则以对号标识选中
-                .maxSelectable(9)
-                .capture(false)//是否可以拍照，如果允许需要另行配置，具体可查看Matisse相关文章
-                .imageEngine(new GlideEngine())
-                .forResult(REQUEST_CODE_CHOOSE);
+    private void doPictures() {
+        photoUtil.getPictures(mActivity, REQUEST_CODE_CHOOSE);
     }
 
     private void doPictureCut() {
-        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-        String photoPath = picFilesPath + photoName;
-        photoUtil.getPictureAndCut(photoPath);
+        isZip = false;
+        photoUtil.getPictureAndCut(getNewPicturePathByTimeStamp("pictureCut"));
     }
 
     private void doPicture() {
+        isZip = false;
         photoUtil.getPicture();
     }
 
     private void doCameraCut() {
-        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-        String photoPath = picFilesPath + photoName;
-        photoUtil.doCameraAndCut(photoPath);
+        isZip = false;
+        photoUtil.doCameraAndCut(getNewPicturePathByTimeStamp("cameraCut"));
     }
 
+
     private void doCamera() {
-        String photoName = String.format("img_%d.jpg", System.currentTimeMillis());
-        String photoPath = picFilesPath + photoName;
-        photoUtil.doCamera(photoPath);
+        isZip = false;
+        photoUtil.doCamera(getNewPicturePathByTimeStamp("camera"));
+    }
+
+    @NonNull
+    private String getNewPicturePathByTimeStamp(String tag) {
+        String photoName = String.format("img_%s_%d.jpg", tag, System.currentTimeMillis());
+        return picFilesPath + photoName;
     }
 
     private static class MyHandler extends Handler {
