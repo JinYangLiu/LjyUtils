@@ -90,50 +90,30 @@ public class PhotoActivity extends AppCompatActivity {
 
     //按钮点击事件监听
     public void onPhotoBtnClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_camera:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
-                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
+                LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            switch (view.getId()) {
+                case R.id.btn_camera:
                     doCamera();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
-                }
-                break;
-            case R.id.btn_cameraCut:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
-                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    break;
+                case R.id.btn_cameraCut:
                     doCameraCut();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCameraCut);
-                }
-                break;
-            case R.id.btn_picture:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    break;
+                case R.id.btn_picture:
                     doPicture();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            requestCodePicture);
-                }
-                break;
-            case R.id.btn_pictureCut:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    break;
+                case R.id.btn_pictureCut:
                     doPictureCut();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            requestCodePictureCut);
-                }
-                break;
-            case R.id.btn_Matisse:
-                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
-                        LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    break;
+                case R.id.btn_Matisse:
                     doMatisse();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeMatisse);
-                }
-                break;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
     }
 
