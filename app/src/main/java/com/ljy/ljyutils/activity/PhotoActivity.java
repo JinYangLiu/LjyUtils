@@ -115,8 +115,9 @@ public class PhotoActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.btn_picturemore:
-                //Matisse，来自知乎的PhotoPicker
-                Matisse.from(mActivity)
+                if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    //Matisse，来自知乎的PhotoPicker
+                    Matisse.from(mActivity)
                         .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
                         .theme(R.style.Matisse_Dracula)
                         .countable(false)//是否显示所选的图片是第几个（右上角标），false则以对号标识选中
@@ -124,6 +125,9 @@ public class PhotoActivity extends AppCompatActivity {
                         .capture(false)//是否可以拍照，如果允许需要另行配置，具体可查看Matisse相关文章
                         .imageEngine(new GlideEngine())
                         .forResult(REQUEST_CODE_CHOOSE);
+                } else {
+                    LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+                }
                 break;
         }
     }
