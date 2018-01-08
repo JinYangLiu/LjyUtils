@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--MDDialog-->
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!--对话框按钮文字颜色-->
+        <item name="colorAccent">#f44336</item>
+        <!--对话框内容文字颜色-->
+        <item name="android:textColorPrimary">#f44336</item>
+        <!--对话框背景色-->
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+    <!--TextInputlayou的style-->
+    <style name="MDTextInputLayout" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#8A000000</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <!--TextInputlayou的theme-->
+    <style name="AppCompatTextInputlayout">
+        <item name="colorAccent">#8A000000</item>
+    </style>
+</resources>
