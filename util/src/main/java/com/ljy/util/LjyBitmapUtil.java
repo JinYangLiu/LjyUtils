@@ -4,8 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.media.ExifInterface;
+import android.text.TextUtils;
 
 import net.bither.util.NativeUtil;
 
@@ -24,9 +27,9 @@ public class LjyBitmapUtil {
     /**
      * 1.质量压缩
      *
-     * @param bitmap 原图片
+     * @param bitmap     原图片
      * @param targetPath 要保存的指定目录
-     * @param quality 0~100，要压缩到百分之几
+     * @param quality    0~100，要压缩到百分之几
      */
     public static void compressQuality(Bitmap bitmap, String targetPath, int quality) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,68 +44,83 @@ public class LjyBitmapUtil {
         }
     }
 
+    public static Bitmap compressQuality(Bitmap bitmap, int quality) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        byte[] compressBytes = baos.toByteArray();
+        return BitmapFactory.decodeByteArray(compressBytes, 0, compressBytes.length);
+    }
+
     /**
      * 2.尺寸压缩
      *
-     * @param bitmap 原图片
+     * @param bitmap     原图片
      * @param targetPath 要保存的指定目录
-     * @param ratio 要压缩到几分之一
+     * @param ratio      要压缩到几分之一
      */
     public static void compressSize(Bitmap bitmap, String targetPath, int ratio) {
+        Bitmap compressBitmap = compressSize(bitmap, ratio);
+        compressQuality(compressBitmap, targetPath, 100);
+    }
+
+    public static Bitmap compressSize(Bitmap bitmap, int ratio) {
         Bitmap result = Bitmap.createBitmap(bitmap.getWidth() / ratio, bitmap.getHeight() / ratio, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         Rect rect = new Rect(0, 0, bitmap.getWidth() / ratio, bitmap.getHeight() / ratio);
         canvas.drawBitmap(bitmap, null, rect, null);
+        return result;
 
-        compressQuality(result, targetPath, 100);
     }
 
     /**
      * 3.采样率压缩
      *
-     * @param filePath 原图片
-     * @param targetPath 要保存的指定目录
+     * @param filePath     原图片
+     * @param targetPath   要保存的指定目录
      * @param inSampleSize 数值越高，图片像素越低
      */
     public static void compressSample(String filePath, String targetPath, int inSampleSize) {
+        Bitmap compressBitmap = compressSample(filePath, inSampleSize);
+        compressQuality(compressBitmap, targetPath, 100);
+    }
+
+    public static Bitmap compressSample(String filePath, int inSampleSize) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
         options.inSampleSize = inSampleSize;
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        return BitmapFactory.decodeFile(filePath, options);
 
-        compressQuality(bitmap, targetPath, 100);
+
     }
 
     /**
      * 4.哈夫曼压缩
      *
-     * @param bit 原图片
+     * @param bit        原图片
      * @param targetPath 要保存的指定目录
-     * @param quality 0~100，要压缩到百分之几
-     * @param optimize 是否采用哈弗曼表数据计算 品质相差5-10倍
+     * @param quality    0~100，要压缩到百分之几
+     * @param optimize   是否采用哈弗曼表数据计算 品质相差5-10倍
      */
-    public static void compressHuffman(Bitmap bit,  String targetPath,int quality, boolean optimize) {
+    public static void compressHuffman(Bitmap bit, String targetPath, int quality, boolean optimize) {
         NativeUtil.compressBitmap(bit, bit.getWidth(), bit.getHeight(), quality, targetPath.getBytes(), optimize);
     }
 
     /**
      * 5.混合终极方法（尺寸、质量、JNI压缩）
      *
-     * @param image    bitmap对象
+     * @param image      bitmap对象
      * @param targetPath 要保存的指定目录
-     * @param maxSizeKB 将指定的bitmap压缩到小于maxSizeKB,maxSizeKB最小为30KB
+     * @param maxSizeKB  将指定的bitmap压缩到小于maxSizeKB,maxSizeKB最小为30KB
      * @Description: 通过JNI图片压缩把Bitmap保存到指定目录
      */
     public static void compressMix(Bitmap image, String targetPath, int maxSizeKB) {
         maxSizeKB = maxSizeKB > 30 ? maxSizeKB : 30;
+        //step1：尺寸压缩
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
-        // 压缩Bitmap到对应尺寸
-        Bitmap result = Bitmap.createBitmap(image.getWidth() / ratio, image.getHeight() / ratio, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(result);
-        Rect rect = new Rect(0, 0, image.getWidth() / ratio, image.getHeight() / ratio);
-        canvas.drawBitmap(image, null, rect, null);
-
+        // 压缩原Bitmap到按对应尺寸压缩的bitmap
+        Bitmap result = compressSize(image,ratio);
+        //step2：质量压缩
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
         int quality = 100;
@@ -113,15 +131,16 @@ public class LjyBitmapUtil {
             baos.reset();
             // 每次都减少10
             quality -= 10;
-            if (quality<10) {
+            if (quality < 10) {
                 quality = 10;
                 break;
             }
             // 这里压缩options%，把压缩后的数据存放到baos中
             result.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         }
+        //step3：哈夫曼压缩
         // JNI调用哈夫曼压缩并保存图片到SD卡 这个关键
-        compressHuffman(result, targetPath,quality, true);
+        compressHuffman(result, targetPath, quality, true);
         // 释放Bitmap
         if (result != null && !result.isRecycled()) {
             result.recycle();
@@ -158,6 +177,12 @@ public class LjyBitmapUtil {
         return ratio;
     }
 
+    /**
+     * 计算缩放比例：缩放到1080*1920
+     * @param currentWidth
+     * @param currentHeight
+     * @return
+     */
     private static int getRatioSize(int currentWidth, int currentHeight) {
         return getRatioSize(currentWidth, currentHeight, 1080, 1920);
     }
@@ -258,6 +283,63 @@ public class LjyBitmapUtil {
             e.printStackTrace();
         }
         return degree;
+    }
+
+    /**
+     * 给图片添加水印
+     *
+     * @param targetBitmap   目标图片
+     * @param watermarkText  水印文字
+     * @param watermarkColor 水印颜色
+     */
+    public static void addWatermark(Bitmap targetBitmap, String watermarkText, int watermarkColor,String savePath) {
+        Bitmap result=addWatermark(targetBitmap,watermarkText,watermarkColor);
+        compressQuality(result, savePath, 100);
+    }
+
+    public static Bitmap addWatermark(Bitmap targetBitmap, String watermarkText, int watermarkColor) {
+        if (TextUtils.isEmpty(watermarkText))
+            return targetBitmap;
+        for (int i = 0; i < 9; i++) {
+            watermarkText += "        " + watermarkText;
+        }
+        int width = targetBitmap.getWidth(), hight = targetBitmap.getHeight();
+        Bitmap icon = Bitmap.createBitmap(width, hight, Bitmap.Config.ARGB_8888); //建立一个空的BItMap
+        Canvas canvas = new Canvas(icon);//初始化画布绘制的图像到icon上
+
+        Paint photoPaint = new Paint(); //建立画笔
+        photoPaint.setDither(true); //获取跟清晰的图像采样
+        photoPaint.setFilterBitmap(true);//过滤一些
+
+        Rect src = new Rect(0, 0, targetBitmap.getWidth(), targetBitmap.getHeight());//创建一个指定的新矩形的坐标
+        Rect dst = new Rect(0, 0, width, hight);//创建一个指定的新矩形的坐标
+        canvas.save();
+        canvas.drawBitmap(targetBitmap, src, dst, photoPaint);//将photo 缩放或则扩大到 dst使用的填充区photoPaint
+        canvas.restore();
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);//设置画笔
+        float textSize=20;
+        if (width>1440||hight>2560){
+            textSize=80;
+        }else if (width>1080||hight>1920){
+            textSize=60;
+        }else if (width>720||hight>1280){
+            textSize=40;
+        }
+        textPaint.setTextSize(textSize);//字体大小
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);//采用默认的宽度
+        textPaint.setColor(watermarkColor);//采用的颜色
+        Rect textBounds = new Rect();
+        photoPaint.getTextBounds(watermarkText, 0, String.valueOf(watermarkText).length(), textBounds);
+        float textHeight = textBounds.height();
+        for (float j = -canvas.getWidth(); j < canvas.getHeight(); ) {
+            canvas.save();
+            canvas.translate(0, j);
+            canvas.rotate(30);
+            canvas.drawText(watermarkText, textHeight, textHeight, textPaint);//绘制上去字，开始未知x,y采用那只笔绘制
+            canvas.restore();
+            j = j + textHeight * 30;
+        }
+        return icon;
     }
 
 }

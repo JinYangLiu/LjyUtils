@@ -166,7 +166,7 @@ public class LjyRadarView extends View {
         pointColor = typedArray.getColor(R.styleable.LjyRadarView_pointColor, Color.parseColor("#80333366"));
         borderColor = typedArray.getColor(R.styleable.LjyRadarView_borderColor, Color.parseColor("#80333366"));
         radiusColor = typedArray.getColor(R.styleable.LjyRadarView_radiusColor, Color.parseColor("#80CCCCCC"));
-        borderWidth = typedArray.getDimensionPixelSize(R.styleable.LjyRadarView_borderWidth, 5);
+        borderWidth = typedArray.getDimensionPixelSize(R.styleable.LjyRadarView_raderBorderWidth, 5);
 
         pointRadius = typedArray.getDimensionPixelSize(R.styleable.LjyRadarView_pointRadius, 10);
         enabledBorder = typedArray.getBoolean(R.styleable.LjyRadarView_enabledBorder, false);

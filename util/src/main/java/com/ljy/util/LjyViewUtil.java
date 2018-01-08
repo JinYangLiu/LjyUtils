@@ -2,6 +2,7 @@ package com.ljy.util;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -10,7 +11,7 @@ import android.widget.RelativeLayout;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
- *
+ * <p>
  * 提供view相关方法
  */
 
@@ -78,18 +79,18 @@ public class LjyViewUtil {
     /**
      * View的宽高=屏幕的宽高*scaleW/H
      *
-     * @param context 上下文对象，用于获取屏幕宽高
-     * @param layoutParams    目标view的layoutParams
-     * @param scaleW  宽的缩放
-     * @param scaleH  高的缩放
-     * @param type    几种状态:0为正常，1为使高等于宽，2为使宽等于高,3为height=WRAP_CONTENT，4为width=WRAP_CONTENT
+     * @param context      上下文对象，用于获取屏幕宽高
+     * @param layoutParams 目标view的layoutParams
+     * @param scaleW       宽的缩放
+     * @param scaleH       高的缩放
+     * @param type         几种状态:0为正常，1为使高等于宽，2为使宽等于高,3为height=WRAP_CONTENT，4为width=WRAP_CONTENT
      */
     public static void setViewSize(Context context, ViewGroup.LayoutParams layoutParams, float scaleW, float scaleH, int type) {
         if (scaleW <= 0 && scaleH <= 0)
             return;
-        if (context==null||layoutParams==null)
+        if (context == null || layoutParams == null)
             return;
-        context=context.getApplicationContext();
+        context = context.getApplicationContext();
 
         int windowWidth = getScreenWidth(context);
         int windowHeight = getScreenHeight(context);
@@ -125,4 +126,87 @@ public class LjyViewUtil {
         layoutParams.width = viewWidth;
         layoutParams.height = viewHeight;
     }
+
+    public static int getViewWidth(View view){
+        int width =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int height =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        view.measure(width,height);
+        return view.getMeasuredWidth();
+    }
+
+    public static int getViewHeight(View view){
+        int width =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int height =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        view.measure(width,height);
+        return view.getMeasuredHeight();
+    }
+
+    /**
+     * 使view可以拖拽移动
+     *
+     */
+    public static void touchMove( final View view,ViewGroup parentView) {
+        final int parentViewWidth = parentView.getWidth();
+        final int parentViewHeight = parentView.getHeight();
+        final int viewWidth=getViewWidth(view);
+        final int viewHeight=getViewHeight(view);
+        view.setOnTouchListener(new View.OnTouchListener() {
+            public int lastY;
+            public int lastX;
+            public int firstX;
+            public int firstY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+
+                        lastX=firstX = (int) event.getRawX();
+                        lastY=firstY = (int) event.getRawY();
+                    case MotionEvent.ACTION_MOVE:
+                        int dx = (int) event.getRawX() - lastX;
+                        int dy = (int) event.getRawY() - lastY;
+
+                        int top = v.getTop() + dy;
+
+                        int left = v.getLeft() + dx;
+
+                        if (top <= 0) {
+                            top = 0;
+                        }
+
+                        if (top >= parentViewHeight - viewHeight) {
+                            top = parentViewHeight - viewHeight;
+                        }
+                        if (left >= parentViewWidth - viewWidth) {
+                            left = parentViewWidth - viewWidth;
+                        }
+
+                        if (left <= 0) {
+                            left = 0;
+                        }
+
+                        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        param.leftMargin = left;
+                        param.topMargin = top;
+                        v.setLayoutParams(param);
+                        v.postInvalidate();
+                        lastX = (int) event.getRawX();
+                        lastY = (int) event.getRawY();
+                        if ( event.getRawX()==firstX &&  event.getRawY()==firstY) {
+                            view.setClickable(true);
+                        } else {
+                            view.setClickable(false);
+                        }
+                    case MotionEvent.ACTION_UP:
+                        break;
+
+                }
+                return false;
+            }
+        });
+    }
+
 }

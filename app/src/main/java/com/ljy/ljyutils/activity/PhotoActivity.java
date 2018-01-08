@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.ljy.ljyutils.R;
@@ -23,6 +24,8 @@ import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
+import com.ljy.view.LjyMDDialog;
+import com.ljy.view.LjyTagView;
 import com.zhihu.matisse.Matisse;
 
 import java.io.File;
@@ -42,7 +45,10 @@ public class PhotoActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_1)
     ImageView mImageView1;
+    @BindView(R.id.tags_container)
+    RelativeLayout tagsContainer;
     private int REQUEST_CODE_CHOOSE = 222;
+    private boolean isWatermark = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +110,23 @@ public class PhotoActivity extends AppCompatActivity {
                             });
                         }
                     }.start();
+                } else if (isWatermark) {
+                    new Thread() {
+                        public void run() {
+                            //添加水印前先压缩一下，避免过大
+                            String zipPath = getNewPicturePathByTimeStamp("mix");
+                            LjyBitmapUtil.compressMix(BitmapFactory.decodeFile(filePath), zipPath, 90);
+                            //添加水印
+                            final String watermarkPath = getNewPicturePathByTimeStamp("watermark");
+                            LjyBitmapUtil.addWatermark(BitmapFactory.decodeFile(zipPath), "LJY_ABCDEF", 0x55f44336, watermarkPath);
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mImageView1.setImageBitmap(BitmapFactory.decodeFile(watermarkPath));
+                                }
+                            });
+                        }
+                    }.start();
                 } else {
                     File file = new File(filePath);
                     if (file.exists()) {
@@ -127,6 +150,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private boolean isZip = false;
     private ZipType zipType;
+    int temp = 1;
 
 
     //按钮点击事件监听
@@ -164,6 +188,34 @@ public class PhotoActivity extends AppCompatActivity {
                 case R.id.btn_mix:
                     doZip(ZipType.mix);
                     break;
+                case R.id.btn_watermark:
+                    doWatermark();
+                    break;
+                case R.id.btn_label:
+                    final LjyTagView tagView = LjyTagView.getTag(mContext, "标签_" + temp++, tagsContainer);
+                    tagView.setOnTagLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            LjyLogUtil.i("onLongClick");
+                            LjyMDDialog dialog=new LjyMDDialog(mActivity);
+                            dialog.alert("温馨提示", "是否删除" + tagView.getContent(), "确定", new LjyMDDialog.PositiveListener() {
+                                @Override
+                                public void positive() {
+                                    if (tagsContainer != null)
+                                        tagsContainer.removeView(tagView);
+                                }
+                            }, "取消", null,false);
+
+                            return false;
+                        }
+                    });
+
+                    tagsContainer.addView(tagView);
+                    break;
+                case R.id.btn_clearlabel:
+                    if (tagsContainer != null)
+                        tagsContainer.removeAllViews();
+                    break;
                 default:
                     break;
             }
@@ -171,6 +223,11 @@ public class PhotoActivity extends AppCompatActivity {
             LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
+    }
+
+    private void doWatermark() {
+        isWatermark = true;
+        photoUtil.getPicture();
     }
 
     enum ZipType {
