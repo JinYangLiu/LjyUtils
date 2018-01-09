@@ -67,6 +67,19 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 
 各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode
 
++ LjyColorUtil：
+
+颜色相关工具类\
+randomColor(生成随机颜色)
+
+LjyBitmapUtil：
+
+bitmap处理的工具类\
+compressQuality(质量压缩),compressSize(尺寸压缩),compressSample(采样率压缩),
+compressHuffman（哈夫曼压缩），compressMix（尺寸、质量，哈夫曼混合使用）
+
+getRatioSize（计算缩放比），addWatermark（给图片添加水印）
+
 
 ### 自定义View介绍：（具体使用demo在app模块中都有）
 
@@ -85,6 +98,12 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 + LjySwipeRefreshView：刷新和加载更多view，其中如果是recycleView需要使用LjyRecyclerView，配合LjyBaseAdapter效果
 
 + LjyZoomImageView：支持手势缩放的图片控件
+
++ LjyMDDialog:MD风格的Dialog
+
++ LjyTagView：仿Nice的标签View
+
++ LjyGifImageView：支持GIF的ImageView
 
 
 
