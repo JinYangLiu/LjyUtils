@@ -5,10 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.widget.EditText;
 
 import com.ljy.ljyview.R;
 
@@ -17,10 +17,10 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 /**
  * Created by Mr.LJY on 2017/12/28.
  *
- * 数字密码的自定义view
+ * 仿ios输入密码的EditText
  */
 
-public class LjyPwdInputView extends EditText {
+public class LjyPwdInputView extends AppCompatEditText {
 
     private static final int defaultContMargin = 5;
     private static final int defaultSplitLineWidth = 3;

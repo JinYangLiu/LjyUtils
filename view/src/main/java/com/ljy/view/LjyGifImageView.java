@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 
 /**
  * Created by Mr.LJY on 2018/1/9.
+ *
+ * 支持GIF的imageView
  */
 
 public class LjyGifImageView extends AppCompatImageView {

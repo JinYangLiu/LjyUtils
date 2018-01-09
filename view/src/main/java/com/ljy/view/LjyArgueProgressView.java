@@ -16,6 +16,8 @@ import com.ljy.ljyview.R;
 
 /**
  * Created by Mr.LJY on 2018/1/2.
+ *
+ * 辩论（红蓝对决）View
  */
 
 public class LjyArgueProgressView  extends LinearLayout {

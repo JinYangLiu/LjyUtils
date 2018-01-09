@@ -23,6 +23,8 @@ import com.ljy.ljyview.R;
 
 /**
  * Created by Mr.LJY on 2017/8/18.
+ *
+ * 刷新和加载更多View，支持listView和LjyRecyclerView
  */
 
 public class LjySwipeRefreshView extends SwipeRefreshLayout {

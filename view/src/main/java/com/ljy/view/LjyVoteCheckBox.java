@@ -24,6 +24,8 @@ import java.util.List;
 
 /**
  * Created by Mr.LJY on 2018/1/2.
+ *
+ * 多选投票View
  */
 
 public class LjyVoteCheckBox extends LinearLayout {

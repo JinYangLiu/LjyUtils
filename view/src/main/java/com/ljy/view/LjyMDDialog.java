@@ -24,6 +24,8 @@ import java.util.TimerTask;
 
 /**
  * Created by Mr.LJY on 2018/1/8.
+ *
+ * MD风格的Dialog
  */
 public class LjyMDDialog {
 

@@ -6,10 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * 手势图片控件
+ * 支持手势缩放的ImageView
  * Created by Mr.LJY on 2017/12/28.
  */
 
-public class LjyZoomImageView extends ImageView {
+public class LjyZoomImageView extends AppCompatImageView {
 
     ////////////////////////////////配置参数////////////////////////////////
 

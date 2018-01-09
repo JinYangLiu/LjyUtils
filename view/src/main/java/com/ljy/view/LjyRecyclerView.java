@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Mr.LJY on 2016/11/8.
+ *
+ * 可添加header/footer的recyclerView，配合LjySwipeRefreshView使用
  */
 public class LjyRecyclerView extends RecyclerView {
 

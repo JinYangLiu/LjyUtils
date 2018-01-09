@@ -23,6 +23,8 @@ import java.io.Serializable;
 
 /**
  * Created by Mr.LJY on 2018/1/8.
+ *
+ * 仿Nice标签View
  */
 public class LjyTagView extends RelativeLayout {
     public Animation blackAnimation1;

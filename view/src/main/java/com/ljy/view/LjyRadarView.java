@@ -34,8 +34,8 @@ import java.util.List;
 
 /**
  * Created by Mr.LJY on 2017/12/29.
- * <p>
- * 雷达图控件
+ *
+ * 雷达图（蛛网图）控件
  */
 
 public class LjyRadarView extends View {

@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 九宫格图案锁
  * Created by Mr.LJY on 2017/12/28.
+ *
+ * 九宫格图案锁
  */
 
 public class LjyGestureLockView extends View {
