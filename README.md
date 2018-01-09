@@ -39,7 +39,9 @@ requestPermission：动态申请指定权限
 getScreenWidth: 获得屏幕的宽\
 getScreenHeight: 获得屏幕的高\
 setListViewHeight: 重新计算ListView item的高度\
-setViewSize: View的宽高=屏幕的宽高*scaleW/H
+setViewSize: View的宽高=屏幕的宽高*scaleW/H\
+getViewWidth,getViewHeight:得到view的宽高\
+touchMove:使view可以拖拽移动
 
 + LjyStringUtil:
 
@@ -67,12 +69,21 @@ save(保存)，get(获取)，clearAll(清空)，getAll(获取全部)
 
 各种数据加密的工具类,包括: Caesar,AES,DES,RSA,MD5,SHA256/512,QrCode
 
++ LjyGlideUtil：
+
+对图片框架Glide的封装
+
 + LjyColorUtil：
 
 颜色相关工具类\
 randomColor(生成随机颜色)
 
-LjyBitmapUtil：
++ LjyPhotoUtil：
+
+doCamera（拍照并保存到指定path），doCameraAndCut（拍照后裁剪并保存到指定path），getPicture（从系统相册选取单张图片），
+getPictureAndCut（从系统相册选取单张图片后裁剪并保存到指定path），getPictures（使用Matisse选取多张图片）
+
++ LjyBitmapUtil：
 
 bitmap处理的工具类\
 compressQuality(质量压缩),compressSize(尺寸压缩),compressSample(采样率压缩),
