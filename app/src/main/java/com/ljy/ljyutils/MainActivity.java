@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
+import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_picture:
                 startActivity(new Intent(mContext, PhotoActivity.class));
+                break;
+                case R.id.btn_gif:
+                startActivity(new Intent(mContext, GifActivity.class));
                 break;
             default:
                 break;

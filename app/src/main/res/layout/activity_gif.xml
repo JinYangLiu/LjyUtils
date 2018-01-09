@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.GifActivity">
+
+    <com.ljy.view.LjyGifImageView
+        android:id="@+id/gif"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        app:authPlay="false"/>
+
+    <TextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gif"
+        android:layout_centerHorizontal="true"/>
+
+    <SeekBar
+        android:id="@+id/seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/percent"
+        android:max="100"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        >
+
+            <Button
+                android:id="@+id/playCycle"
+                android:onClick="onGifClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="循环播放"
+            />
+
+            <Button
+                android:id="@+id/playOne"
+                android:onClick="onGifClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="单次播放"
+            />
+
+            <Button
+                android:id="@+id/pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onGifClick"
+                android:text="暂停"
+            />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/flashback"
+                android:onClick="onGifClick"
+                android:text="倒叙播放"
+            />
+
+            <Button
+                android:id="@+id/loadNew"
+                android:onClick="onGifClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加载新图片"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+</RelativeLayout>
