@@ -1,5 +1,5 @@
 # LjyUtils
-整理一些常用的工具类
+整理一些常用的工具类和自定义view 
 
 ### gradle中使用：
 Step 1. Add it in your root build.gradle at the end of repositories:
