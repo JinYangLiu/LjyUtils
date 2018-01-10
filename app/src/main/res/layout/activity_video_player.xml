@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.VideoPlayerActivity">
+    <com.ljy.view.LjyVideoPlayer
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="200dp"/>
+    <HorizontalScrollView
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+                      android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/play"
+                android:text="开始"
+                android:onClick="onVideoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/pause"
+                android:text="暂停"
+                android:onClick="onVideoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/resume"
+                android:text="重置"
+                android:onClick="onVideoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/small"
+                android:text="小窗口"
+                android:onClick="onVideoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/hidesmall"
+                android:text="隐藏小窗口"
+                android:onClick="onVideoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+</RelativeLayout>

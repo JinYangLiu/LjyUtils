@@ -15,6 +15,7 @@ import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
+import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_gestureLockView:
                 startActivity(new Intent(mContext, GestureLockActivity.class));
                 break;
-                case R.id.btn_radarView:
+            case R.id.btn_radarView:
                 startActivity(new Intent(mContext, RadarViewActivity.class));
                 break;
             case R.id.btn_argueView:
@@ -60,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_picture:
                 startActivity(new Intent(mContext, PhotoActivity.class));
                 break;
-                case R.id.btn_gif:
+            case R.id.btn_gif:
                 startActivity(new Intent(mContext, GifActivity.class));
+            case R.id.btn_video:
+                startActivity(new Intent(mContext, VideoPlayerActivity.class));
                 break;
             default:
                 break;
