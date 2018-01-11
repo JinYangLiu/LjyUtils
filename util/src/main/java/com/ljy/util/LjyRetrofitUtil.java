@@ -81,9 +81,21 @@ public class LjyRetrofitUtil {
         setCallBack(observable, callBack);
     }
 
+    /**
+     * 可以代替上面的getJsonMap使用，具体可参考RetrofitActivity
+     */
+    public <T> void getJsonObj(String methodPath, Map<String, String> params, final CallBack<T> callBack) {
+        Observable<ParserDataBase<Object>> observable = apiService.getJsonObj(methodPath, params);
+        setCallBack(observable, callBack);
+    }
+
     public interface ApiService {
+
         @GET("{methodPath}")
         Observable<ParserDataBase<HashMap<String, Object>>> getJsonMap(@Path("methodPath") String methodPath, @QueryMap Map<String, String> options);
+
+        @GET("{methodPath}")
+        Observable<ParserDataBase<Object>> getJsonObj(@Path("methodPath") String methodPath, @QueryMap Map<String, String> options);
     }
 
     private <T> void setCallBack(final Observable<T> observable, final CallBack callBack) {
@@ -104,8 +116,8 @@ public class LjyRetrofitUtil {
                     }
 
                     @Override
-                    public void onCompleted() {//所以事件完成
-                        LjyLogUtil.i("onCompleted");
+                    public void onCompleted() {//所以事件完成,若onError被调用了则不会再走这个方法
+
                     }
 
 
@@ -115,7 +127,8 @@ public class LjyRetrofitUtil {
 
     public interface CallBack<T> {
         void onSuccess(final T parserData);
-        void onFail(final String failInfo );
+
+        void onFail(final String failInfo);
     }
 
     public interface FailureCallBack {
