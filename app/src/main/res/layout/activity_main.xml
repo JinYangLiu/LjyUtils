@@ -15,87 +15,59 @@
             <Button
                 android:id="@+id/btn_app_util"
                 android:text="Utils的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_glide_util"
                 android:text="GlideUtil的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_setViewSize"
                 android:text="setViewSize的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_gestureLockView"
                 android:text="手势锁view的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_radarView"
                 android:text="雷达图view的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_argueView"
                 android:text="辩论view的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_vote"
                 android:text="投票view的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_refreshListView"
                 android:text="刷新和加载更多ListView的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_refreshRecycleView"
                 android:text="刷新和加载更多RecycleView的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_picture"
                 android:text="拍照和选取图片工具类的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_gif"
                 android:text="gifView的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_video"
                 android:text="videoPlayer的使用"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:onClick="onMainBtnClick"
-                android:layout_height="wrap_content"/>
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_dagger2"
+                android:text="dagger2的使用"
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_retrofit"
+                android:text="retrofit的使用"
+                style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

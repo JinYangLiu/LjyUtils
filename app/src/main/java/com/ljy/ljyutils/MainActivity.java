@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
+import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
@@ -14,6 +15,7 @@ import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
+import com.ljy.ljyutils.activity.RetrofitActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
@@ -65,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(mContext, GifActivity.class));
             case R.id.btn_video:
                 startActivity(new Intent(mContext, VideoPlayerActivity.class));
+                break;
+            case R.id.btn_dagger2:
+                startActivity(new Intent(mContext, DemoDa2Activity.class));
+                break;
+            case R.id.btn_retrofit:
+                startActivity(new Intent(mContext, RetrofitActivity.class));
                 break;
             default:
                 break;

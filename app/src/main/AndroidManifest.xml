@@ -13,78 +13,86 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.UseUtilsActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        />
-        <activity android:name=".activity.GlideUtilActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        />
-
-        <activity android:name=".activity.ViewSizeActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        />
-        <activity android:name=".activity.GestureLockActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.UseUtilsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.GlideUtilActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ViewSizeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.GestureLockActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.RadarViewActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.RadarViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.Radar2Activity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.Radar2Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.ArgueProgressActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.ArgueProgressActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.VoteActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.VoteActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.RefreshListViewActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.RefreshListViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.RefreshRecyclerViewActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.RefreshRecyclerViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.PhotoActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.GifActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+            android:name=".activity.GifActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.VideoPlayerActivity"
+        <activity
+            android:name=".activity.VideoPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activity.DemoDa2Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.RetrofitActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait"
-        >
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 
