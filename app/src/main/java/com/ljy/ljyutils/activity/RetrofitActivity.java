@@ -26,8 +26,8 @@ public class RetrofitActivity extends AppCompatActivity {
     private final String appId = "2";
     private final String appSecret = "anxin_bbs!@#";
     private final String safeCode = "bbs_anxin_android_#@!";
-    private final String axid = "152052";
-    private final String pwd = "6a204bd89f3c8348afd5c77c717a097a";
+    private final String axid = "1177080";
+    private final String pwd = "e3ceb5881a0a1fdaad01296d7554868d";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
