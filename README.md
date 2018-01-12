@@ -81,6 +81,8 @@ compressQuality(质量压缩),compressSize(尺寸压缩),compressSample(采样�
 compressHuffman（哈夫曼压缩），compressMix（尺寸、质量，哈夫曼混合使用）\
 getRatioSize（计算缩放比），addWatermark（给图片添加水印）
 
++ LjyRetrofitUtil：网络请求工具类，Retrofit和rxJava的结合，提供get，post请求的处理方法，相关demo使用mvp设计模式加载数据
+
 
 ### 自定义View介绍：（具体使用demo在app模块中都有）
 
@@ -105,6 +107,10 @@ getRatioSize（计算缩放比），addWatermark（给图片添加水印）
 + LjyTagView：仿Nice的标签View
 
 + LjyGifImageView：支持GIF的ImageView
+
++ LjyVideoPlayer：视频播放控件，基于GSYVideoPlayer,支持边播便缓存，全屏，小窗口
+
+
 
 
 
