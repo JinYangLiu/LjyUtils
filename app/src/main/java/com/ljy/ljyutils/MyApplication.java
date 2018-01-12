@@ -15,5 +15,6 @@ public class MyApplication extends Application {
         super.onCreate();
         LjyLogUtil.setIsLog(true);
         LjyRetrofitUtil.setBaseUrl("http://pub2.bbs.anxin.com");
+        LjyRetrofitUtil.setTimeOut(30,60,60);
     }
 }

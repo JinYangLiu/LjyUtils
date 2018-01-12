@@ -2,7 +2,6 @@ package com.ljy.util;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +9,10 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -28,9 +30,30 @@ public class LjyRetrofitUtil {
     private ApiService apiService;
     private Retrofit retrofit;
     private OkHttpClient okHttpClient;
+    private static int mConnectTimeout = 10;
+    private static int mReadTimeout = 30;
+    private static int mWriteTimeout = 30;
 
+    /**
+     * 设置baseUrl，可以写在Application中
+     *
+     * @param baseUrl
+     */
     public static void setBaseUrl(String baseUrl) {
         mBaseUrl = baseUrl;
+    }
+
+    /**
+     * 设置超时时长，可以写在Application中
+     *
+     * @param connectTimeout 连接超时
+     * @param readTimeout    读取超时
+     * @param writeTimeout   写入超时
+     */
+    public static void setTimeOut(int connectTimeout, int readTimeout, int writeTimeout) {
+        mConnectTimeout = connectTimeout;
+        mReadTimeout = readTimeout;
+        mWriteTimeout = writeTimeout;
     }
 
     /**
@@ -43,6 +66,9 @@ public class LjyRetrofitUtil {
         return retrofitManager;
     }
 
+    /**
+     * 构造方法中初始化apiService
+     */
     public LjyRetrofitUtil() {
         if (apiService == null) {
             if (retrofit == null) {
@@ -65,9 +91,9 @@ public class LjyRetrofitUtil {
             synchronized (LjyRetrofitUtil.class) {
                 if (okHttpClient == null) {
                     okHttpClient = new OkHttpClient.Builder()
-                            .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时
-                            .readTimeout(30, TimeUnit.SECONDS)//设置读超时
-                            .writeTimeout(30, TimeUnit.SECONDS)//设置写超时
+                            .connectTimeout(mConnectTimeout, TimeUnit.SECONDS)//设置连接超时
+                            .readTimeout(mReadTimeout, TimeUnit.SECONDS)//设置读超时
+                            .writeTimeout(mWriteTimeout, TimeUnit.SECONDS)//设置写超时
 //                            .addInterceptor(commonInterceptor)//拦截器
                             .build();
                 }
@@ -76,35 +102,54 @@ public class LjyRetrofitUtil {
         return okHttpClient;
     }
 
-    public <T> void getJsonMap(String methodPath, Map<String, String> params, final CallBack<T> callBack) {
-        Observable<ParserDataBase<HashMap<String, Object>>> observable = apiService.getJsonMap(methodPath, params);
+    /**
+     * 调用get接口
+     *
+     * @param methodPath
+     * @param params
+     * @param callBack
+     */
+    public void get(String methodPath, Map<String, Object> params, final CallBack callBack) {
+        Observable<ParserDataBase<Map<String, Object>>> observable = apiService.get(methodPath, params);
         setCallBack(observable, callBack);
     }
 
     /**
-     * 可以代替上面的getJsonMap使用，具体可参考RetrofitActivity
+     * 调用post接口
+     *
+     * @param methodPath
+     * @param params
+     * @param callBack
      */
-    public <T> void getJsonObj(String methodPath, Map<String, String> params, final CallBack<T> callBack) {
-        Observable<ParserDataBase<Object>> observable = apiService.getJsonObj(methodPath, params);
+    public void post(String methodPath, Map<String, Object> params, final CallBack callBack) {
+        Observable<ParserDataBase<Map<String, Object>>> observable = apiService.post(methodPath, params);
         setCallBack(observable, callBack);
     }
+
+
 
     public interface ApiService {
 
         @GET("{methodPath}")
-        Observable<ParserDataBase<HashMap<String, Object>>> getJsonMap(@Path("methodPath") String methodPath, @QueryMap Map<String, String> options);
+        Observable<ParserDataBase<Map<String, Object>>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
 
-        @GET("{methodPath}")
-        Observable<ParserDataBase<Object>> getJsonObj(@Path("methodPath") String methodPath, @QueryMap Map<String, String> options);
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        @POST("{methodPath}")
+        Observable<ParserDataBase<Map<String, Object>>> post(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
     }
 
-    private <T> void setCallBack(final Observable<T> observable, final CallBack callBack) {
+    /**
+     *设置回调
+     * @param observable
+     * @param callBack
+     */
+    private void setCallBack(final Observable<ParserDataBase<Map<String, Object>>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
-                .subscribe(new Observer<T>() {//订阅
+                .subscribe(new Observer<ParserDataBase<Map<String, Object>>>() {//订阅
 
                     @Override
-                    public void onNext(T parserData) {//调用接口成功，返回数据
+                    public void onNext(ParserDataBase<Map<String, Object>> parserData) {//调用接口成功，返回数据
                         if (callBack != null)
                             callBack.onSuccess(parserData);
                     }
@@ -125,16 +170,19 @@ public class LjyRetrofitUtil {
     }
 
 
-    public interface CallBack<T> {
-        void onSuccess(final T parserData);
+    /**
+     * 成功失败的回调接口
+     */
+    public interface CallBack {
+        void onSuccess(final ParserDataBase<Map<String, Object>> parserData);
 
         void onFail(final String failInfo);
     }
 
-    public interface FailureCallBack {
-
-    }
-
+    /**
+     * 安心的返回都是这种样式的，实际使用是可以自己修改
+     * @param <T>
+     */
     public static class ParserDataBase<T> {
 
         @SerializedName(value = "code", alternate = {"errorNo"})
