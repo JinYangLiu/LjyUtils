@@ -1,7 +1,5 @@
 package com.ljy.util;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -35,28 +33,6 @@ public class LjyRetrofitUtil {
     private static int mWriteTimeout = 30;
 
     /**
-     * 设置baseUrl，可以写在Application中
-     *
-     * @param baseUrl
-     */
-    public static void setBaseUrl(String baseUrl) {
-        mBaseUrl = baseUrl;
-    }
-
-    /**
-     * 设置超时时长，可以写在Application中
-     *
-     * @param connectTimeout 连接超时
-     * @param readTimeout    读取超时
-     * @param writeTimeout   写入超时
-     */
-    public static void setTimeOut(int connectTimeout, int readTimeout, int writeTimeout) {
-        mConnectTimeout = connectTimeout;
-        mReadTimeout = readTimeout;
-        mWriteTimeout = writeTimeout;
-    }
-
-    /**
      * 获得RetrofitManager单例
      */
     public static LjyRetrofitUtil getInstance() {
@@ -69,7 +45,7 @@ public class LjyRetrofitUtil {
     /**
      * 构造方法中初始化apiService
      */
-    public LjyRetrofitUtil() {
+    private LjyRetrofitUtil() {
         if (apiService == null) {
             if (retrofit == null) {
                 retrofit = new Retrofit.Builder()
@@ -102,40 +78,26 @@ public class LjyRetrofitUtil {
         return okHttpClient;
     }
 
-    /**
-     * 调用get接口
-     *
-     * @param methodPath
-     * @param params
-     * @param callBack
-     */
     public void get(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Observable<ParserDataBase<Map<String, Object>>> observable = apiService.get(methodPath, params);
+        Observable<Map<String, Object>> observable = apiService.get(methodPath, params);
         setCallBack(observable, callBack);
     }
 
-    /**
-     * 调用post接口
-     *
-     * @param methodPath
-     * @param params
-     * @param callBack
-     */
     public void post(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Observable<ParserDataBase<Map<String, Object>>> observable = apiService.post(methodPath, params);
+        Observable<Map<String, Object>> observable = apiService.post(methodPath, params);
         setCallBack(observable, callBack);
     }
 
 
 
-    public interface ApiService {
+    private interface ApiService {
 
         @GET("{methodPath}")
-        Observable<ParserDataBase<Map<String, Object>>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
+        Observable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
 
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         @POST("{methodPath}")
-        Observable<ParserDataBase<Map<String, Object>>> post(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+        Observable<Map<String, Object>> post(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
     }
 
     /**
@@ -143,13 +105,13 @@ public class LjyRetrofitUtil {
      * @param observable
      * @param callBack
      */
-    private void setCallBack(final Observable<ParserDataBase<Map<String, Object>>> observable, final CallBack callBack) {
+    private void setCallBack(final Observable<Map<String, Object>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
-                .subscribe(new Observer<ParserDataBase<Map<String, Object>>>() {//订阅
+                .subscribe(new Observer<Map<String, Object>>() {//订阅
 
                     @Override
-                    public void onNext(ParserDataBase<Map<String, Object>> parserData) {//调用接口成功，返回数据
+                    public void onNext(Map<String, Object> parserData) {//调用接口成功，返回数据
                         if (callBack != null)
                             callBack.onSuccess(parserData);
                     }
@@ -169,41 +131,36 @@ public class LjyRetrofitUtil {
                 });
     }
 
-
     /**
      * 成功失败的回调接口
      */
     public interface CallBack {
-        void onSuccess(final ParserDataBase<Map<String, Object>> parserData);
+        void onSuccess(final Map<String, Object> parserData);
 
         void onFail(final String failInfo);
     }
 
+
     /**
-     * 安心的返回都是这种样式的，实际使用是可以自己修改
-     * @param <T>
+     * 设置baseUrl，可以写在Application中
+     *
+     * @param baseUrl
      */
-    public static class ParserDataBase<T> {
+    public static void setBaseUrl(String baseUrl) {
+        mBaseUrl = baseUrl;
+    }
 
-        @SerializedName(value = "code", alternate = {"errorNo"})
-        private int code;
-
-        private String message;
-
-        @SerializedName(value = "body", alternate = {"data", "list"})
-        private T body;
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public T getBody() {
-            return body;
-        }
+    /**
+     * 设置超时时长，可以写在Application中
+     *
+     * @param connectTimeout 连接超时
+     * @param readTimeout    读取超时
+     * @param writeTimeout   写入超时
+     */
+    public static void setTimeOut(int connectTimeout, int readTimeout, int writeTimeout) {
+        mConnectTimeout = connectTimeout;
+        mReadTimeout = readTimeout;
+        mWriteTimeout = writeTimeout;
     }
 
 }
