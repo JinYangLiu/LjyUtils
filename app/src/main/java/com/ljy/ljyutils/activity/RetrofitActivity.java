@@ -69,6 +69,8 @@ public class RetrofitActivity extends AppCompatActivity {
                     stringBuffer.append("\n\n");
                     stringBuffer.append("username:" + parserData.getBody().get("username"));
                     stringBuffer.append("\n\n");
+                    stringBuffer.append("nickname:" + parserData.getBody().get("nickname"));
+                    stringBuffer.append("\n\n");
                     stringBuffer.append("gold:" + parserData.getBody().get("gold"));
                     stringBuffer.append("\n\n");
                     stringBuffer.append("goldgroup:" + parserData.getBody().get("goldgroup"));
