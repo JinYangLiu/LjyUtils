@@ -12,7 +12,6 @@ import java.util.Map;
 /**
  * Created by Mr.LJY on 2018/1/12.
  */
-
 public class RetrofitActivityPresenter extends BasePresenter {
 
     private final Context context;
@@ -28,20 +27,20 @@ public class RetrofitActivityPresenter extends BasePresenter {
         postData(methodPath, body, new PresenterCallBack<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> parserBody) {
-                StringBuffer stringBuffer = new StringBuffer();
-                stringBuffer.append("userimg:" + parserBody.get("userimg"));
+                StringBuilder stringBuffer = new StringBuilder();
+                stringBuffer.append("userimg:").append(parserBody.get("userimg"));
                 stringBuffer.append("\n\n");
-                stringBuffer.append("username:" + parserBody.get("username"));
+                stringBuffer.append("username:").append(parserBody.get("username"));
                 stringBuffer.append("\n\n");
-                stringBuffer.append("nickname:" + parserBody.get("nickname"));
+                stringBuffer.append("nickname:").append(parserBody.get("nickname"));
                 stringBuffer.append("\n\n");
-                stringBuffer.append("gold:" + parserBody.get("gold"));
+                stringBuffer.append("gold:").append(parserBody.get("gold"));
                 stringBuffer.append("\n\n");
-                stringBuffer.append("goldgroup:" + parserBody.get("goldgroup"));
+                stringBuffer.append("goldgroup:").append(parserBody.get("goldgroup"));
                 stringBuffer.append("\n\n");
                 Map<String, Object> map = (Map<String, Object>) parserBody.get("signInfo");
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    stringBuffer.append(entry.getKey() + ":" + entry.getValue());
+                    stringBuffer.append(entry.getKey()).append(":").append(entry.getValue());
                     stringBuffer.append("\n\n");
                 }
                 String data = stringBuffer.toString();
@@ -81,15 +80,19 @@ public class RetrofitActivityPresenter extends BasePresenter {
         getData(methodPath, options, new PresenterCallBack<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> parserBody) {
-                List<Map<String, Object>> listMap = (List<Map<String, Object>>) parserBody.get("rows");
-                StringBuffer stringBuffer = new StringBuffer();
-                for (Map<String, Object> map : listMap) {
-                    stringBuffer.append(map.get("title"));
-                    stringBuffer.append("\n\n");
+                if (parserBody.get("rows") instanceof List) {
+                    List<Map<String, Object>> listMap = (List<Map<String, Object>>) parserBody.get("rows");
+                    StringBuilder stringBuffer = new StringBuilder();
+                    for (Map<String, Object> map : listMap) {
+                        stringBuffer.append(map.get("title"));
+                        stringBuffer.append("\n\n");
+                    }
+                    String data = stringBuffer.toString();
+                    LjyLogUtil.i(data);
+                    bindTextView.bind(data);
+                }else {
+                    LjyToastUtil.toast(context, "rows 类型错误");
                 }
-                String data = stringBuffer.toString();
-                LjyLogUtil.i(data);
-                bindTextView.bind(data);
             }
 
             @Override

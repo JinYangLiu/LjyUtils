@@ -10,9 +10,10 @@ import java.util.Map;
 
 /**
  * Created by Mr.LJY on 2018/1/12.
+ * <p>
+ * Presenter的基类
  */
-
-public class BasePresenter {
+class BasePresenter {
 
     private final String CODE = "code";
     private final String MESSAGE = "message";
@@ -24,7 +25,7 @@ public class BasePresenter {
     private final String axid = "1177080";
     private final String pwd = "e3ceb5881a0a1fdaad01296d7554868d";
 
-    <T>void postData(String methodPath, Map<String, Object> body, final PresenterCallBack<T> postCallBack) {
+    <T> void postData(String methodPath, Map<String, Object> body, final PresenterCallBack<T> postCallBack) {
 
         //header
         PostHeader header = new PostHeader(appId, appSecret, safeCode, axid, pwd);
@@ -52,7 +53,7 @@ public class BasePresenter {
         });
     }
 
-    <T>void getData(String methodPath, Map<String, Object> params, final PresenterCallBack<T> getCallBack) {
+    <T> void getData(String methodPath, Map<String, Object> params, final PresenterCallBack<T> getCallBack) {
         LjyRetrofitUtil.getInstance().get(methodPath, params,
                 new LjyRetrofitUtil.CallBack() {
                     @Override
@@ -76,7 +77,7 @@ public class BasePresenter {
                 });
     }
 
-     interface PresenterCallBack<T> {
+    interface PresenterCallBack<T> {
         void onSuccess(T parserBody);
 
         void onFail(String info);

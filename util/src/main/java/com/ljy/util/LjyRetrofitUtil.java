@@ -20,8 +20,9 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by Mr.LJY on 2018/1/11.
+ *
+ * 网络请求工具类
  */
-
 public class LjyRetrofitUtil {
     private static LjyRetrofitUtil retrofitManager;
     private static String mBaseUrl;
@@ -102,8 +103,6 @@ public class LjyRetrofitUtil {
 
     /**
      *设置回调
-     * @param observable
-     * @param callBack
      */
     private void setCallBack(final Observable<Map<String, Object>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
