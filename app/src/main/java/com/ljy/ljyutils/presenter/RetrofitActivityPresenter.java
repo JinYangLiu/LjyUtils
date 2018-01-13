@@ -28,21 +28,9 @@ public class RetrofitActivityPresenter extends BasePresenter {
             @Override
             public void onSuccess(Map<String, Object> parserBody) {
                 StringBuilder stringBuffer = new StringBuilder();
-                stringBuffer.append("userimg:").append(parserBody.get("userimg"));
-                stringBuffer.append("\n\n");
-                stringBuffer.append("username:").append(parserBody.get("username"));
-                stringBuffer.append("\n\n");
-                stringBuffer.append("nickname:").append(parserBody.get("nickname"));
-                stringBuffer.append("\n\n");
-                stringBuffer.append("gold:").append(parserBody.get("gold"));
-                stringBuffer.append("\n\n");
-                stringBuffer.append("goldgroup:").append(parserBody.get("goldgroup"));
-                stringBuffer.append("\n\n");
-                Map<String, Object> map = (Map<String, Object>) parserBody.get("signInfo");
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    stringBuffer.append(entry.getKey()).append(":").append(entry.getValue());
-                    stringBuffer.append("\n\n");
-                }
+                //遍历map叠加数据
+                appendData(parserBody, stringBuffer);
+
                 String data = stringBuffer.toString();
                 LjyLogUtil.i(data);
                 bindTextView.bind(data);
@@ -53,6 +41,20 @@ public class RetrofitActivityPresenter extends BasePresenter {
                 LjyToastUtil.toast(context, info);
             }
         });
+    }
+
+    /**
+     * 使用递归进行数据叠加
+     */
+    private void appendData(Map<String, Object> map, StringBuilder stringBuffer) {
+        for (Map.Entry<String, Object> entry1 : map.entrySet()) {
+            if (entry1.getValue() instanceof Map ) {
+               appendData((Map<String, Object>) entry1.getValue(),stringBuffer);
+            } else {
+                stringBuffer.append(entry1.getKey()).append(":").append(entry1.getValue());
+                stringBuffer.append("\n\n");
+            }
+        }
     }
 
     public void getBbsId(final BindTextView bindTextView) {
@@ -90,7 +92,7 @@ public class RetrofitActivityPresenter extends BasePresenter {
                     String data = stringBuffer.toString();
                     LjyLogUtil.i(data);
                     bindTextView.bind(data);
-                }else {
+                } else {
                     LjyToastUtil.toast(context, "rows 类型错误");
                 }
             }

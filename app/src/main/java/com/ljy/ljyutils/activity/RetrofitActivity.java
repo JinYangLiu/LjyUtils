@@ -2,6 +2,7 @@ package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ public class RetrofitActivity extends AppCompatActivity {
                         new RetrofitActivityPresenter.BindTextView() {
                             @Override
                             public void bind(String text) {
-                                mTextView.setText(text);
+                                mTextView.setText(Html.fromHtml(text+"&#183;"));
                             }
                         });
                 break;
