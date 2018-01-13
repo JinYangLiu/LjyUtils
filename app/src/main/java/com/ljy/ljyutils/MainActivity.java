@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
+import com.ljy.ljyutils.activity.FishActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_gif:
                 startActivity(new Intent(mContext, GifActivity.class));
+                break;
             case R.id.btn_video:
                 startActivity(new Intent(mContext, VideoPlayerActivity.class));
                 break;
@@ -73,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_retrofit:
                 startActivity(new Intent(mContext, RetrofitActivity.class));
+                break;
+            case R.id.btn_fish:
+                startActivity(new Intent(mContext, FishActivity.class));
                 break;
             default:
                 break;

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.presenter.RetrofitActivityPresenter;
@@ -34,9 +35,12 @@ public class RetrofitActivity extends AppCompatActivity {
                         new RetrofitActivityPresenter.BindTextView() {
                             @Override
                             public void bind(String text) {
-                                mTextView.setText(Html.fromHtml(text+"&#183;"));
+                                String str = "---&#183;---";
+                                str = Html.fromHtml(str).toString();
+                                mTextView.setText(text + str);
                             }
                         });
+                Toast.makeText(RetrofitActivity.this, "aaaaa", 100000).show();
                 break;
             case R.id.btn_get:
                 presenter.getBbsHomeList(

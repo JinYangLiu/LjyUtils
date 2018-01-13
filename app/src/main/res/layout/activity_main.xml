@@ -68,6 +68,10 @@
                 android:id="@+id/btn_retrofit"
                 android:text="retrofit的使用"
                 style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_fish"
+                android:text="fishView的使用"
+                style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

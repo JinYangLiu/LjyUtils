@@ -90,7 +90,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.RetrofitActivity"
+        <activity
+            android:name=".activity.RetrofitActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activity.FishActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:screenOrientation="portrait">
         </activity>
