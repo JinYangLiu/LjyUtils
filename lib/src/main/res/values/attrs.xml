@@ -35,8 +35,8 @@
         <attr name="dataColor" format="color|reference" />
         <attr name="singleColor" format="color|reference" />
         <attr name="titleColor" format="color|reference" />
-        <attr name="pointColor" format="color|reference" />
-        <attr name="borderColor" format="color|reference" />
+        <attr name="radarPointColor" format="color|reference" />
+        <attr name="raderBorderColor" format="color|reference" />
         <attr name="radiusColor" format="color|reference" />
         <attr name="raderBorderWidth" format="dimension|reference" />
         <attr name="pointRadius" format="dimension|reference" />
