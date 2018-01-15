@@ -14,13 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 import com.ljy.util.LjySystemUtil;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by Mr.LJY on 2018/1/2.
@@ -147,28 +148,28 @@ public class LjyVoteCheckBox extends LinearLayout {
         textView.setTextSize(14);
         textView.setTextColor(0xff333333);
         textView.setText(++index + "." + polloption.getPolloption());
-        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams checkBoxParams = new LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        LayoutParams textParams = new LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
+        LayoutParams checkBoxParams = new LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
         textParams.gravity = Gravity.CENTER_VERTICAL;
         checkBoxParams.gravity = Gravity.CENTER_VERTICAL;
         textParams.weight = 1.0f;
         LinearLayout linearLayout_son = new LinearLayout(mContext);
         linearLayout_son.setOrientation(LinearLayout.HORIZONTAL);
         linearLayout_son.setPadding(0,LjyVoteRadioGroup.PADDING_ITEM,0,0);
-        LinearLayout.LayoutParams lyParams = new LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        LayoutParams lyParams = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
         linearLayout_son.addView(textView, textParams);
         checkBox.setPadding(LjyVoteRadioGroup.PADDING_LEFT, 0, 0, 0);
         linearLayout_son.addView(checkBox, checkBoxParams);
         LinearLayout linearLayout_son2 = new LinearLayout(mContext);
         linearLayout_son2.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams progressParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+        LayoutParams progressParams = new LayoutParams(
+                LayoutParams.WRAP_CONTENT,
                 LjyVoteRadioGroup.HEIGHT_PROGRESS);
         progressParams.gravity = Gravity.CENTER_VERTICAL;
         progressParams.weight = 1.0f;

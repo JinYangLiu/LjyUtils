@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 

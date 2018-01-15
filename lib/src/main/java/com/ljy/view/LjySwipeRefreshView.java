@@ -12,13 +12,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 
 
 /**
@@ -80,7 +79,7 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
                         // 设置RecyclerView的滑动监听
                         setRecyclerViewOnScroll();
                         mRecyclerView.setOnTouchListener(
-                                new View.OnTouchListener() {
+                                new OnTouchListener() {
                                     @Override
                                     public boolean onTouch(View v, MotionEvent event) {
                                         if (mIsRefreshing) {
@@ -275,7 +274,7 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
             if (mRecyclerView != null && mRecyclerView.getFooterViewsCount() < 1)
                 mRecyclerView.addFooterView(mRecyclerViewFooter);
             if (mRecyclerView != null) {
-                ViewGroup.LayoutParams params = mRecyclerView.getFooterView(0).getLayoutParams();
+                LayoutParams params = mRecyclerView.getFooterView(0).getLayoutParams();
                 params.width = RecyclerView.LayoutParams.MATCH_PARENT;
                 params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
                 mRecyclerView.getFooterView(0).setLayoutParams(params);

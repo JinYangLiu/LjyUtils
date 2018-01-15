@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 import com.ljy.util.LjySPUtil;
 import com.ljy.util.LjyViewUtil;
 

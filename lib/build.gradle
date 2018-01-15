@@ -7,7 +7,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -29,6 +29,10 @@ android {
     }
 }
 
+ext {
+    libSupportVersion = '26.1.0'
+}
+
 dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.google.zxing:core:3.3.0'
@@ -45,4 +49,10 @@ dependencies {
     //okHttp
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    //video
+    compile 'com.shuyu:GSYVideoPlayer:2.1.3'
+    //recyclerview
+    compile "com.android.support:recyclerview-v7:${libSupportVersion}"
+    //design
+    compile "com.android.support:design:${libSupportVersion}"
 }

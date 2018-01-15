@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 import com.ljy.util.LjyViewUtil;
 
 import java.io.Serializable;
@@ -83,7 +83,7 @@ public class LjyTagView extends RelativeLayout {
         tagView.setData(tagInfo);
         tagView.setContent(content);
         tagView.setClickable(true);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        LayoutParams params = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         tagView.setLayoutParams(params);
         tagView.setTouch(parentView);
@@ -96,7 +96,7 @@ public class LjyTagView extends RelativeLayout {
         final int parentViewHeight = parentView.getHeight();
         final int viewWidth = LjyViewUtil.getViewWidth(this);
         final int viewHeight = LjyViewUtil.getViewHeight(this);
-        setOnTouchListener(new View.OnTouchListener() {
+        setOnTouchListener(new OnTouchListener() {
             public int lastY;
             public int lastX;
             public int firstX;
@@ -135,7 +135,7 @@ public class LjyTagView extends RelativeLayout {
                             left = 0;
                         }
 
-                        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        LayoutParams param = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         param.leftMargin = left;
                         param.topMargin = top;
                         v.setLayoutParams(param);

@@ -17,7 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

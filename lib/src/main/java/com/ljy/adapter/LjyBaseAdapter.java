@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Mr.LJY on 2017/8/9.
+ * Created by Mr.LJY on 2018/1/15.
  */
 
 public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdapter.LjyViewHolder> {

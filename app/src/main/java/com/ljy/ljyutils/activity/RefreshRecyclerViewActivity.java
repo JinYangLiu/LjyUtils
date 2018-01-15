@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.bean.SwipeCardBean;
+import com.ljy.util.LjyGlideUtil;
 import com.ljy.view.LjyRecyclerView;
 import com.ljy.view.LjySwipeRefreshView;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
                 holder.setBackgroundColor(R.id.itemRoot, item.getCardColor());
                 holder.setText(R.id.textName, item.getName());
                 holder.setText(R.id.textInfo, item.getPosition() + "/" + mAdapter.getItemCount());
-                Picasso.with(mContext).load(item.getUrl()).into((ImageView) holder.getView(R.id.imgIcon));
+                LjyGlideUtil.loadImg(mContext,item.getUrl(),(ImageView) holder.getView(R.id.imgIcon));
             }
         });
     }

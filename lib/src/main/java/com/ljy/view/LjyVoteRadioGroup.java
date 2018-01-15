@@ -14,7 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.ljy.ljyview.R;
+import com.ljy.lib.R;
 import com.ljy.util.LjySystemUtil;
 
 import java.lang.reflect.Field;

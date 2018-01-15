@@ -92,18 +92,18 @@ public class LjyRecyclerView extends RecyclerView {
         public int viewType;
     }
 
-    public class WrapperRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public class WrapperRecyclerViewAdapter extends Adapter<ViewHolder> {
 
-        public ArrayList<LjyRecyclerView.FixedViewInfo> mHeaderViewInfos;
-        public ArrayList<LjyRecyclerView.FixedViewInfo> mFooterViewInfos;
-        public RecyclerView.Adapter mAdapter;
-        public ArrayList<LjyRecyclerView.FixedViewInfo> EMPTY_INFO_LIST = new ArrayList<>();
+        public ArrayList<FixedViewInfo> mHeaderViewInfos;
+        public ArrayList<FixedViewInfo> mFooterViewInfos;
+        public Adapter mAdapter;
+        public ArrayList<FixedViewInfo> EMPTY_INFO_LIST = new ArrayList<>();
         private boolean isStaggered;
         private boolean isFooter;
 
-        public WrapperRecyclerViewAdapter(ArrayList<LjyRecyclerView.FixedViewInfo> headerViewInfos,
-                                          ArrayList<LjyRecyclerView.FixedViewInfo> footerViewInfos,
-                                          RecyclerView.Adapter adapter) {
+        public WrapperRecyclerViewAdapter(ArrayList<FixedViewInfo> headerViewInfos,
+                                          ArrayList<FixedViewInfo> footerViewInfos,
+                                          Adapter adapter) {
             mAdapter = adapter;
             if (headerViewInfos == null) {
                 mHeaderViewInfos = EMPTY_INFO_LIST;
@@ -182,7 +182,7 @@ public class LjyRecyclerView extends RecyclerView {
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType >= LjyRecyclerView.BASE_HEADER_VIEW_TYPE && viewType < LjyRecyclerView.BASE_HEADER_VIEW_TYPE + getHeadersCount()) {
                 View view = mHeaderViewInfos.get(viewType - LjyRecyclerView.BASE_HEADER_VIEW_TYPE).view;
                 isFooter = false;
@@ -198,7 +198,7 @@ public class LjyRecyclerView extends RecyclerView {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, int position) {
             int numHeaders = getHeadersCount();
             if (position < numHeaders) {
                 return;
@@ -255,7 +255,7 @@ public class LjyRecyclerView extends RecyclerView {
             }
         }
 
-        private RecyclerView.ViewHolder viewHolder(final View itemView) {
+        private ViewHolder viewHolder(final View itemView) {
 
             if (isStaggered) {
                 StaggeredGridLayoutManager.LayoutParams params = new StaggeredGridLayoutManager.LayoutParams(StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT,
@@ -265,7 +265,7 @@ public class LjyRecyclerView extends RecyclerView {
                 params.setFullSpan(true);
                 itemView.setLayoutParams(params);
             }
-            return new RecyclerView.ViewHolder(itemView) {
+            return new ViewHolder(itemView) {
             };
         }
     }
