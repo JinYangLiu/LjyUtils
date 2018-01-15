@@ -2,6 +2,8 @@ package com.ljy.ljyutils.presenter;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyToastUtil;
 
@@ -27,9 +29,14 @@ public class RetrofitActivityPresenter extends BasePresenter {
         postData(methodPath, body, new PresenterCallBack<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> parserBody) {
+                //模拟缓存数据
+                String cache=new Gson().toJson(parserBody);
+                //模拟读取缓存
+                Map<String, Object> getCache = new Gson().fromJson(cache,new TypeToken<Map<String, Object>>(){}.getType());
                 StringBuilder stringBuffer = new StringBuilder();
+                stringBuffer.append("getCache----->\n\n");
                 //遍历map叠加数据
-                appendData(parserBody, stringBuffer);
+                appendData(getCache, stringBuffer);
 
                 String data = stringBuffer.toString();
                 LjyLogUtil.i(data);
