@@ -76,6 +76,10 @@
                 android:id="@+id/btn_broadcast"
                 android:text="broadcast的使用"
                 style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_service"
+                android:text="service的使用"
+                style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

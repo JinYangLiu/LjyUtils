@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ljy.ljyutils.activity.ServiceActivity">
+    <Button
+        android:id="@+id/btn_start"
+        android:textAllCaps="false"
+        android:text="startService"
+        android:onClick="onServiceClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_stop"
+        android:textAllCaps="false"
+        android:text="stopService"
+        android:onClick="onServiceClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_bind"
+        android:textAllCaps="false"
+        android:text="bindService"
+        android:onClick="onServiceClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_unbind"
+        android:textAllCaps="false"
+        android:text="unbindService"
+        android:onClick="onServiceClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_startIntentService"
+        android:textAllCaps="false"
+        android:text="startIntentService"
+        android:onClick="onServiceClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

@@ -18,6 +18,7 @@ import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
+import com.ljy.ljyutils.activity.ServiceActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_broadcast:
                 startActivity(new Intent(mContext, BroadcastActivity.class));
+                break;
+            case R.id.btn_service:
+                startActivity(new Intent(mContext, ServiceActivity.class));
                 break;
             default:
                 break;
