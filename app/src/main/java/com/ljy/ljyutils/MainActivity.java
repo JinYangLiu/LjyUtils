@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
+import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.FishActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_fish:
                 startActivity(new Intent(mContext, FishActivity.class));
+                break;
+            case R.id.btn_broadcast:
+                startActivity(new Intent(mContext, BroadcastActivity.class));
                 break;
             default:
                 break;

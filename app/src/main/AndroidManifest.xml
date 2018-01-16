@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ljy.ljyutils">
-
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
+    <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
     <application
         android:name=".MyApplication"
@@ -95,10 +97,33 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activity.FishActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".activity.FishActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
         </activity>
-    </application>
+        <activity android:name=".activity.BroadcastActivity">
+        </activity>
 
+
+        //broadcastReceiver
+        <receiver android:name=".broadcast.MyBroadcastReceiver1"
+                  android:permission="com.ljy.ljyutils.BroadcastReceiverPermission">
+            <intent-filter android:priority="1">
+                <action android:name="com.ljy.ljyutils.broadcast"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".broadcast.MyBroadcastReceiver2"
+                  android:exported="false">
+            <intent-filter android:priority="100">
+                <action android:name="com.ljy.ljyutils.broadcast"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".broadcast.MyBroadcastReceiver3">
+            <intent-filter android:priority="1000">
+                <action android:name="com.ljy.ljyutils.broadcast"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
 </manifest>

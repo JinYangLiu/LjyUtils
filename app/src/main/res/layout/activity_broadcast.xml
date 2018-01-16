@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ljy.ljyutils.activity.BroadcastActivity">
+    <Button
+        android:id="@+id/btn_ACTION_VIEW"
+        android:text="ACTION_VIEW"
+        android:textAllCaps="true"
+        android:onClick="onBroadcastClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btn_sendBroadcast"
+        android:text="sendBroadcast"
+        android:textAllCaps="true"
+        android:onClick="onBroadcastClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

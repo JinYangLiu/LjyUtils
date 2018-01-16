@@ -127,29 +127,28 @@ public class LjyViewUtil {
         layoutParams.height = viewHeight;
     }
 
-    public static int getViewWidth(View view){
-        int width =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        int height =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        view.measure(width,height);
+    public static int getViewWidth(View view) {
+        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(width, height);
         return view.getMeasuredWidth();
     }
 
-    public static int getViewHeight(View view){
-        int width =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        int height =View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        view.measure(width,height);
+    public static int getViewHeight(View view) {
+        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(width, height);
         return view.getMeasuredHeight();
     }
 
     /**
      * 使view可以拖拽移动
-     *
      */
-    public static void touchMove( final View view,ViewGroup parentView) {
+    public static void touchMove(final View view, ViewGroup parentView) {
         final int parentViewWidth = parentView.getWidth();
         final int parentViewHeight = parentView.getHeight();
-        final int viewWidth=getViewWidth(view);
-        final int viewHeight=getViewHeight(view);
+        final int viewWidth = getViewWidth(view);
+        final int viewHeight = getViewHeight(view);
         view.setOnTouchListener(new View.OnTouchListener() {
             public int lastY;
             public int lastX;
@@ -163,8 +162,8 @@ public class LjyViewUtil {
 
                     case MotionEvent.ACTION_DOWN:
 
-                        lastX=firstX = (int) event.getRawX();
-                        lastY=firstY = (int) event.getRawY();
+                        lastX = firstX = (int) event.getRawX();
+                        lastY = firstY = (int) event.getRawY();
                     case MotionEvent.ACTION_MOVE:
                         int dx = (int) event.getRawX() - lastX;
                         int dy = (int) event.getRawY() - lastY;
@@ -195,7 +194,7 @@ public class LjyViewUtil {
                         v.postInvalidate();
                         lastX = (int) event.getRawX();
                         lastY = (int) event.getRawY();
-                        if ( event.getRawX()==firstX &&  event.getRawY()==firstY) {
+                        if (event.getRawX() == firstX && event.getRawY() == firstY) {
                             view.setClickable(true);
                         } else {
                             view.setClickable(false);
