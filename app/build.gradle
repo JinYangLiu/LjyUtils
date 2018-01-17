@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
+//butterKnife使用
 apply plugin: 'com.neenbedankt.android-apt'
+//使用greenDao
+apply plugin: 'org.greenrobot.greendao'
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -10,12 +14,22 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dexOptions {
+        jumboMode = true//Cannot merge new index 65562 into a non-jumbo instruction! 这个问题的解决
+        incremental true
+        preDexLibraries = false //设置对第三方lib不做preDex处理
+        javaMaxHeapSize "4g"//java虚拟机堆内存最大值设为4g，避免oom
+        //每个dex包方法数限制在4000以内
+        additionalParameters = ['--multi-dex', '--set-max-idx-number=40000']
     }
 }
 
@@ -27,9 +41,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.0.2'
+    //我的工具类lib
+    compile project(':lib')
+    //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     apt 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile project(':lib')
+    //dagger2
     compile 'com.google.dagger:dagger:2.13'
     apt 'com.google.dagger:dagger-compiler:2.12'
+    //greenDao
+    compile 'org.greenrobot:greendao:3.2.0'
+    compile 'org.greenrobot:greendao-generator:3.2.0'
+    //multidex，解决method ID not in [0, 0xffff]: 65536 这个问题
+    compile 'com.android.support:multidex:1.0.1'
 }

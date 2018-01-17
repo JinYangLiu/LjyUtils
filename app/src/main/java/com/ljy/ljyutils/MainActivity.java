@@ -14,6 +14,7 @@ import com.ljy.ljyutils.activity.FragmentDemoActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
+import com.ljy.ljyutils.activity.GreenDaoActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
@@ -90,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_fragment:
                 startActivity(new Intent(mContext, FragmentDemoActivity.class));
+                break;
+            case R.id.btn_greenDao:
+                startActivity(new Intent(mContext, GreenDaoActivity.class));
                 break;
             default:
                 break;

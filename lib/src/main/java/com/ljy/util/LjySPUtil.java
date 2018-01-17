@@ -8,23 +8,36 @@ import java.util.Set;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
- *
+ * <p>
  * SharedPreferences工具类
  */
 
 public class LjySPUtil {
 
-    private final String SP_NAME="LJY_SP_NAME";
+    private final String SP_NAME = "LJY_SP_NAME";
     private SharedPreferences sp;
+    private static LjySPUtil mSPUtil = new LjySPUtil();
 
-
-    public LjySPUtil(Context context) {
-        if (sp==null) {
+    /**
+     * 需要在application中初始化
+     *
+     * @param context
+     */
+    public void init(Context context) {
+        if (sp == null) {
             if (context == null)
                 return;
             context = context.getApplicationContext();
             sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         }
+    }
+
+    public static LjySPUtil getInstance() {
+        return mSPUtil;
+    }
+
+    private LjySPUtil() {
+
     }
 
     public void save(String key, boolean value) {

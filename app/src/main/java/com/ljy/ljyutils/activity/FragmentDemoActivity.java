@@ -119,7 +119,7 @@ public class FragmentDemoActivity extends AppCompatActivity {
         LjyLogUtil.i("onDestroy");
     }
 
-    public void setFragment(View view) {
+    public void onFragmentBtnClick(View view) {
 
         int currentCount = 0;
         switch (view.getId()) {

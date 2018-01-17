@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ljy.ljyutils.activity.GreenDaoActivity">
+
+    <HorizontalScrollView
+        android:id="@+id/bottomBtn"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="match_parent"
+                      android:orientation="horizontal"
+                      android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_insert"
+                android:text="insert"
+                android:textAllCaps="false"
+                android:onClick="onGreenDaoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_del"
+                android:text="delete"
+                android:textAllCaps="false"
+                android:onClick="onGreenDaoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_updata"
+                android:text="updata"
+                android:textAllCaps="false"
+                android:onClick="onGreenDaoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_queryAll"
+                android:text="queryAll"
+                android:textAllCaps="false"
+                android:onClick="onGreenDaoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ScrollView
+        android:layout_above="@+id/bottomBtn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/text_db"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ScrollView>
+
+
+</RelativeLayout>

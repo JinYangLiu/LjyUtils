@@ -77,7 +77,7 @@ public class UseUtilsActivity extends AppCompatActivity {
         String key2 = "spKey2";
         String key3 = "spKey3";
         String key4 = "spKey4";
-        LjySPUtil spUtil = new LjySPUtil(mContext);
+        LjySPUtil spUtil = LjySPUtil.getInstance();
         spUtil.save(key1, true);
         spUtil.save(key2, 123);
         spUtil.save(key3, 1.2f);

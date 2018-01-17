@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ljy.ljyutils">
+          package="com.ljy.ljyutils">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
-    <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission" />
+    <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
     <application
         android:name=".MyApplication"
@@ -20,24 +20,24 @@
             android:name=".broadcast.MyBroadcastReceiver1"
             android:permission="com.ljy.ljyutils.BroadcastReceiverPermission">
             <intent-filter android:priority="1">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         <receiver
             android:name=".broadcast.MyBroadcastReceiver2"
             android:exported="false">
             <intent-filter android:priority="100">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".broadcast.MyBroadcastReceiver3">
             <intent-filter android:priority="1000">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         //注册service
-        <service android:name=".service.MyNormalService" />
-        <service android:name=".service.MyForegroundNormalService" />
+        <service android:name=".service.MyNormalService"/>
+        <service android:name=".service.MyForegroundNormalService"/>
         //注册并声明为远程服务
         //android:process=":remote" //将本地服务设置成远程服务
         //android:exported="true" //设置可被其他进程调用
@@ -48,13 +48,13 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="com.ljy.ljyutils.IMyAidlInterface" />
+                <action android:name="com.ljy.ljyutils.IMyAidlInterface"/>
             </intent-filter>
         </service>
         //注册并声明intentService
         <service android:name=".service.MyIntentService">
             <intent-filter>
-                <action android:name="com.ljy.ljyutils.mIntentService" />
+                <action android:name="com.ljy.ljyutils.mIntentService"/>
             </intent-filter>
         </service>
         //activity
@@ -63,78 +63,80 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.UseUtilsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GlideUtilActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ViewSizeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GestureLockActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RadarViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.Radar2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ArgueProgressActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.VoteActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RefreshListViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RefreshRecyclerViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PhotoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GifActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.DemoDa2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RetrofitActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.FishActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".activity.BroadcastActivity"></activity>
-        <activity android:name=".activity.ServiceActivity"></activity>
-        <activity android:name=".activity.FragmentDemoActivity"></activity>
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.BroadcastActivity"/>
+        <activity android:name=".activity.ServiceActivity"/>
+        <activity android:name=".activity.FragmentDemoActivity"/>
+        <activity android:name=".activity.GreenDaoActivity">
+        </activity>
     </application>
 
 </manifest>

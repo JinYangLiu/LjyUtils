@@ -29,7 +29,6 @@ import java.util.List;
 public class LjyGestureLockView extends View {
 
     private static final int POINT_SIZE = 1;   //选中点的数量
-    private final LjySPUtil spUtil;
 
     private int xNum=3;
     private int yNum=3;
@@ -94,7 +93,7 @@ public class LjyGestureLockView extends View {
     public LjyGestureLockView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mContext = context;
-        spUtil=new LjySPUtil(context);
+        LjySPUtil.getInstance().init(context);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LjyGestureLockView);
         //获取对应的属性值
         this.iconPointCheck = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointCheck,R.drawable.gesture_check);
@@ -279,7 +278,7 @@ public class LjyGestureLockView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         long currentTime = System.currentTimeMillis();
-        long needTime = 1 * 60 * 1000 - (currentTime - spUtil.get(LOCK_TIME_START,0l));
+        long needTime = 1 * 60 * 1000 - (currentTime - LjySPUtil.getInstance().get(LOCK_TIME_START,0l));
         if (needTime > 0 && (needTime / 1000 <= lockTimeLen * 60)) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
