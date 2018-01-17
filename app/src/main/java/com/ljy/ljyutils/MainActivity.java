@@ -10,6 +10,7 @@ import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.FishActivity;
+import com.ljy.ljyutils.activity.FragmentDemoActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
@@ -86,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_service:
                 startActivity(new Intent(mContext, ServiceActivity.class));
+                break;
+            case R.id.btn_fragment:
+                startActivity(new Intent(mContext, FragmentDemoActivity.class));
                 break;
             default:
                 break;
