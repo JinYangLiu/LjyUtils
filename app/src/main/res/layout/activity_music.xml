@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/play_page_default_bg"
+    tools:context="com.ljy.ljyutils.activity.MusicActivity">
+
+    <RelativeLayout
+        android:id="@+id/playBar"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/iv_last"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:clickable="true"
+            android:onClick="onMusicBtnClick"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/iv_play"
+            android:src="@drawable/play_btn_prev_selector" />
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:clickable="true"
+            android:onClick="onMusicBtnClick"
+            android:layout_centerInParent="true"
+            android:src="@drawable/play_btn_play_pause_selector" />
+
+        <ImageView
+            android:id="@+id/iv_next"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:onClick="onMusicBtnClick"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/iv_play"
+            android:src="@drawable/play_btn_next_selector" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_above="@+id/playBar"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/tv_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+        <SeekBar
+            android:id="@+id/sb_progress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+             />
+
+        <TextView
+            android:id="@+id/tv_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="#80FFFFFF"
+            android:textSize="10sp" />
+    </LinearLayout>
+</RelativeLayout>

@@ -37,6 +37,7 @@ public class ServiceActivity extends AppCompatActivity {
 
         }
     };
+    private boolean isRegisterReceiver = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class ServiceActivity extends AppCompatActivity {
                 IntentFilter filter = new IntentFilter();
                 filter.addAction("123321");
                 registerReceiver(mReceiver, filter);
+                isRegisterReceiver = true;
                 for (int i = 0; i < 4; i++) {
                     Intent intentTask = new Intent("com.ljy.ljyutils.mIntentService");
                     Bundle bundle = new Bundle();
@@ -119,6 +121,7 @@ public class ServiceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
+        if (isRegisterReceiver)
+            unregisterReceiver(mReceiver);
     }
 }

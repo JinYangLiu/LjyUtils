@@ -88,6 +88,14 @@
                 android:id="@+id/btn_greenDao"
                 android:text="GreenDao的使用"
                 style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_music"
+                android:text="音乐播放demo"
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_lottie"
+                android:text="Lottie的demo"
+                style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

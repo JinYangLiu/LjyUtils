@@ -15,6 +15,8 @@ import com.ljy.ljyutils.activity.GestureLockActivity;
 import com.ljy.ljyutils.activity.GifActivity;
 import com.ljy.ljyutils.activity.GlideUtilActivity;
 import com.ljy.ljyutils.activity.GreenDaoActivity;
+import com.ljy.ljyutils.activity.LottieActivity;
+import com.ljy.ljyutils.activity.MusicActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
@@ -94,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_greenDao:
                 startActivity(new Intent(mContext, GreenDaoActivity.class));
+                break;
+            case R.id.btn_music:
+                startActivity(new Intent(mContext, MusicActivity.class));
+                break;
+            case R.id.btn_lottie:
+                startActivity(new Intent(mContext, LottieActivity.class));
                 break;
             default:
                 break;

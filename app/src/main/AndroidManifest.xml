@@ -57,6 +57,11 @@
                 <action android:name="com.ljy.ljyutils.mIntentService"/>
             </intent-filter>
         </service>
+        //注册音乐播放的service
+        <service
+            android:name=".service.PlayMusicService"
+            android:enabled="true"
+            android:exported="true"/>
         //activity
         <activity
             android:name=".MainActivity"
@@ -136,6 +141,10 @@
         <activity android:name=".activity.ServiceActivity"/>
         <activity android:name=".activity.FragmentDemoActivity"/>
         <activity android:name=".activity.GreenDaoActivity">
+        </activity>
+        <activity android:name=".activity.MusicActivity">
+        </activity>
+        <activity android:name=".activity.LottieActivity">
         </activity>
     </application>
 

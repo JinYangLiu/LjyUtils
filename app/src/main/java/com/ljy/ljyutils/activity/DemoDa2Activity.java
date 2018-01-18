@@ -6,9 +6,6 @@ import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.bean.Person;
-import com.ljy.ljyutils.component.DaggerDemoDa2ActivityComponent;
-import com.ljy.ljyutils.component.DaggerPersonComponent;
-import com.ljy.ljyutils.component.DaggerPetComponent;
 
 import javax.inject.Inject;
 
@@ -36,15 +33,15 @@ public class DemoDa2Activity extends AppCompatActivity {
         //使用dagger2的@Module和@Provides，@Qualifier和@Named
 //        dagger2Init2();
         //@Component的dependence
-        dagger2Init3();
+//        dagger2Init3();
     }
 
-    private void dagger2Init3() {
-        DaggerDemoDa2ActivityComponent.builder()
-                .personComponent(DaggerPersonComponent.builder().petComponent(DaggerPetComponent.create()).build())
-                .build().inject(this);
-        mTextView1.setText(mPerson.petSay());
-    }
+//    private void dagger2Init3() {
+//        DaggerDemoDa2ActivityComponent.builder()
+//                .personComponent(DaggerPersonComponent.builder().petComponent(DaggerPetComponent.create()).build())
+//                .build().inject(this);
+//        mTextView1.setText(mPerson.petSay());
+//    }
 
 //    private void dagger2Init2() {
 //        DaggerDemoDa2ActivityComponent.create().inject(this);
