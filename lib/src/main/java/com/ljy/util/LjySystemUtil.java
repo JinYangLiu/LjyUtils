@@ -163,4 +163,24 @@ public class LjySystemUtil {
         //disAllowIndexs没有被允许的权限角标
         void fail(List<Integer> disAllowIndexs);
     }
+
+    /**
+     * 判断服务是否启动了
+     * @param context
+     * @param className
+     * @return
+     */
+    public static boolean isServiceWorked(Context context, Class className) {
+        ActivityManager myManager = (ActivityManager) context.getApplicationContext().getSystemService(
+                        Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
+                .getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().toString()
+                    .equals(className.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

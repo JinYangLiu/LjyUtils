@@ -1,5 +1,7 @@
 package com.ljy.ljyutils.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,9 +12,13 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.widget.RemoteViews;
 
+import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.MusicActivity;
+import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyToastUtil;
 
 /**
@@ -58,6 +64,42 @@ public class PlayMusicService extends Service {
             });
         }
         initBroadcastReceiver();
+
+    }
+
+    private void showNotification(boolean isPlaying) {
+        //添加下列代码将后台Service变成前台Service
+        //构建"点击通知后打开MainActivity"的Intent对象
+        Intent notificationIntent = new Intent(this, MusicActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        //新建Builer对象
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentIntent(pendingIntent)
+                .setCustomContentView(getRemoteViews(isPlaying))
+                .build();
+        startForeground(1, notification);//让Service变成前台Service,并在系统的状态栏显示出来
+    }
+
+    private RemoteViews getRemoteViews( boolean isPlaying) {
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification);
+        remoteViews.setTextViewText(R.id.tv_title, "歌曲名：暧昧");
+        remoteViews.setTextViewText(R.id.tv_subtitle, "演唱者：薛之谦");
+        remoteViews.setImageViewResource(R.id.iv_play_pause, isPlaying?R.drawable.ic_status_bar_pause_dark:R.drawable.ic_status_bar_play_dark);
+        Intent intent = new Intent();
+        intent.setAction(PlayMusicService.action_ser);
+        intent.putExtra("type", isPlaying?MUSIC_PAUSE:MUSIC_PLAY);
+        intent.putExtra("isChangeUI", true);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.iv_play_pause, playPendingIntent);
+        Intent intent2 = new Intent();
+        intent2.setAction(PlayMusicService.action_ser);
+        intent2.putExtra("type", MUSIC_STOP);
+        PendingIntent playPendingIntent2 = PendingIntent.getBroadcast(this, 1, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.iv_finish, playPendingIntent2);
+        return remoteViews;
     }
 
     private void initBroadcastReceiver() {
@@ -66,6 +108,15 @@ public class PlayMusicService extends Service {
             public void onReceive(Context context, Intent intent) {
                 if (action_ser.equals(intent.getAction())) {
                     playMusic(intent);
+                    boolean isChangeUI=intent.getBooleanExtra("isChangeUI",false);
+                    LjyLogUtil.i("isChangeUI:"+isChangeUI);
+                    if (isChangeUI){
+                        //发送广播设置UI更新
+                        Intent intent2 = new Intent();
+                        intent2.putExtra("isToPlay", intent.getIntExtra("type",-1)==1);
+                        intent2.setAction(MusicActivity.action_act_changeUI);
+                        sendBroadcast(intent2);
+                    }
                 }
             }
         };
@@ -113,12 +164,14 @@ public class PlayMusicService extends Service {
                     //更新进度
                     mHandler.post(mRunnable);
                     isStop = false;
+                    //显示通知，将服务设为前台
+                    showNotification(true);
                 } else if (!isStop && mediaPlayer != null && !mediaPlayer.isPlaying()) {//继续播放
                     mediaPlayer.start();
                     //更新进度
                     mHandler.post(mRunnable);
+                    showNotification(true);
                 }
-
                 break;
             case 2:
                 //暂停
@@ -126,6 +179,7 @@ public class PlayMusicService extends Service {
                     mediaPlayer.pause();
                     mHandler.removeCallbacks(mRunnable);
                 }
+                showNotification(false);
                 break;
             case 3:
                 //停止
@@ -134,6 +188,7 @@ public class PlayMusicService extends Service {
                     isStop = true;
                     mHandler.removeCallbacks(mRunnable);
                 }
+                stopSelf();
                 break;
             case 4://拖动后设置播放进度
                 if (mediaPlayer != null && intent != null) {

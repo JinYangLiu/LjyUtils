@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.service.PlayMusicService;
+import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyTimeUtil;
 
 import butterknife.BindView;
@@ -50,25 +52,28 @@ public class MusicActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         initBroadcastReceiver();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        LjyLogUtil.i("onStop");
         unregisterReceiver(broadcastReceiver);
     }
 
 
     public static String action_act = "com.ljy.ljyutils.activity.broadcastReceiver";
     public static String action_act_seekto = "com.ljy.ljyutils.activity.broadcastReceiver.seekTo";
+    public static String action_act_changeUI = "com.ljy.ljyutils.activity.broadcastReceiver.changeUI";
 
     private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                LjyLogUtil.i("onReceive:"+intent.getAction());
                 if (action_act.equals(intent.getAction())) {
                     int duration = intent.getIntExtra("duration", -1);
                     if (duration >= 0) {
@@ -81,14 +86,19 @@ public class MusicActivity extends AppCompatActivity {
                             sbProgress.setProgress(currentTime);
                     }
 
-                }else if (action_act_seekto.equals(intent.getAction())){
+                } else if (action_act_seekto.equals(intent.getAction())) {
                     isDraggingProgress = false;
+                } else if (action_act_changeUI.equals(intent.getAction())) {
+                    boolean isToPlay=intent.getBooleanExtra("isToPlay",false);
+                    LjyLogUtil.i("isToPlay:"+isToPlay);
+                    ivPlay.setSelected(isToPlay);
                 }
             }
         };
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(action_act);
         intentFilter.addAction(action_act_seekto);
+        intentFilter.addAction(action_act_changeUI);
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -120,8 +130,11 @@ public class MusicActivity extends AppCompatActivity {
     }
 
     public void onMusicBtnClick(View view) {
+        if (!LjySystemUtil.isServiceWorked(this, PlayMusicService.class))
+            initService();
         switch (view.getId()) {
             case R.id.iv_play:
+
                 if (ivPlay.isSelected()) {
                     ivPlay.setSelected(false);
                     playMusic(PlayMusicService.MUSIC_PAUSE);
