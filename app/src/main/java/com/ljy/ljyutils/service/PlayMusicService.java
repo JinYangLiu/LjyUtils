@@ -71,7 +71,6 @@ public class PlayMusicService extends Service {
         //添加下列代码将后台Service变成前台Service
         //构建"点击通知后打开MainActivity"的Intent对象
         Intent notificationIntent = new Intent(this, MusicActivity.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         //新建Builer对象

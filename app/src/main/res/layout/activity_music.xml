@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/progressBar"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         app:lrcAnimationDuration="1000"
         app:lrcCurrentTextColor="@color/white"
         app:lrcDividerHeight="24dp"

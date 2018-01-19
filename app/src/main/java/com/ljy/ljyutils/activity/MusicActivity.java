@@ -138,12 +138,12 @@ public class MusicActivity extends AppCompatActivity {
         });
 
         mLrcView.loadLrc(LjySystemUtil.getStringFromRaw(mContext,R.raw.am_lrc));
-        mLrcView.setOnPlayClickListener(new LjyLrcView.OnPlayClickListener() {
-            @Override
-            public boolean onPlayClick(long time) {
-                return false;
-            }
-        });
+//        mLrcView.setOnPlayClickListener(new LjyLrcView.OnPlayClickListener() {
+//            @Override
+//            public boolean onPlayClick(long time) {
+//                return false;
+//            }
+//        });
     }
 
     public void onMusicBtnClick(View view) {
