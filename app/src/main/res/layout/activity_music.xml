@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/play_page_default_bg"
+    android:background="@drawable/music_bg"
     tools:context="com.ljy.ljyutils.activity.MusicActivity">
 
     <RelativeLayout
@@ -48,6 +48,7 @@
             android:src="@drawable/play_btn_next_selector" />
     </RelativeLayout>
     <LinearLayout
+        android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -81,4 +82,18 @@
             android:textColor="#80FFFFFF"
             android:textSize="10sp" />
     </LinearLayout>
+    <com.ljy.view.LjyLrcView
+        android:id="@+id/lrc_view_full"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/progressBar"
+        android:layout_marginTop="10dp"
+        app:lrcAnimationDuration="1000"
+        app:lrcCurrentTextColor="@color/white"
+        app:lrcDividerHeight="24dp"
+        app:lrcNormalTextColor="#80FFFFFF"
+        app:lrcPadding="40dp"
+        app:lrcTextSize="16sp"
+        app:lrcTimelineColor="#80FFFFFF"
+        app:lrcTimelineTextColor="#CCFFFFFF" />
 </RelativeLayout>

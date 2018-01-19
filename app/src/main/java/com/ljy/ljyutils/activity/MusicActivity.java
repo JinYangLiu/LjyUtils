@@ -17,6 +17,7 @@ import com.ljy.ljyutils.service.PlayMusicService;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyTimeUtil;
+import com.ljy.view.LjyLrcView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,21 +34,26 @@ public class MusicActivity extends AppCompatActivity {
     TextView tvTotalTime;
     @BindView(R.id.sb_progress)
     SeekBar sbProgress;
+    @BindView(R.id.lrc_view_full)
+    LjyLrcView mLrcView;
     private int mLastProgress = 0;
     private BroadcastReceiver broadcastReceiver;
     private boolean isDraggingProgress;
+    private Context mContext=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LjySystemUtil.noStatusBar(this);
         setContentView(R.layout.activity_music);
         ButterKnife.bind(this);
         initService();
         initView();
+
     }
 
     private void initService() {
-        Intent intent = new Intent(this, PlayMusicService.class);
+        Intent intent = new Intent(mContext, PlayMusicService.class);
         startService(intent);
     }
 
@@ -82,8 +88,11 @@ public class MusicActivity extends AppCompatActivity {
                     }
                     int currentTime = intent.getIntExtra("currentTime", -1);
                     if (currentTime > 0) {
-                        if (!isDraggingProgress)
+                        if (!isDraggingProgress) {
                             sbProgress.setProgress(currentTime);
+                            if (mLrcView.hasLrc())
+                                mLrcView.updateTime(currentTime);
+                        }
                     }
 
                 } else if (action_act_seekto.equals(intent.getAction())) {
@@ -127,10 +136,18 @@ public class MusicActivity extends AppCompatActivity {
                 sendBroadcast(intent);
             }
         });
+
+        mLrcView.loadLrc(LjySystemUtil.getStringFromRaw(mContext,R.raw.am_lrc));
+        mLrcView.setOnPlayClickListener(new LjyLrcView.OnPlayClickListener() {
+            @Override
+            public boolean onPlayClick(long time) {
+                return false;
+            }
+        });
     }
 
     public void onMusicBtnClick(View view) {
-        if (!LjySystemUtil.isServiceWorked(this, PlayMusicService.class))
+        if (!LjySystemUtil.isServiceWorked(mContext, PlayMusicService.class))
             initService();
         switch (view.getId()) {
             case R.id.iv_play:

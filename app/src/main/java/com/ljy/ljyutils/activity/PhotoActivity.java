@@ -53,10 +53,10 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LjySystemUtil.noStatusBar(mActivity);
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);
         mContext = this.getApplicationContext();
-        LjySystemUtil.noStatusBar(mActivity);
         initPath();
         initPhotoUtil();
     }

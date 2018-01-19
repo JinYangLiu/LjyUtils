@@ -12,6 +12,10 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,18 +119,19 @@ public class LjySystemUtil {
 
     /**
      * 申请权限的结果回调，需要在Activity的onRequestPermissionsResult中调用
+     *
      * @param grantResults
      * @param permissionResult
      */
-    public static void onPermissionResult( @NonNull int[] grantResults, PermissionResult permissionResult) {
+    public static void onPermissionResult(@NonNull int[] grantResults, PermissionResult permissionResult) {
         boolean hasPermission = true;
-        List<Integer> disAllowIndexs=null;
+        List<Integer> disAllowIndexs = null;
         for (int i = 0; i < grantResults.length; i++) {
             boolean isAllow = grantResults[i] == PackageManager.PERMISSION_GRANTED;
             hasPermission &= isAllow;
-            if (!isAllow){
-                if (disAllowIndexs==null)
-                    disAllowIndexs=new ArrayList<>();
+            if (!isAllow) {
+                if (disAllowIndexs == null)
+                    disAllowIndexs = new ArrayList<>();
                 disAllowIndexs.add(i);
             }
         }
@@ -139,40 +144,25 @@ public class LjySystemUtil {
     }
 
     /**
-     * 沉浸式状态栏
-     * @param activity
-     */
-    public static void noStatusBar(Activity activity) {
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = activity.getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-
-    }
-
-
-    /**
      * 权限申请结果的回调接口
      */
     public interface PermissionResult {
         void success();
+
         //disAllowIndexs没有被允许的权限角标
         void fail(List<Integer> disAllowIndexs);
     }
 
     /**
      * 判断服务是否启动了
+     *
      * @param context
      * @param className
      * @return
      */
     public static boolean isServiceWorked(Context context, Class className) {
         ActivityManager myManager = (ActivityManager) context.getApplicationContext().getSystemService(
-                        Context.ACTIVITY_SERVICE);
+                Context.ACTIVITY_SERVICE);
         ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
                 .getRunningServices(30);
         for (int i = 0; i < runningService.size(); i++) {
@@ -182,5 +172,56 @@ public class LjySystemUtil {
             }
         }
         return false;
+    }
+
+    public static String getStringFromAssets(Context context, String fileName) {
+        try {
+            InputStream input = context.getResources().getAssets().open(fileName);
+            return getString(input);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+
+    public static String getStringFromRaw(Context context, int resId) {
+
+        InputStream input = context.getResources().openRawResource(resId);
+        return getString(input);
+    }
+
+    @NonNull
+    private static String getString(InputStream input) {
+        try {
+            InputStreamReader inputReader = new InputStreamReader(input, "utf-8");
+
+            BufferedReader bufReader = new BufferedReader(inputReader);
+            String line;
+            StringBuffer stringBuffer = new StringBuffer();
+            while ((line = bufReader.readLine()) != null) {
+                stringBuffer.append(line);
+                stringBuffer.append("\n");
+            }
+            return stringBuffer.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 沉浸式状态栏
+     * @param activity
+     */
+    public static void noStatusBar(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = activity.getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+//            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION//底部虚拟按键
+            decorView.setSystemUiVisibility(option);
+//            getWindow().setNavigationBarColor(Color.TRANSPARENT);//底部虚拟按键
+            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+
     }
 }
