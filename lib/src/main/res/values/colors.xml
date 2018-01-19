@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="thin_green">#89cbc1</color>
+    <color name="alpha_gray">#ffdddddd</color>
+    <color name="alpha_0">#00ffffff</color>
+</resources>

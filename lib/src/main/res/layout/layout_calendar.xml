@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/linear_topBar"
+        android:layout_width="match_parent"
+        android:background="@color/thin_green"
+        android:layout_height="40dp">
+        <ImageView
+            android:id="@+id/btn_last"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/btn_preview"/>
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+        <ImageView
+            android:id="@+id/btn_next"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/btn_next"/>
+    </LinearLayout>
+    <GridView
+        android:id="@+id/grid_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="0.0dip"
+        android:background="@color/thin_green"
+        android:numColumns="7"
+        android:scrollbars="none"
+        android:verticalSpacing="0.0dip">
+    </GridView>
+    <GridView
+        android:id="@+id/grid_month"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="0.0dip"
+        android:numColumns="7"
+        android:scrollbars="none"
+        android:verticalSpacing="0.0dip" >
+    </GridView>
+
+</LinearLayout>

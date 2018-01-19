@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/music_bg"
     tools:context=".MainActivity">
     <ScrollView
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
             <Button
                 android:id="@+id/btn_app_util"
                 android:text="Utils的使用"
+
                 style="@style/mainBtnStyle"/>
             <Button
                 android:id="@+id/btn_glide_util"
@@ -95,6 +97,11 @@
             <Button
                 android:id="@+id/btn_lottie"
                 android:text="Lottie的demo"
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_calendar"
+                android:text="calendar的demo"
+
                 style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>

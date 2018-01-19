@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.BroadcastActivity;
+import com.ljy.ljyutils.activity.CalendarActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.FishActivity;
 import com.ljy.ljyutils.activity.FragmentDemoActivity;
@@ -102,6 +103,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_lottie:
                 startActivity(new Intent(mContext, LottieActivity.class));
+                break;
+            case R.id.btn_calendar:
+                startActivity(new Intent(mContext, CalendarActivity.class));
                 break;
             default:
                 break;

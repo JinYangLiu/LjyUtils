@@ -12,7 +12,10 @@
     <style name="mainBtnStyle">
         <item name="android:textAllCaps">false</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#44ffffff</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textColor">#ffffffff</item>
         <item name="android:onClick">onMainBtnClick</item>
     </style>
 
