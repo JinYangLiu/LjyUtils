@@ -129,8 +129,8 @@ public class LjyCalendarView extends RelativeLayout {
                     LjyToastUtil.toast(context, "公历: " + bean.toString()
                             + "\n农历: " + chinaDay[0] + "-" + chinaDay[1] + "-" + chinaDay[2]
                             + "\n生肖: " + LjyTimeUtil.getAnimalsYear(chinaDay[0])
-                            + "\n星座：" + LjyTimeUtil.getConstellation(bean)
-                            + "\n节气：" + LjyTimeUtil.getSolarTerm(bean)
+                            + "\n星座: " + LjyTimeUtil.getConstellation(bean)
+                            + "\n节气: " + LjyTimeUtil.getSolarTerm(bean)
                             + "\n干支: " + LjyTimeUtil.getChineseEra(bean)
                             + "\n星期: " + weeks[position % 7]
                     );
