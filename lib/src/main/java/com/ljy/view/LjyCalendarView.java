@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.ljy.bean.CalendarBean;
 import com.ljy.lib.R;
 import com.ljy.util.LjyTimeUtil;
+import com.ljy.util.LjyToastUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +39,8 @@ public class LjyCalendarView extends RelativeLayout {
     private final GridView gridMonth;
     private final int currentYearRaw;
     private final int currentMonthRaw;
+    private final ImageView btnLastYear;
+    private final ImageView btnNextYear;
     private int currentYear;
     private int currentMonth;
     private final int currentDayRaw;
@@ -49,12 +53,14 @@ public class LjyCalendarView extends RelativeLayout {
     }
 
     @SuppressLint("WrongConstant")
-    public LjyCalendarView(Context context, AttributeSet attrs) {
+    public LjyCalendarView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_calendar, this, true);
         textTitle = rootView.findViewById(R.id.text_title);
         btnLast = rootView.findViewById(R.id.btn_last);
         btnNext = rootView.findViewById(R.id.btn_next);
+        btnLastYear = rootView.findViewById(R.id.btn_last_year);
+        btnNextYear = rootView.findViewById(R.id.btn_next_year);
         gridWeek = rootView.findViewById(R.id.grid_week);
         gridMonth = rootView.findViewById(R.id.grid_month);
 
@@ -65,7 +71,18 @@ public class LjyCalendarView extends RelativeLayout {
         currentDayRaw = cal.get(Calendar.DATE);
         currentYear = currentYearRaw;
         currentMonth = currentMonthRaw;
+
         textTitle.setText(currentYear + "年" + currentMonth + "月");
+        textTitle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentYear = currentYearRaw;
+                currentMonth = currentMonthRaw;
+                textTitle.setText(currentYear + "年" + currentMonth + "月");
+                List<CalendarBean> list = initList(LjyTimeUtil.getDaysOfMonth());
+                dayAdapter.setNewList(list);
+            }
+        });
 
         btnLast.setOnClickListener(new OnClickListener() {
             @Override
@@ -81,14 +98,45 @@ public class LjyCalendarView extends RelativeLayout {
             }
         });
 
+        btnLastYear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeYear(false);
+            }
+        });
+
+        btnNextYear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeYear(true);
+            }
+        });
+
         gridWeek.setSelector(new ColorDrawable(Color.TRANSPARENT));
         gridWeek.setAdapter(new WeekGirdViewAdapter(context, weeks));
 
         gridMonth.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        List<CalendarBean> list = LjyTimeUtil.getDaysListOfMonth();
+        List<CalendarBean> list = LjyTimeUtil.getDaysOfMonth();
         List<CalendarBean> listAll = initList(list);
         dayAdapter = new DaysGirdViewAdapter(context, listAll);
         gridMonth.setAdapter(dayAdapter);
+        gridMonth.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CalendarBean bean = dayAdapter.getList().get(position);
+                if (bean.getDay() > 0) {
+                    int[] chinaDay = LjyTimeUtil.getChineseDay(bean);
+                    LjyToastUtil.toast(context, "公历: " + bean.toString()
+                            + "\n农历: " + chinaDay[0] + "-" + chinaDay[1] + "-" + chinaDay[2]
+                            + "\n生肖: " + LjyTimeUtil.getAnimalsYear(chinaDay[0])
+                            + "\n星座：" + LjyTimeUtil.getConstellation(bean)
+                            + "\n节气：" + LjyTimeUtil.getSolarTerm(bean)
+                            + "\n干支: " + LjyTimeUtil.getChineseEra(bean)
+                            + "\n星期: " + weeks[position % 7]
+                    );
+                }
+            }
+        });
     }
 
     private void changeMonth(boolean toNext) {
@@ -102,7 +150,15 @@ public class LjyCalendarView extends RelativeLayout {
             currentYear += 1;
         }
         textTitle.setText(currentYear + "年" + currentMonth + "月");
-        List newList = initList(LjyTimeUtil.getDaysListOfMonth(currentYear, currentMonth));
+        List newList = initList(LjyTimeUtil.getDaysOfMonth(currentYear, currentMonth));
+        dayAdapter.setNewList(newList);
+    }
+
+    private void changeYear(boolean toNext) {
+        int temp = toNext ? 1 : -1;
+        currentYear += temp;
+        textTitle.setText(currentYear + "年" + currentMonth + "月");
+        List newList = initList(LjyTimeUtil.getDaysOfMonth(currentYear, currentMonth));
         dayAdapter.setNewList(newList);
     }
 
@@ -111,13 +167,13 @@ public class LjyCalendarView extends RelativeLayout {
     private List<CalendarBean> initList(List<CalendarBean> list) {
 
         for (CalendarBean bean : list) {
-            if (currentDayRaw == bean.getDay()&&currentMonthRaw==bean.getMonth()&&currentYearRaw==bean.getYear()) {
+            if (currentDayRaw == bean.getDay() && currentMonthRaw == bean.getMonth() && currentYearRaw == bean.getYear()) {
                 bean.setToday(true);
                 break;
             }
         }
         CalendarBean firstDay = list.get(0);
-        int firstWeek = LjyTimeUtil.getWeekDayOnCertainDate(firstDay.getYear(), firstDay.getMonth(), firstDay.getDay());
+        int firstWeek = LjyTimeUtil.getWeekForDay(firstDay.getYear(), firstDay.getMonth(), firstDay.getDay());
         List<CalendarBean> listAll = new ArrayList<>();
         for (int i = 1; i < firstWeek; i++) {
             CalendarBean bean = new CalendarBean();
@@ -180,6 +236,10 @@ public class LjyCalendarView extends RelativeLayout {
         public void setNewList(List<CalendarBean> list) {
             mlist = list;
             notifyDataSetChanged();
+        }
+
+        public List<CalendarBean> getList() {
+            return mlist;
         }
 
         @Override

@@ -9,10 +9,17 @@
         android:background="@color/thin_green"
         android:layout_height="40dp">
         <ImageView
-            android:id="@+id/btn_last"
+            android:id="@+id/btn_last_year"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_lastyear"/>
+        <ImageView
+            android:id="@+id/btn_last"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/btn_preview"/>
         <TextView
@@ -29,8 +36,16 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="6dp"
             android:src="@drawable/btn_next"/>
+        <ImageView
+            android:id="@+id/btn_next_year"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_nextyear"/>
     </LinearLayout>
     <GridView
         android:id="@+id/grid_week"

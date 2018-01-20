@@ -59,4 +59,9 @@ public class CalendarBean {
     public void setToday(boolean today) {
         this.isToday = today;
     }
+
+    @Override
+    public String toString() {
+        return year +"/" + month +"/" + day;
+    }
 }
