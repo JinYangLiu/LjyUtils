@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
+import com.ljy.ljyutils.activity.BallActivity;
+import com.ljy.ljyutils.activity.BezierActivity;
 import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.CalendarActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
@@ -106,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_calendar:
                 startActivity(new Intent(mContext, CalendarActivity.class));
+                break;
+            case R.id.btn_ball:
+                startActivity(new Intent(mContext, BallActivity.class));
+                break;
+            case R.id.btn_bezier:
+                startActivity(new Intent(mContext, BezierActivity.class));
                 break;
             default:
                 break;

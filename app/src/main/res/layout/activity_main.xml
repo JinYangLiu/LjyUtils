@@ -101,7 +101,14 @@
             <Button
                 android:id="@+id/btn_calendar"
                 android:text="calendar的demo"
-
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_ball"
+                android:text="ballView的使用"
+                style="@style/mainBtnStyle"/>
+            <Button
+                android:id="@+id/btn_bezier"
+                android:text="贝塞尔曲线的使用"
                 style="@style/mainBtnStyle"/>
         </LinearLayout>
     </ScrollView>

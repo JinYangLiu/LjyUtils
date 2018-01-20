@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -210,6 +211,7 @@ public class LjySystemUtil {
 
     /**
      * 沉浸式状态栏
+     *
      * @param activity
      */
     public static void noStatusBar(Activity activity) {
@@ -224,4 +226,39 @@ public class LjySystemUtil {
         }
 
     }
+
+    /**
+     * 创建某个界面的桌面快捷入口
+     * 注意：manifest中需要添加权限，
+     * 对应的activity中要
+     * <intent-filter>
+     * <action android:name="android.intent.action.MAIN"/>
+     * </intent-filter>
+     *
+     * @param context
+     * @param activityName
+     * @param name
+     * @param icon
+     */
+    public static void addShortcut(Context context, String activityName, String name, int icon) {
+        //   创建快捷方式的intent广播
+        Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        //  添加快捷名称
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+        //  快捷图标是允许重复
+        shortcut.putExtra("duplicate", false);
+        // 快捷图标
+        Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(context, icon);
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+        //  我们下次启动要用的Intent信息
+        Intent carryIntent = new Intent(Intent.ACTION_MAIN);
+        carryIntent.putExtra("name", name);
+        carryIntent.setClassName(context, activityName);
+        carryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //添加携带的Intent
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, carryIntent);
+        //   发送广播
+        context.sendBroadcast(shortcut);
+    }
+
 }

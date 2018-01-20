@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.BallActivity">
+    <com.ljy.view.LjyBallView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/btn_fast"
+        android:text="创建桌面快捷方式"
+        android:layout_alignParentBottom="true"
+        android:onClick="onBallBtnClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

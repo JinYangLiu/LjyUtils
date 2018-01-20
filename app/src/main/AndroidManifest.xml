@@ -166,6 +166,13 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.CalendarActivity">
         </activity>
+        <activity android:name=".activity.BallActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.BezierActivity">
+        </activity>
     </application>
 
 </manifest>
