@@ -33,7 +33,7 @@ android {
     }
 
     //导入dataBinding支持
-    dataBinding{
+    dataBinding {
         enabled true
     }
 }

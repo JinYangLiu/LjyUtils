@@ -179,6 +179,8 @@
         </activity>
         <activity android:name=".activity.BindDataActivity">
         </activity>
+        <activity android:name=".activity.DoodleActivity">
+        </activity>
     </application>
 
 </manifest>
