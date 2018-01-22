@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 
 public class RadarViewActivity extends AppCompatActivity {
     String[] values = new String[]{"KDA","输出","经济","生存","带线","打野"};
-    String[] titles = new String[]{"12.4","54092","12670","4.5","6","12"};
+    String[] titles = new String[]{"12.4","54k","1.2w","4.5","6","12"};
     double[] percents = new double[]{0.9, 0.7,0.7,0.5,0.9,0.45};
 
     @BindView(R.id.jump)

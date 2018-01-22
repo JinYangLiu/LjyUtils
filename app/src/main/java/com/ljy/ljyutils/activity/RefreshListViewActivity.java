@@ -141,6 +141,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
                 holder.textTitle=convertView.findViewById(R.id.textName);
                 holder.textInfo=convertView.findViewById(R.id.textInfo);
                 holder.itemRoot=convertView.findViewById(R.id.itemRoot);
+                holder.itemRoot.setBackgroundColor(LjyColorUtil.getInstance().randomColor());
                 convertView.setTag(holder);
             }
 
@@ -148,7 +149,6 @@ public class RefreshListViewActivity extends AppCompatActivity {
             holder.imgIcon.setImageResource((Integer) data.get("head"));
             holder.textTitle.setText((CharSequence) data.get("name"));
             holder.textInfo.setText((position+1) + "/" + getCount());
-            holder.itemRoot.setBackgroundColor(LjyColorUtil.getInstance().randomColor());
 
             return convertView;
         }

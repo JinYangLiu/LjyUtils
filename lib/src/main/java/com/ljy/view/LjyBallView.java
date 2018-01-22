@@ -62,9 +62,6 @@ public class LjyBallView extends View {
 
     public Ball[] mBalls;   // 用来保存所有小球的数组
 
-    public String sayHello(){
-        return "ballview:hello!!!";
-    }
 
     public LjyBallView(Context context, AttributeSet attrs) {
         super(context, attrs);
