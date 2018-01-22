@@ -4,16 +4,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CircularProgressDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.view.LjyArgueProgressView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ArgueProgressActivity extends AppCompatActivity {
+public class ArgueProgressActivity extends BaseActivity {
 
     @BindView(R.id.argueProgressView)
     LjyArgueProgressView mLjyArgueProgressView;
@@ -23,14 +23,12 @@ public class ArgueProgressActivity extends AppCompatActivity {
     private int b=3;
     private String str1="<font color=\"#d50000\">" + "【正方】" + "</font>" +"Android牛";
     private String str2="<font color=\"#1976d2\">" + "【反方】" + "</font>" +"iOS牛";
-    private Context mContext=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_argue_progress);
-        ButterKnife.bind(this);
-
+        ButterKnife.bind(mActivity);
         initView();
     }
 

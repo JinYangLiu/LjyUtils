@@ -1,16 +1,13 @@
 package com.ljy.ljyutils.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjySystemUtil;
 
-public class BallActivity extends AppCompatActivity {
-
-    private Activity activity=this;
+public class BallActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +18,7 @@ public class BallActivity extends AppCompatActivity {
     public void onBallBtnClick(View view) {
         switch (view.getId()){
             case R.id.btn_fast:
-                LjySystemUtil.addShortcut(activity, BallActivity.class.getName(),"小球快捷入口",R.drawable.ic_music);
+                LjySystemUtil.addShortcut(mContext, BallActivity.class.getName(),"小球快捷入口",R.drawable.ic_music);
                 break;
         }
     }

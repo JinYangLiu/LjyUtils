@@ -1,8 +1,6 @@
 package com.ljy.ljyutils.activity;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,7 +9,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
@@ -35,10 +33,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PhotoActivity extends AppCompatActivity {
+public class PhotoActivity extends BaseActivity {
 
-    private Activity mActivity = this;
-    private Context mContext;
     private LjyPhotoUtil photoUtil;
     //图片要保存的目录
     private String picFilesPath;
@@ -55,8 +51,7 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LjySystemUtil.noStatusBar(mActivity);
         setContentView(R.layout.activity_photo);
-        ButterKnife.bind(this);
-        mContext = this.getApplicationContext();
+        ButterKnife.bind(mActivity);
         initPath();
         initPhotoUtil();
     }

@@ -3,7 +3,6 @@ package com.ljy.ljyutils.activity;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
@@ -19,12 +18,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.view.LjyRadarView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class Radar2Activity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class Radar2Activity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
     @BindView(R.id.radarView)
     LjyRadarView radarView;
     @BindView(R.id.countTextView)
@@ -80,7 +80,7 @@ public class Radar2Activity extends AppCompatActivity implements CompoundButton.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_radar2);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
 
         drawBorder.setOnCheckedChangeListener(this);
         drawPoint.setOnCheckedChangeListener(this);

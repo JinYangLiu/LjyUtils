@@ -1,14 +1,13 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyGestureLockView;
@@ -17,19 +16,18 @@ import com.ljy.view.LjyPwdInputView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GestureLockActivity extends AppCompatActivity {
+public class GestureLockActivity extends BaseActivity {
 
     @BindView(R.id.gestureLockView)
     LjyGestureLockView mGestureLockView;
     @BindView(R.id.passwordInputView)
     LjyPwdInputView mPwdInputView;
-    private Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gesture_lock);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initView();
     }
 

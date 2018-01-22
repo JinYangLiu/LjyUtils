@@ -1,17 +1,17 @@
 package com.ljy.ljyutils.activity;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.fragment.MyFragment;
 import com.ljy.ljyutils.fragment.MyFragment2;
 import com.ljy.ljyutils.fragment.MyFragment3;
@@ -23,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FragmentDemoActivity extends AppCompatActivity {
+public class FragmentDemoActivity extends BaseActivity {
 
 
     //用于动态添加fragment的frameLayout
@@ -46,7 +46,7 @@ public class FragmentDemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LjyLogUtil.i("onCreate");
         setContentView(R.layout.activity_fragment_demo);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initFragment();
         initViewPager();
     }

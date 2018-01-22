@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -259,6 +260,45 @@ public class LjySystemUtil {
         shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, carryIntent);
         //   发送广播
         context.sendBroadcast(shortcut);
+    }
+
+    /**
+     * 获取app 的 appName
+     */
+    public static String getAppName(Context context) {
+        PackageInfo packInfo = getPackageInfo(context);
+        return packInfo==null?"":packInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+    }
+
+    /**
+     * 获取app 的 versionName
+     */
+    public static String getVersionName(Context context) {
+        PackageInfo packInfo = getPackageInfo(context);
+        return packInfo==null?"":packInfo.versionName;
+    }
+
+    /**
+     * 获取app 的 versionName
+     */
+    public static int getVersionCode(Context context) {
+        PackageInfo packInfo = getPackageInfo(context);
+        return packInfo==null?-1:packInfo.versionCode;
+    }
+
+    /**
+     * 获取app 的 PackageInfo
+     */
+    private static PackageInfo getPackageInfo(Context context) {
+        context=context.getApplicationContext();
+        //获取packagemanager的实例
+        PackageManager packageManager = context.getPackageManager();
+        //getPackageName()是你当前类的包名，0代表是获取版本信息
+        try {
+            return packageManager.getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
     }
 
 }

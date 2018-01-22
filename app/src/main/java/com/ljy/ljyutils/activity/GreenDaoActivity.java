@@ -1,15 +1,13 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.ljy.ljyutils.MyApplication;
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.bean.Phone;
 import com.ljy.ljyutils.bean.PhoneDao;
-import com.ljy.util.LjySPUtil;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ import butterknife.ButterKnife;
  *
  * 注意：数据库的初始化放到了application中
  */
-public class GreenDaoActivity extends AppCompatActivity {
+public class GreenDaoActivity extends BaseActivity {
 
     @BindView(R.id.text_db)
     TextView mTextView;
@@ -34,10 +32,10 @@ public class GreenDaoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_green_dao);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
 
-        phoneDao=MyApplication.getDaoInstance().getPhoneDao();
-        lastCount= LjySPUtil.getInstance().get(LAST_PHONE_COUNT,0);
+        phoneDao=getDaoInstance().getPhoneDao();
+        lastCount= getSpUtilInstance().get(LAST_PHONE_COUNT,0);
     }
 
 
@@ -73,7 +71,7 @@ public class GreenDaoActivity extends AppCompatActivity {
         List<Phone> phoneList= phoneDao.loadAll();
         Phone phone=phoneList.get(phoneList.size()-1);
         phoneDao.deleteByKey(phone.getId());
-        LjySPUtil.getInstance().save(LAST_PHONE_COUNT,lastCount);
+        getSpUtilInstance().save(LAST_PHONE_COUNT,lastCount);
     }
 
     private void insertPhone() {
@@ -84,7 +82,7 @@ public class GreenDaoActivity extends AppCompatActivity {
         phone.setPrice(lastCount*100);
         phone.setInfo("info_"+lastCount);
         phoneDao.insertOrReplace(phone);
-        LjySPUtil.getInstance().save(LAST_PHONE_COUNT,lastCount);
+        getSpUtilInstance().save(LAST_PHONE_COUNT,lastCount);
     }
 
     private void queryAllPhone() {

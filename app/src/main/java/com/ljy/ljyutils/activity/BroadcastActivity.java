@@ -6,15 +6,15 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.broadcast.MyBroadcastReceiver4;
 import com.ljy.ljyutils.broadcast.MyBroadcastReceiver5;
 import com.ljy.util.LjyLogUtil;
 
-public class BroadcastActivity extends AppCompatActivity {
+public class BroadcastActivity extends BaseActivity {
 
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager localBroadcastManager;
@@ -41,8 +41,8 @@ public class BroadcastActivity extends AppCompatActivity {
                 intent2.setAction("com.ljy.ljyutils.broadcast");
                 intent2.putExtra("info", "我是广播传送的消息啊");
                 intent2.setPackage("com.ljy.ljyutils");//设置package可以防止其他应用接受到本条广播
-//                BroadcastActivity.this.sendBroadcast(intent2);   //普通广播发送
-                BroadcastActivity.this.sendOrderedBroadcast(intent2, null);   //有序广播发送
+//                mActivity.sendBroadcast(intent2);   //普通广播发送
+                mActivity.sendOrderedBroadcast(intent2, null);   //有序广播发送
                 localBroadcastManager.sendBroadcast(intent2);
                 LjyLogUtil.i("发送了广播");
                 break;
@@ -97,7 +97,7 @@ public class BroadcastActivity extends AppCompatActivity {
         //注册应用内广播：只能收到localBroadcastManager.sendBroadcast发送的广播
         IntentFilter intentFilter2 = new IntentFilter();
         intentFilter2.addAction("com.ljy.ljyutils.broadcast");
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
         broadcastReceiver2= new MyBroadcastReceiver4();
         localBroadcastManager.registerReceiver(broadcastReceiver2, intentFilter2);
     }

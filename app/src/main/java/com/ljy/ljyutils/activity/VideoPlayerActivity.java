@@ -1,14 +1,13 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyGlideUtil;
 import com.ljy.view.LjyVideoPlayer;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
@@ -17,10 +16,9 @@ import com.shuyu.gsyvideoplayer.video.base.GSYVideoView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class VideoPlayerActivity extends AppCompatActivity {
+public class VideoPlayerActivity extends BaseActivity {
     @BindView(R.id.video_player)
     LjyVideoPlayer videoPlayer;
-    private Context mContext = this;
     private String imgUrl = "https://avatars1.githubusercontent.com/u/19702574?s=460&v=4";
     private String playUrl = "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=70096&editionType=default&source=aliyun";
     private boolean isFullScreen;
@@ -29,14 +27,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initVideo();
     }
 
     private void initVideo() {
 
         //设置加载时封面
-        ImageView ivCoverVideo = new ImageView(this);
+        ImageView ivCoverVideo = new ImageView(mContext);
         ivCoverVideo.setScaleType(ImageView.ScaleType.CENTER_CROP);
         LjyGlideUtil.loadImg(mContext, imgUrl, ivCoverVideo);
         videoPlayer.setThumbImageView(ivCoverVideo);

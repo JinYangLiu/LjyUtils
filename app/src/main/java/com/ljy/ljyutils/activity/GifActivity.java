@@ -1,33 +1,37 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.FloatRange;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyGifImageView;
 
-public class GifActivity extends AppCompatActivity {
-    LjyGifImageView gifImageView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class GifActivity extends BaseActivity {
+    @BindView(R.id.pause)
     Button pauseBtn;
-    boolean hasPaused = true;
-    TextView percentTv;
+    @BindView(R.id.seek)
     SeekBar mSeekBar;
-    private Context mContext = this;
+    @BindView(R.id.percent)
+    TextView percentTv;
+    @BindView(R.id.gif)
+    LjyGifImageView gifImageView;
+    boolean hasPaused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gif);
-        pauseBtn = findViewById(R.id.pause);
+        ButterKnife.bind(mActivity);
         pauseBtn.setVisibility(View.GONE);
-        mSeekBar = findViewById(R.id.seek);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -45,8 +49,6 @@ public class GifActivity extends AppCompatActivity {
 
             }
         });
-        percentTv = findViewById(R.id.percent);
-        gifImageView = findViewById(R.id.gif);
         gifImageView.setGifResource(R.drawable.dog, new LjyGifImageView.OnPlayListener() {
             @Override
             public void onPlayStart() {

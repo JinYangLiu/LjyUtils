@@ -1,14 +1,13 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.ImageView;
 
 import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.bean.SwipeCardBean;
 import com.ljy.util.LjyGlideUtil;
 import com.ljy.view.LjyRecyclerView;
@@ -19,13 +18,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RefreshRecyclerViewActivity extends AppCompatActivity {
+public class RefreshRecyclerViewActivity extends BaseActivity {
 
     @BindView(R.id.swipeRefreshView)
     LjySwipeRefreshView mSwipeRefreshView;
     @BindView(R.id.recyclerView)
     LjyRecyclerView mRecyclerView;
-    private Context mContext=this;
     private LjyBaseAdapter<SwipeCardBean> mAdapter;
     private int pageCount=0,pageSize=5;
 
@@ -33,13 +31,12 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refresh_recycler_view);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initView();
-        initRecyclerData(SwipeCardBean.initData(pageCount++*pageSize,pageCount*pageSize));
     }
 
     private void initView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
         mSwipeRefreshView.setRefreshProgressColor(R.color.theme_red);
         mSwipeRefreshView.setLoadMoreProgressColor(R.color.theme_red);
         mSwipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -54,9 +51,9 @@ public class RefreshRecyclerViewActivity extends AppCompatActivity {
                 loadMoreData();
             }
         });
-    }
 
-    private void initRecyclerData(final List listData) {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        List<SwipeCardBean> listData=SwipeCardBean.initData(pageCount++*pageSize,pageCount*pageSize);
         mRecyclerView.setAdapter(mAdapter=new LjyBaseAdapter<SwipeCardBean>(mContext,listData,mRecyclerView , R.layout.layout_item_list) {
             @Override
             public void convert(LjyViewHolder holder, SwipeCardBean item) {

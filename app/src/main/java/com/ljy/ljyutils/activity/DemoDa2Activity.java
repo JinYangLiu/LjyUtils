@@ -1,10 +1,10 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.bean.Person;
 
 import javax.inject.Inject;
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DemoDa2Activity extends AppCompatActivity {
+public class DemoDa2Activity extends BaseActivity {
 
     @BindView(R.id.tv1)
     TextView mTextView1;
@@ -25,7 +25,7 @@ public class DemoDa2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demoda2);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         //使用普通的初始化
 //        normalInit();
         //使用dagger2初始化

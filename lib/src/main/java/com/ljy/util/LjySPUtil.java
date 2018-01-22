@@ -16,28 +16,12 @@ public class LjySPUtil {
 
     private final String SP_NAME = "LJY_SP_NAME";
     private SharedPreferences sp;
-    private static LjySPUtil mSPUtil = new LjySPUtil();
 
-    /**
-     * 需要在application中初始化
-     *
-     * @param context
-     */
-    public void init(Context context) {
+    public LjySPUtil(Context context) {
         if (sp == null) {
-            if (context == null)
-                return;
             context = context.getApplicationContext();
             sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         }
-    }
-
-    public static LjySPUtil getInstance() {
-        return mSPUtil;
-    }
-
-    private LjySPUtil() {
-
     }
 
     public void save(String key, boolean value) {

@@ -1,8 +1,6 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -10,10 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyEncryUtil;
 import com.ljy.util.LjyLogUtil;
-import com.ljy.util.LjySPUtil;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyTimeUtil;
@@ -25,9 +23,7 @@ import java.security.KeyPair;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UseUtilsActivity extends AppCompatActivity {
-
-    private Context mContext = this;
+public class UseUtilsActivity extends BaseActivity {
 
     @BindView(R.id.imageView)
     ImageView mImageView;
@@ -38,7 +34,7 @@ public class UseUtilsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_util);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         LjyLogUtil.setAppendLogMsg(true);
         useUtil();
         LjyLogUtil.clearAllLogMsg();
@@ -52,12 +48,12 @@ public class UseUtilsActivity extends AppCompatActivity {
         LjyLogUtil.w("log.w----");
         LjyLogUtil.e("log.e----");
         //判断当前栈顶的activity
-        boolean isForeground = LjySystemUtil.isForeground(this, UseUtilsActivity.class.getSimpleName());
+        boolean isForeground = LjySystemUtil.isForeground(mContext, UseUtilsActivity.class.getSimpleName());
         LjyLogUtil.i("isForeground:" + isForeground);
         //screen
-        int screenWidth = LjyViewUtil.getScreenWidth(this);
+        int screenWidth = LjyViewUtil.getScreenWidth(mContext);
         LjyLogUtil.i("screenWidth:" + screenWidth);
-        int screenHeight = LjyViewUtil.getScreenHeight(this);
+        int screenHeight = LjyViewUtil.getScreenHeight(mContext);
         LjyLogUtil.i("screenHeight:" + screenHeight);
         //string
         LjyLogUtil.i("123asd:" + LjyStringUtil.isNumber("123asd"));
@@ -77,18 +73,17 @@ public class UseUtilsActivity extends AppCompatActivity {
         String key2 = "spKey2";
         String key3 = "spKey3";
         String key4 = "spKey4";
-        LjySPUtil spUtil = LjySPUtil.getInstance();
-        spUtil.save(key1, true);
-        spUtil.save(key2, 123);
-        spUtil.save(key3, 1.2f);
-        spUtil.save(key4, "abc");
-        LjyLogUtil.i(key1 + ":" + spUtil.get(key1, false));
-        LjyLogUtil.i(key2 + ":" + spUtil.get(key2, 0));
-        LjyLogUtil.i(key3 + ":" + spUtil.get(key3, 0f));
-        LjyLogUtil.i(key4 + ":" + spUtil.get(key4, ""));
-        LjyLogUtil.i("getAll:" + spUtil.getAll());
-        spUtil.clearAll();
-        LjyLogUtil.i("getAll:" + spUtil.getAll());
+        getSpUtilInstance().save(key1, true);
+        getSpUtilInstance().save(key2, 123);
+        getSpUtilInstance().save(key3, 1.2f);
+        getSpUtilInstance().save(key4, "abc");
+        LjyLogUtil.i(key1 + ":" + getSpUtilInstance().get(key1, false));
+        LjyLogUtil.i(key2 + ":" + getSpUtilInstance().get(key2, 0));
+        LjyLogUtil.i(key3 + ":" + getSpUtilInstance().get(key3, 0f));
+        LjyLogUtil.i(key4 + ":" + getSpUtilInstance().get(key4, ""));
+        LjyLogUtil.i("getAll:" + getSpUtilInstance().getAll());
+        getSpUtilInstance().clearAll();
+        LjyLogUtil.i("getAll:" + getSpUtilInstance().getAll());
         //EncryUtil
         int count = 3;
         String str1 = "刘123ab.|";
@@ -126,7 +121,7 @@ public class UseUtilsActivity extends AppCompatActivity {
         mImageView.setImageBitmap(LjyEncryUtil.getQrCode(str1, size, size, true));
         mImageView.setClickable(true);
         //一个view左右晃动的动画
-        final Animation mShakeAnim = AnimationUtils.loadAnimation(this, R.anim.shake_x);
+        final Animation mShakeAnim = AnimationUtils.loadAnimation(mContext, R.anim.shake_x);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

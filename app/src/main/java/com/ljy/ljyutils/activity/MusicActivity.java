@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.service.PlayMusicService;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjySystemUtil;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 /**
  * 做个简单的音乐播放
  */
-public class MusicActivity extends AppCompatActivity {
+public class MusicActivity extends BaseActivity {
     @BindView(R.id.iv_play)
     ImageView ivPlay;
     @BindView(R.id.tv_current_time)
@@ -39,14 +39,13 @@ public class MusicActivity extends AppCompatActivity {
     private int mLastProgress = 0;
     private BroadcastReceiver broadcastReceiver;
     private boolean isDraggingProgress;
-    private Context mContext=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LjySystemUtil.noStatusBar(this);
+        LjySystemUtil.noStatusBar(mActivity);
         setContentView(R.layout.activity_music);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initService();
         initView();
 

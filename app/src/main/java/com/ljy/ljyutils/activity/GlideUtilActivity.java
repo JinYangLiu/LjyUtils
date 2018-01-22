@@ -1,28 +1,27 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyGlideUtil;
 import com.ljy.util.LjyLogUtil;
-import com.ljy.ljyutils.R;
 
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GlideUtilActivity extends AppCompatActivity {
+public class GlideUtilActivity extends BaseActivity {
 
     @BindView(R.id.iv_1)
     ImageView iv1;
@@ -35,7 +34,6 @@ public class GlideUtilActivity extends AppCompatActivity {
     @BindView(R.id.iv_5)
     ImageView iv5;
     private String imgUrl1;
-    private Context mContext = this;
     private Bitmap bitmap;
     private String imgUrl2;
     private String imgUrl3;
@@ -46,7 +44,7 @@ public class GlideUtilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide_util);
-        ButterKnife.bind(this);
+        ButterKnife.bind(mActivity);
         initUrl();
     }
 

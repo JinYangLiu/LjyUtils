@@ -1,13 +1,12 @@
 package com.ljy.ljyutils.activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyVoteCheckBox;
 import com.ljy.view.LjyVoteRadioGroup;
@@ -15,29 +14,31 @@ import com.ljy.view.LjyVoteRadioGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VoteActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private Button btn_submit;
-    private LjyVoteCheckBox voteCheckBoxs;
-    private LjyVoteRadioGroup voeRadioGroup;
-    private TextView textVoteType;
-    private TextView textVoteType2;
-    private Context mContext=this;
+public class VoteActivity extends BaseActivity {
+
+    @BindView(R.id.button_submit)
+    Button btn_submit;
+    @BindView(R.id.myCheckBoxs)
+    LjyVoteCheckBox voteCheckBoxs;
+    @BindView(R.id.myRadioButtons)
+    LjyVoteRadioGroup voeRadioGroup;
+    @BindView(R.id.textView_voteType)
+    TextView textVoteType;
+    @BindView(R.id.textView_voteType2)
+    TextView textVoteType2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vote);
+        ButterKnife.bind(mActivity);
         initVoteView();
     }
 
     private void initVoteView() {
-        //投票贴
-        btn_submit = findViewById(R.id.button_submit);
-        voteCheckBoxs = findViewById(R.id.myCheckBoxs);
-        voeRadioGroup =  findViewById(R.id.myRadioButtons);
-        textVoteType =  findViewById(R.id.textView_voteType);
-        textVoteType2 =  findViewById(R.id.textView_voteType2);
         List<LjyVoteRadioGroup.VoteBean> list_item = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             LjyVoteRadioGroup.VoteBean bean = new LjyVoteRadioGroup.VoteBean();
@@ -67,7 +68,7 @@ public class VoteActivity extends AppCompatActivity {
                 sbuffer.append("RadioGroup_");
                 sbuffer.append(voeRadioGroup.getSelectedRadioContent());
                 String select = sbuffer.toString();
-                LjyToastUtil.toast(mContext,"voteId:"+ select);
+                LjyToastUtil.toast(mContext, "voteId:" + select);
             }
         });
     }

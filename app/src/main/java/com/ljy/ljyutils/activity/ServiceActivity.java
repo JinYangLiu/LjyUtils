@@ -8,10 +8,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.service.MyForegroundNormalService;
 import com.ljy.ljyutils.service.MyNormalService;
 import com.ljy.util.LjyLogUtil;
@@ -20,9 +20,8 @@ import com.ljy.util.LjyToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceActivity extends AppCompatActivity {
+public class ServiceActivity extends BaseActivity {
 
-    private Context mContext = this;
     private ServiceConnection serviceConnection;
     private MyNormalService.MyBinder mBinder;
     private boolean isServiceBind;

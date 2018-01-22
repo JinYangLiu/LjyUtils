@@ -1,11 +1,11 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 
-public class FishActivity extends AppCompatActivity {
+public class FishActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,7 +3,6 @@ package com.ljy.ljyutils.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.view.LjySwipeRefreshView;
 
@@ -23,27 +23,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RefreshListViewActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private LjySwipeRefreshView swipeRefreshView;
-    private ListView listView;
+public class RefreshListViewActivity extends BaseActivity {
+
+    @BindView(R.id.swipeRefreshView)
+    LjySwipeRefreshView swipeRefreshView;
+    @BindView(R.id.listView)
+    ListView listView;
     private ArrayList<Map<String, Object>> listems;
-    private Context mContext = this;
     private MyAdapter mAdapter;
-    int start = 1;
+    private int start = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refresh_list_view);
-        initRefreshView();
-        initListView();
+        ButterKnife.bind(mActivity);
+        initView();
     }
 
-    private void initListView() {
-        listView = findViewById(R.id.listView);
+    private void initView() {
+        swipeRefreshView.setRefreshProgressColor(R.color.theme_red);
+        swipeRefreshView.setLoadMoreProgressColor(R.color.theme_red);
+        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+
+            }
+        });
+        swipeRefreshView.setOnLoadMoreListener(new LjySwipeRefreshView.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                loadMoreData();
+            }
+        });
+
         listems = new ArrayList<>();
-        listems.addAll(initData(start, start +=4));
+        listems.addAll(initData(start, start += 4));
         mAdapter = new MyAdapter(mContext, listems);
         swipeRefreshView.initListViewHeader(listView);
         listView.setAdapter(mAdapter);
@@ -60,31 +79,12 @@ public class RefreshListViewActivity extends AppCompatActivity {
         return list;
     }
 
-    private void initRefreshView() {
-        swipeRefreshView = findViewById(R.id.swipeRefreshView);
-        swipeRefreshView.setRefreshProgressColor(R.color.theme_red);
-        swipeRefreshView.setLoadMoreProgressColor(R.color.theme_red);
-        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
-
-            }
-        });
-        swipeRefreshView.setOnLoadMoreListener(new LjySwipeRefreshView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                loadMoreData();
-            }
-        });
-    }
-
     private void loadMoreData() {
         swipeRefreshView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 swipeRefreshView.setLoadMoreSuccess();
-                listems.addAll(initData(start+1, start += 5));
+                listems.addAll(initData(start + 1, start += 5));
                 mAdapter.notifyDataSetChanged();
             }
         }, 100 * 8);
@@ -106,7 +106,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
     public class MyAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
-        public List<Map<String, Object>>  mData;
+        public List<Map<String, Object>> mData;
         private Map<String, Object> data;
 
         public MyAdapter(Context context, List<Map<String, Object>> dataList) {
@@ -137,10 +137,10 @@ public class RefreshListViewActivity extends AppCompatActivity {
             } else {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(R.layout.layout_item_list, null);
-                holder.imgIcon=convertView.findViewById(R.id.imgIcon);
-                holder.textTitle=convertView.findViewById(R.id.textName);
-                holder.textInfo=convertView.findViewById(R.id.textInfo);
-                holder.itemRoot=convertView.findViewById(R.id.itemRoot);
+                holder.imgIcon = convertView.findViewById(R.id.imgIcon);
+                holder.textTitle = convertView.findViewById(R.id.textName);
+                holder.textInfo = convertView.findViewById(R.id.textInfo);
+                holder.itemRoot = convertView.findViewById(R.id.itemRoot);
                 holder.itemRoot.setBackgroundColor(LjyColorUtil.getInstance().randomColor());
                 convertView.setTag(holder);
             }
@@ -148,7 +148,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
             data = mData.get(position);
             holder.imgIcon.setImageResource((Integer) data.get("head"));
             holder.textTitle.setText((CharSequence) data.get("name"));
-            holder.textInfo.setText((position+1) + "/" + getCount());
+            holder.textInfo.setText((position + 1) + "/" + getCount());
 
             return convertView;
         }

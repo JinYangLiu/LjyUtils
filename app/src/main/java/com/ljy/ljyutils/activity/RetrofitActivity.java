@@ -1,18 +1,18 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.presenter.RetrofitActivityPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RetrofitActivity extends AppCompatActivity {
+public class RetrofitActivity extends BaseActivity {
 
     @BindView(R.id.text1)
     TextView mTextView;
@@ -23,8 +23,8 @@ public class RetrofitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_retrofit);
-        ButterKnife.bind(this);
-        presenter = new RetrofitActivityPresenter(this);
+        ButterKnife.bind(mActivity);
+        presenter = new RetrofitActivityPresenter(mContext);
     }
 
     public void retrofitClick(View view) {

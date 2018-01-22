@@ -8,7 +8,7 @@
     <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
     <application
-        android:name=".MyApplication"
+        android:name=".base.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -64,7 +64,8 @@
             android:exported="true"/>
         //activity
         <activity
-            android:name=".MainActivity"
+            android:name=".base.MainActivity"
+            android:theme="@style/SplashTheme"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -172,6 +173,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.BezierActivity">
+        </activity>
+        <activity android:name=".activity.AppUpdateActivity">
         </activity>
     </application>
 
