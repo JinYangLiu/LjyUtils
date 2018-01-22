@@ -31,6 +31,11 @@ android {
         //每个dex包方法数限制在4000以内
         additionalParameters = ['--multi-dex', '--set-max-idx-number=40000']
     }
+
+    //导入dataBinding支持
+    dataBinding{
+        enabled true
+    }
 }
 
 dependencies {

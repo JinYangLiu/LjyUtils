@@ -66,9 +66,9 @@
         //activity
         <activity
             android:name=".base.MainActivity"
-            android:theme="@style/SplashTheme"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -176,6 +176,8 @@
         <activity android:name=".activity.BezierActivity">
         </activity>
         <activity android:name=".activity.AppUpdateActivity">
+        </activity>
+        <activity android:name=".activity.BindDataActivity">
         </activity>
     </application>
 
