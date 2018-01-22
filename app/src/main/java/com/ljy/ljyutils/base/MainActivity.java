@@ -2,6 +2,7 @@ package com.ljy.ljyutils.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -44,13 +45,17 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.recyclerView_main)
     RecyclerView mRecyclerView;
-    private List<MainIntentBean> mList=new ArrayList<>();
+    private List<MainIntentBean> mList = new ArrayList<>();
+    private String IS_NIGHT = "IS_NIGHT";
+    private boolean isNight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(mActivity);
+        isNight = getSpUtilInstance().get(IS_NIGHT, false);
+        setNightMode(isNight);
         initData();
         initView();
     }
@@ -60,7 +65,7 @@ public class MainActivity extends BaseActivity {
                 "辩论view的使用", "投票view的使用", "刷新和加载更多ListView的使用", "刷新和加载更多RecycleView的使用",
                 "拍照和选取图片工具类的使用", "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
                 "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用", "GreenDao的使用", "音乐播放demo",
-                "Lottie的demo", "calendar的demo", "ballView的使用", "贝塞尔曲线的使用", "app更新"};
+                "Lottie的demo", "calendar的demo", "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -68,7 +73,7 @@ public class MainActivity extends BaseActivity {
                 GifActivity.class, VideoPlayerActivity.class, DemoDa2Activity.class, RetrofitActivity.class,
                 FishActivity.class, BroadcastActivity.class, ServiceActivity.class, FragmentDemoActivity.class,
                 GreenDaoActivity.class, MusicActivity.class, LottieActivity.class, CalendarActivity.class,
-                BallActivity.class, BezierActivity.class, AppUpdateActivity.class};
+                BallActivity.class, BezierActivity.class, AppUpdateActivity.class,null};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
@@ -86,13 +91,29 @@ public class MainActivity extends BaseActivity {
                 holder.setOnClickListener(R.id.itemRoot, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(mContext, item.getIntentClass()));
+                        if (item.getTextInfo().equals("夜间模式")) {
+                            setNight();
+                        } else {
+                            startActivity(new Intent(mContext, item.getIntentClass()));
+                        }
                     }
                 });
 
             }
 
         });
+    }
+
+    private void setNight() {
+        isNight = !isNight;
+        setNightMode(isNight);
+        getSpUtilInstance().save(IS_NIGHT, isNight);
+        startActivity(new Intent(mContext, MainActivity.class));
+        finish();
+    }
+
+    public void setNightMode(boolean isNight) {
+        AppCompatDelegate.setDefaultNightMode(isNight ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     class MainIntentBean {

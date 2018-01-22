@@ -1,12 +1,16 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
+import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjySystemUtil;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +40,11 @@ public class AppUpdateActivity extends BaseActivity {
     public void onUpdateBtnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_update_app:
-                updateApp();
+                if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    updateApp();
+                } else {
+                    LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
+                }
                 break;
             default:
                 break;
@@ -45,5 +53,26 @@ public class AppUpdateActivity extends BaseActivity {
 
     private void updateApp() {
 
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        LjySystemUtil.onPermissionResult(grantResults, new LjySystemUtil.PermissionResult() {
+            @Override
+            public void success() {
+                if (requestCode == 999) {
+                    updateApp();
+                }
+            }
+
+            @Override
+            public void fail(List<Integer> disAllowIndexs) {
+                for (int index : disAllowIndexs) {
+                    LjyLogUtil.i(String.format("%s 权限被拒绝", permissions[index]));
+                }
+            }
+        });
     }
 }

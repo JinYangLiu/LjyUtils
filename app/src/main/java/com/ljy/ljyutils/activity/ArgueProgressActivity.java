@@ -52,7 +52,7 @@ public class ArgueProgressActivity extends BaseActivity {
 
         CircularProgressDrawable drawable=new CircularProgressDrawable(mContext);
         final Context context = mContext;
-        int[] colorResIds={R.color.theme_red};
+        int[] colorResIds={R.color.thin_red};
         int[] colorRes = new int[colorResIds.length];
         for (int i = 0; i < colorResIds.length; i++) {
             colorRes[i] = ContextCompat.getColor(context, colorResIds[i]);

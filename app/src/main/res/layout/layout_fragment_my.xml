@@ -9,7 +9,7 @@
        android:layout_width="match_parent"
        android:layout_centerInParent="true"
        android:text="我是fragment的textView"
-       android:background="@color/colorAccent"
+       android:background="@color/thin_green"
        android:layout_height="wrap_content" />
 
 </RelativeLayout>

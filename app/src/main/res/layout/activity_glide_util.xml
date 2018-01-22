@@ -59,27 +59,27 @@
             <com.ljy.view.LjyZoomImageView
                 android:id="@+id/iv_1"
                 android:layout_width="match_parent"
-                android:background="@color/colorAccent"
+                android:background="@color/thin_red"
                 android:layout_height="90dp"/>
             <ImageView
                 android:id="@+id/iv_2"
                 android:layout_width="match_parent"
-                android:background="@color/colorPrimary"
+                android:background="@color/thin_green"
                 android:layout_height="90dp"/>
             <ImageView
                 android:id="@+id/iv_3"
                 android:layout_width="match_parent"
-                android:background="@color/colorAccent"
+                android:background="@color/thin_blue"
                 android:layout_height="90dp"/>
             <ImageView
                 android:id="@+id/iv_4"
                 android:layout_width="match_parent"
-                android:background="@color/colorPrimary"
+                android:background="@color/thin_green"
                 android:layout_height="90dp"/>
             <ImageView
                 android:id="@+id/iv_5"
                 android:layout_width="match_parent"
-                android:background="@color/colorAccent"
+                android:background="@color/thin_red"
                 android:layout_height="90dp"/>
         </LinearLayout>
     </ScrollView>

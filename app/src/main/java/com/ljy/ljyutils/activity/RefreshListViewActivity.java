@@ -45,8 +45,8 @@ public class RefreshListViewActivity extends BaseActivity {
     }
 
     private void initView() {
-        swipeRefreshView.setRefreshProgressColor(R.color.theme_red);
-        swipeRefreshView.setLoadMoreProgressColor(R.color.theme_red);
+        swipeRefreshView.setRefreshProgressColor(R.color.thin_red);
+        swipeRefreshView.setLoadMoreProgressColor(R.color.thin_red);
         swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

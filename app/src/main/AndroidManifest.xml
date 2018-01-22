@@ -3,6 +3,7 @@
           package="com.ljy.ljyutils">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
     <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>

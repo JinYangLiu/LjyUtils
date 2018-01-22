@@ -12,7 +12,7 @@
         <com.ljy.view.LjyZoomImageView
             android:id="@+id/iv_1"
             android:layout_width="match_parent"
-            android:background="@color/colorAccent"
+            android:background="@color/thin_green"
             android:layout_height="match_parent"/>
     </LinearLayout>
     <RelativeLayout
