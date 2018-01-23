@@ -1,26 +1,43 @@
 package com.ljy.util;
 
+import com.ljy.bean.DownloadBean;
+
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
+import okio.Source;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Mr.LJY on 2018/1/11.
- *
+ * <p>
  * 网络请求工具类
  */
 public class LjyRetrofitUtil {
@@ -71,7 +88,6 @@ public class LjyRetrofitUtil {
                             .connectTimeout(mConnectTimeout, TimeUnit.SECONDS)//设置连接超时
                             .readTimeout(mReadTimeout, TimeUnit.SECONDS)//设置读超时
                             .writeTimeout(mWriteTimeout, TimeUnit.SECONDS)//设置写超时
-//                            .addInterceptor(commonInterceptor)//拦截器
                             .build();
                 }
             }
@@ -89,9 +105,69 @@ public class LjyRetrofitUtil {
         setCallBack(observable, callBack);
     }
 
+    public Subscriber download(final DownloadBean bean, final ProgressListener progressListener, final DownloadCallBack callBack) {
+        ApiService apiService=bean.getApiService();
+        if (apiService==null) {
+            apiService = getApiServiceProgress(progressListener);
+            bean.setApiService(apiService);
+        }
+        long currentLen = 0;
+        if (bean.getProgress()>0)
+            currentLen = bean.getProgress();
+        Observable<Boolean> observable = apiService.download("bytes=" + currentLen + "-", bean.getLoadUrll())
+                .subscribeOn(Schedulers.io())
+                .map(new Func1<ResponseBody, Boolean>() {
+                    @Override
+                    public Boolean call(ResponseBody responseBody) {
+                        return LjyFileUtil.writeResponseBodyToDisk(responseBody, bean);
+                    }
+                });
+        Subscriber<Boolean> mDownLoadSubscriber = new Subscriber<Boolean>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onCompleted(false);
+            }
+
+            @Override
+            public void onNext(Boolean b) {
+                callBack.onCompleted(b);
+            }
+        };
+        observable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mDownLoadSubscriber);
+        return mDownLoadSubscriber;
+    }
+
+    private ApiService getApiServiceProgress(final ProgressListener progressListener) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(mConnectTimeout, TimeUnit.SECONDS)//设置连接超时
+                .readTimeout(mReadTimeout, TimeUnit.SECONDS)//设置读超时
+                .writeTimeout(mWriteTimeout, TimeUnit.SECONDS)//设置写超时
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Response originalResponse = chain.proceed(chain.request());
+                        return originalResponse.newBuilder()
+                                .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                                .build();
+                    }
+                })//拦截器
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(mBaseUrl)
+                .client(client)//配置okhttp
+                .addConverterFactory(GsonConverterFactory.create())//支持gson
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//增加返回值为Oservable<T>的支持,RxJava
+                .build();
+        return retrofit.create(ApiService.class);
+    }
 
 
-    private interface ApiService {
+    public interface ApiService {
 
         @GET("{methodPath}")
         Observable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
@@ -99,10 +175,15 @@ public class LjyRetrofitUtil {
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         @POST("{methodPath}")
         Observable<Map<String, Object>> post(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+
+        /*断点续传下载接口*/
+        @Streaming/*大文件需要加入这个判断，防止下载过程中写入到内存中*/
+        @GET
+        Observable<ResponseBody> download(@Header("RANGE") String start, @Url String url);
     }
 
     /**
-     *设置回调
+     * 设置回调
      */
     private void setCallBack(final Observable<Map<String, Object>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
@@ -139,6 +220,10 @@ public class LjyRetrofitUtil {
         void onFail(final String failInfo);
     }
 
+    public interface DownloadCallBack {
+        void onCompleted(boolean isSuccess);
+    }
+
 
     /**
      * 设置baseUrl，可以写在Application中
@@ -160,6 +245,60 @@ public class LjyRetrofitUtil {
         mConnectTimeout = connectTimeout;
         mReadTimeout = readTimeout;
         mWriteTimeout = writeTimeout;
+    }
+
+
+    public class ProgressResponseBody extends ResponseBody {
+        private final ResponseBody responseBody;
+        private final ProgressListener progressListener;
+        private BufferedSource bufferedSource;
+
+        public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
+            this.responseBody = responseBody;
+            this.progressListener = progressListener;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return responseBody.contentType();
+        }
+
+
+        @Override
+        public long contentLength() {
+            return responseBody.contentLength();
+        }
+
+        @Override
+        public BufferedSource source() {
+            if (bufferedSource == null) {
+                bufferedSource = Okio.buffer(source(responseBody.source()));
+            }
+            return bufferedSource;
+        }
+
+        private Source source(Source source) {
+            return new ForwardingSource(source) {
+                long totalBytesRead = 0L;
+
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
+                    long bytesRead = super.read(sink, byteCount);
+                    totalBytesRead += bytesRead != -1 ? bytesRead : 0;
+                    progressListener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                    return bytesRead;
+                }
+            };
+        }
+    }
+
+    public interface ProgressListener {
+        /**
+         * @param progress 已经下载或上传字节数
+         * @param total    总字节数
+         * @param done     是否完成
+         */
+        void onProgress(long progress, long total, boolean done);
     }
 
 }
