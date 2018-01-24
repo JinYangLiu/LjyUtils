@@ -66,7 +66,7 @@ public class LjyFileUtil {
         }
     }
 
-    public static byte[] getBytes(File file) {
+    public static byte[] getBytesFromFile(File file) {
         byte[] buffer = null;
         try {
             FileInputStream fis = new FileInputStream(file);
@@ -87,5 +87,14 @@ public class LjyFileUtil {
         return buffer;
     }
 
+    /**
+     * 删除文件
+     *
+     * @param file 文件
+     * @return {@code true}: 删除成功<br>{@code false}: 删除失败
+     */
+    public static boolean deleteFile(File file) {
+        return file != null && (!file.exists() || file.isFile() && file.delete());
+    }
 
 }

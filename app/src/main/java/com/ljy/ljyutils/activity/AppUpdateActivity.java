@@ -20,11 +20,11 @@ import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyRetrofitUtil;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
-import com.ljy.util.LjyTimeUtil;
 import com.ljy.util.LjyToastUtil;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,15 +39,19 @@ public class AppUpdateActivity extends BaseActivity {
     TextView textInfo2;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "anxindai_" + LjyTimeUtil.timestampToDate(System.currentTimeMillis(), "yyyyMMdd_HHmmss") + ".apk");
+    File outputFileJingDong = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "京东商城" + "_1111" + ".apk");
     File outputFileQQ = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "qqMail" + "_1111_" + ".apk");
-    String updateAppPath = "http://www.anxin.com/down.html?cmd=anxinapk";
+            "qqMail" + "_1111" + ".apk");
+    File outputFileWeChat = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "weChat" + "_1111" + ".apk");
+    String updateAppPathJingDong = "http://storage.360buyimg.com/jdmobile/JDMALL-PC2.apk";
     String updateAppPathQQ = "http://app.mail.qq.com/cgi-bin/mailapp?latest=y&from=2&downloadclick=";
+    String updateAppPathWeChat = "http://dldir1.qq.com/weixin/android/weixin661android1220_1.apk";
     private boolean isDone = false;
     private Subscriber subscriber;
-    private DownloadBean mDownloadBean = new DownloadBean(updateAppPathQQ, outputFileQQ);
+    private DownloadBean mDownloadBean;
+    private List<DownloadBean> beans = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,39 +59,52 @@ public class AppUpdateActivity extends BaseActivity {
         setContentView(R.layout.activity_app_update);
         ButterKnife.bind(mActivity);
         initView();
+        beans.add(new DownloadBean(updateAppPathJingDong, outputFileJingDong));
+        beans.add(new DownloadBean(updateAppPathQQ, outputFileQQ));
+        beans.add(new DownloadBean(updateAppPathWeChat, outputFileWeChat));
 
     }
 
     private void initView() {
         String info = String.format("packageName:%s\nappName:%s\nversionName:%s\nversionCode:%d\n",
                 getPackageName(), LjySystemUtil.getAppName(mContext), LjySystemUtil.getVersionName(mContext), LjySystemUtil.getVersionCode(mContext));
-
         textInfo.setText(info);
     }
 
     public void onUpdateBtnClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_update_app:
-                if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    updateApp();
-                } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
-                }
+            case R.id.btn_update_jd:
+                mDownloadBean=beans.get(0);
+                updateApp();
+                break;
+            case R.id.btn_update_qqmail:
+                mDownloadBean=beans.get(1);
+                updateApp();
+                break;
+            case R.id.btn_update_wx:
+                mDownloadBean=beans.get(2);
+                updateApp();
                 break;
             case R.id.btn_getApkHash:
-                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                        "anxindai_20180123_064650.apk");
-                byte[] apkHash = LjyEncryUtil.getMD5(LjyFileUtil.getBytes(outputFile));
+                if (mDownloadBean==null)
+                    return;
+                byte[] apkHash = LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(mDownloadBean.getSaveFile()));
                 String hash1 = new String(apkHash);
                 String hash2 = LjyStringUtil.byte2base64(apkHash);
                 String hash3 = LjyStringUtil.byte2hex(apkHash);
+                textInfo2.setText("apk_hash_md5_hex: "+hash3);
                 LjyLogUtil.i("hash1:" + hash1);
                 LjyLogUtil.i("hash2:" + hash2);
                 LjyLogUtil.i("hash3:" + hash3);
                 break;
             case R.id.btn_pause:
-                if (!subscriber.isUnsubscribed())
+                if (subscriber!=null&&!subscriber.isUnsubscribed())
                     subscriber.unsubscribe();
+                break;
+            case R.id.btn_deleteApk:
+                for (DownloadBean downloadBean:beans){
+                    LjyFileUtil.deleteFile(downloadBean.getSaveFile());
+                }
                 break;
             default:
                 break;
@@ -97,41 +114,47 @@ public class AppUpdateActivity extends BaseActivity {
     private void updateApp() {
         if (mDownloadBean.isDone())
             return;
-        subscriber = LjyRetrofitUtil.getInstance().download(mDownloadBean, new LjyRetrofitUtil.ProgressListener() {
-            @Override
-            public void onProgress(long progress, long total, boolean done) {
-                String info = "源文件len:"+mDownloadBean.getTotal()+",\n已下载len:"+mDownloadBean.getProgress()+",\nprogress:" + progress + ",\ntotal:" + total + ",\ndone:" + done;
-                LjyLogUtil.i(info);
-                if (mDownloadBean.getTotal() > total) {
-                    progress = mDownloadBean.getTotal() - total + progress;
-                } else {
-                    mDownloadBean.setTotal(total);
-                }
-                mDownloadBean.setProgress(progress);
-                mDownloadBean.setDone(done);
-                Message message = new Message();
-                message.obj = info;
-                Bundle bundle = new Bundle();
-                bundle.putLong("progress", progress);
-                bundle.putLong("total", mDownloadBean.getTotal());
-                message.setData(bundle);
-                message.what = 111;
-                mHandler.sendMessage(message);
-                isDone = done;
-            }
-        }, new LjyRetrofitUtil.DownloadCallBack() {
-            @Override
-            public void onCompleted(boolean isSuccess) {
-                if (isDone && isSuccess) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(mDownloadBean.getSaveFile()), "application/vnd.android.package-archive");
-                    startActivity(intent);
-                } else {
-                    LjyToastUtil.toast(mContext, "下载失败");
-                }
-            }
-        });
+        if (subscriber!=null&&subscriber==mDownloadBean.getSubscriber()&&!subscriber.isUnsubscribed())
+            return;
+        if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
+            subscriber = LjyRetrofitUtil.getInstance().download(mDownloadBean, new LjyRetrofitUtil.ProgressListener() {
+                @Override
+                public void onProgress(long progress, long total, boolean done) {
+                    String info = "文件名:" + mDownloadBean.getSaveFile().getName() + ",\n源文件len:" + mDownloadBean.getTotal() + ",\n已下载len:" + mDownloadBean.getProgress() + ",\nprogress:" + progress + ",\ntotal:" + total + ",\ndone:" + done;
+                    LjyLogUtil.i(info);
+                    if (mDownloadBean.getTotal() > total) {
+                        progress = mDownloadBean.getTotal() - total + progress;
+                    } else {
+                        mDownloadBean.setTotal(total);
+                    }
+                    mDownloadBean.setProgress(progress);
+                    mDownloadBean.setDone(done);
+                    Message message = new Message();
+                    message.obj = info;
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("progress", progress);
+                    bundle.putLong("total", mDownloadBean.getTotal());
+                    message.setData(bundle);
+                    message.what = 111;
+                    mHandler.sendMessage(message);
+                    isDone = done;
+                }
+            }, new LjyRetrofitUtil.DownloadCallBack() {
+                @Override
+                public void onCompleted(boolean isSuccess) {
+                    if (isDone && isSuccess) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(mDownloadBean.getSaveFile()), "application/vnd.android.package-archive");
+                        startActivity(intent);
+                    } else {
+                        LjyToastUtil.toast(mContext, "下载失败");
+                    }
+                }
+            });
+        } else {
+            LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
+        }
     }
 
     MyHandler mHandler = new MyHandler(this);

@@ -4,6 +4,8 @@ import com.ljy.util.LjyRetrofitUtil;
 
 import java.io.File;
 
+import rx.Subscriber;
+
 /**
  * Created by Mr.LJY on 2018/1/23.
  */
@@ -15,10 +17,19 @@ public class DownloadBean {
     private long total=0;
     private boolean done;
     private LjyRetrofitUtil.ApiService mApiService;
+    private Subscriber subscriber;
 
     public DownloadBean(String loadUrll, File fileName) {
         this.loadUrll = loadUrll;
         this.saveFile = fileName;
+    }
+
+    public Subscriber getSubscriber() {
+        return subscriber;
+    }
+
+    public void setSubscriber(Subscriber subscriber) {
+        this.subscriber = subscriber;
     }
 
     public LjyRetrofitUtil.ApiService getApiService() {

@@ -139,6 +139,7 @@ public class LjyRetrofitUtil {
         };
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mDownLoadSubscriber);
+        bean.setSubscriber(mDownLoadSubscriber);
         return mDownLoadSubscriber;
     }
 

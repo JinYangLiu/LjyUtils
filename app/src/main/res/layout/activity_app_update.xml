@@ -23,28 +23,49 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/btn_getApkHash"
-        android:layout_marginTop="5dp"
-        android:onClick="onUpdateBtnClick"
-        android:text="取得apkHash"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/btn_update_app"
-        android:onClick="onUpdateBtnClick"
-        android:text="下载并安装app"
-        android:layout_above="@+id/btn_getApkHash"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/btn_pause"
-        android:onClick="onUpdateBtnClick"
-        android:text="暂停下载"
-        android:layout_above="@+id/btn_update_app"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+    <HorizontalScrollView android:layout_width="match_parent"
+                          android:layout_alignParentBottom="true"
+                          android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="match_parent"
+                      android:orientation="horizontal"
+                      android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_getApkHash"
+                android:onClick="onUpdateBtnClick"
+                android:text="取得apkHash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_deleteApk"
+                android:onClick="onUpdateBtnClick"
+                android:text="删除已下载的apk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_pause"
+                android:onClick="onUpdateBtnClick"
+                android:text="暂停下载"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_update_jd"
+                android:onClick="onUpdateBtnClick"
+                android:text="下载并安装京东商城"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_update_qqmail"
+                android:onClick="onUpdateBtnClick"
+                android:text="下载并安装QQ邮箱"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_update_wx"
+                android:onClick="onUpdateBtnClick"
+                android:text="下载并安装微信"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </RelativeLayout>
