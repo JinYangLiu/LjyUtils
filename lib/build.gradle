@@ -56,4 +56,10 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${libSupportVersion}"
     //design
     compile "com.android.support:design:${libSupportVersion}"
+    //xml
+    compile ('com.squareup.retrofit2:converter-simplexml:2.1.0'){
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'stax', module: 'stax'
+    }
 }

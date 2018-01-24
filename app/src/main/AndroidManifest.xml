@@ -181,6 +181,8 @@
         </activity>
         <activity android:name=".activity.DoodleActivity">
         </activity>
+        <activity android:name=".activity.PicUploadActivity">
+        </activity>
     </application>
 
 </manifest>

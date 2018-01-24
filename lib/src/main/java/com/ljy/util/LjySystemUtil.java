@@ -2,6 +2,7 @@ package com.ljy.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by Mr.LJY on 2017/12/25.
@@ -298,6 +301,22 @@ public class LjySystemUtil {
             return packageManager.getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             return null;
+        }
+    }
+
+    /**
+     * 复制文字到剪切板
+     * @param context
+     * @param info
+     */
+    public static void copyToClipboard(Context context,String info){
+        if (android.os.Build.VERSION.SDK_INT > 11) {
+            android.content.ClipboardManager c = (android.content.ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+            c.setPrimaryClip(ClipData.newPlainText("tag", info));
+
+        } else {
+            android.text.ClipboardManager c = (android.text.ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+            c.setText(info);
         }
     }
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.PicUploadActivity">
+
+    <Button
+        android:id="@+id/btn_uploadImg"
+        android:text="上传图片"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@id/text_info"
+        android:layout_above="@+id/btn_uploadImg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/imageView_show"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/text_info"
+        android:layout_height="match_parent"/>
+</RelativeLayout>
