@@ -1,10 +1,10 @@
-# ![Awesome Adb](./assets/title.png)
+# ![Awesome Adb]
 
 ADB，即 [Android Debug Bridge](https://developer.android.com/studio/command-line/adb.html)，它是 Android 开发/测试人员不可替代的强大工具，也是 Android 设备玩家的好玩具。
 
 **注：** 有部分命令的支持情况可能与 Android 系统版本及定制 ROM 的实现有关。
 
-# ![Table of Contents]
+# 目录
 
 <!-- vim-markdown-toc GFM -->
 
@@ -2384,22 +2384,5 @@ Otherwise check for a confirmation dialog on your device.
 
 * [fb-adb](https://github.com/facebook/fb-adb) - A better shell for Android devices (for Mac).
 
-## 致谢
-
-感谢朋友们无私的分享与补充（排名不分先后）。
-
-[zxning](https://github.com/zxning)，[linhua55](https://github.com/linhua55)，[codeskyblue](https://github.com/codeskyblue)，[seasonyuu](https://github.com/seasonyuu)，[fan123199](https://github.com/fan123199)，[zhEdward](https://github.com/zhEdward)，[0x8BADFOOD](https://github.com/0x8BADFOOD)，[keith666666](https://github.com/keith666666)，[shawnlinboy](https://github.com/shawnlinboy)。
-
 ## 参考链接
-
-* [Android Debug Bridge](https://developer.android.com/studio/command-line/adb.html)
-* [ADB Shell Commands](https://developer.android.com/studio/command-line/shell.html)
-* [logcat Command-line Tool](https://developer.android.com/studio/command-line/logcat.html)
-* [Android ADB命令大全](http://zmywly8866.github.io/2015/01/24/all-adb-command.html)
-* [adb 命令行的使用记录](https://github.com/ZQiang94/StudyRecords/blob/master/other/src/main/java/com/other/adb%20%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95.md)
-* [Android ADB命令大全(通过ADB命令查看wifi密码、MAC地址、设备信息、操作文件、查看文件、日志信息、卸载、启动和安装APK等)](http://www.jianshu.com/p/860bc2bf1a6a)
-* [那些做Android开发必须知道的ADB命令](http://yifeiyuan.me/2016/06/30/ADB%E5%91%BD%E4%BB%A4%E6%95%B4%E7%90%86/)
-* [adb shell top](http://blog.csdn.net/kittyboy0001/article/details/38562515)
-* [像高手一样使用ADB命令行（2）](http://cabins.github.io/2016/03/25/UseAdbLikeAPro-2/)
-
-[1]: #ip-地址
+* https://github.com/mzlogin/awesome-adb
