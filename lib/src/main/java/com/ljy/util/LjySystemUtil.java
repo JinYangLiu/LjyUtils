@@ -1,5 +1,6 @@
 package com.ljy.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ClipData;
@@ -14,6 +15,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
+
+import com.ljy.view.LjyMDDialog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -156,6 +159,36 @@ public class LjySystemUtil {
 
         //disAllowIndexs没有被允许的权限角标
         void fail(List<Integer> disAllowIndexs);
+    }
+
+    /**
+     * 8.0以上允许未知来源权限(更新app时使用到)
+     */
+    public static void checkRequestPermision(final Activity activity, PermissionResult result) {
+        //8.0以上允许未知来源权限
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            boolean haveInstallPermission = activity.getPackageManager().canRequestPackageInstalls();
+            if (haveInstallPermission) {
+                //有权限直接更新
+                result.success();
+            } else {
+                //没权限请求权限
+                new LjyMDDialog(activity).alert("申请权限", "安装应用需要打开未知来源权限，请去设置中开启权限",
+                        "好的", new LjyMDDialog.PositiveListener() {
+                            @Override
+                            public void positive() {
+                                //没权限-申请权限
+                                ActivityCompat.requestPermissions(activity,
+                                        new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES},
+                                        111);
+
+                            }
+                        }, "", null, true);
+            }
+        } else {
+            //有权限直接更新
+            result.success();
+        }
     }
 
     /**
