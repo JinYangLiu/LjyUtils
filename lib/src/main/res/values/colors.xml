@@ -9,4 +9,8 @@
     <color name="thin_green">#89cbc1</color>
     <color name="alpha_gray">#ffdddddd</color>
     <color name="alpha_0">#00ffffff</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorYellow">#feef50</color>
 </resources>
