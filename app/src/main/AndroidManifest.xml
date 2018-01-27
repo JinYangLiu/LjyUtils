@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
     <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
@@ -64,6 +67,11 @@
             android:enabled="true"
             android:exported="true"/>
         //activity
+        //bugly
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent"/>
         <activity
             android:name=".base.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -182,6 +190,8 @@
         <activity android:name=".activity.DoodleActivity">
         </activity>
         <activity android:name=".activity.PicUploadActivity">
+        </activity>
+        <activity android:name=".activity.BuglyDemoActivity">
         </activity>
     </application>
 
