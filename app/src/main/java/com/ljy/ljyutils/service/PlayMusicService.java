@@ -1,12 +1,15 @@
 package com.ljy.ljyutils.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -73,8 +76,19 @@ public class PlayMusicService extends Service {
         Intent notificationIntent = new Intent(this, MusicActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        //新建Builer对象
-        Notification notification = new NotificationCompat.Builder(this)
+        String channelID = "1";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String channelName = "Channel1";
+            NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            channel.enableLights(true); //是否在桌面icon右上角展示小红点
+            channel.setLightColor(Color.GREEN); //小红点颜色
+            channel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
+            manager.createNotificationChannel(channel);
+        }
+
+        Notification notification = new NotificationCompat.Builder(this, channelID) //与channelId对应
+                //icon title text必须包含，不然影响桌面图标小红点的展示
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(pendingIntent)
                 .setCustomContentView(getRemoteViews(isPlaying))
@@ -82,14 +96,14 @@ public class PlayMusicService extends Service {
         startForeground(1, notification);//让Service变成前台Service,并在系统的状态栏显示出来
     }
 
-    private RemoteViews getRemoteViews( boolean isPlaying) {
+    private RemoteViews getRemoteViews(boolean isPlaying) {
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification);
         remoteViews.setTextViewText(R.id.tv_title, "歌曲名：暧昧");
         remoteViews.setTextViewText(R.id.tv_subtitle, "演唱者：薛之谦");
-        remoteViews.setImageViewResource(R.id.iv_play_pause, isPlaying?R.drawable.ic_status_bar_pause_dark:R.drawable.ic_status_bar_play_dark);
+        remoteViews.setImageViewResource(R.id.iv_play_pause, isPlaying ? R.drawable.ic_status_bar_pause_dark : R.drawable.ic_status_bar_play_dark);
         Intent intent = new Intent();
         intent.setAction(PlayMusicService.action_ser);
-        intent.putExtra("type", isPlaying?MUSIC_PAUSE:MUSIC_PLAY);
+        intent.putExtra("type", isPlaying ? MUSIC_PAUSE : MUSIC_PLAY);
         intent.putExtra("isChangeUI", true);
         PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.iv_play_pause, playPendingIntent);
@@ -107,12 +121,12 @@ public class PlayMusicService extends Service {
             public void onReceive(Context context, Intent intent) {
                 if (action_ser.equals(intent.getAction())) {
                     playMusic(intent);
-                    boolean isChangeUI=intent.getBooleanExtra("isChangeUI",false);
-                    LjyLogUtil.i("isChangeUI:"+isChangeUI);
-                    if (isChangeUI){
+                    boolean isChangeUI = intent.getBooleanExtra("isChangeUI", false);
+                    LjyLogUtil.i("isChangeUI:" + isChangeUI);
+                    if (isChangeUI) {
                         //发送广播设置UI更新
                         Intent intent2 = new Intent();
-                        intent2.putExtra("isToPlay", intent.getIntExtra("type",-1)==1);
+                        intent2.putExtra("isToPlay", intent.getIntExtra("type", -1) == 1);
                         intent2.setAction(MusicActivity.action_act_changeUI);
                         sendBroadcast(intent2);
                     }
