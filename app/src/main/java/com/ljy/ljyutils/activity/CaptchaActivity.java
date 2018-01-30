@@ -1,5 +1,7 @@
 package com.ljy.ljyutils.activity;
 
+import android.app.WallpaperManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +28,9 @@ public class CaptchaActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captcha);
         ButterKnife.bind(mActivity);
+        //将手机壁纸设置为应用背景
+        Drawable wallpaper= WallpaperManager.getInstance(mContext).getDrawable();
+        this.getWindow().setBackgroundDrawable(wallpaper);
 
     }
 

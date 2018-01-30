@@ -1,5 +1,7 @@
 package com.ljy.ljyutils.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -22,7 +24,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PicUploadActivity extends BaseActivity {
+public class PicUploadActivity extends Activity {
 
     @BindView(R.id.imageView_show)
     ImageView mImageView;
@@ -32,11 +34,13 @@ public class PicUploadActivity extends BaseActivity {
     @BindView(R.id.text_info)
     TextView text_info;
 
+    private Context mContext=this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pic_upload);
-        ButterKnife.bind(mActivity);
+        ButterKnife.bind(this);
         initView();
 
     }
