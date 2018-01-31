@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.VideoLiveWallpaperActivity">
+    <CheckBox
+        android:id="@+id/id_cb_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="是否静音" />
+    <Button
+        android:id="@+id/btn_videoWallPaper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onWallPaperClick"
+        android:layout_marginTop="4dp"
+        android:text="视频作为壁纸" />
+    <Button
+        android:id="@+id/btn_systemWallPaper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onWallPaperClick"
+        android:layout_marginTop="4dp"
+        android:text="系统选择壁纸" />
+    <Button
+        android:id="@+id/btn_wallpaperManager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onWallPaperClick"
+        android:layout_marginTop="4dp"
+        android:textAllCaps="false"
+        android:text="WallpaperManager设置壁纸" />
+</LinearLayout>

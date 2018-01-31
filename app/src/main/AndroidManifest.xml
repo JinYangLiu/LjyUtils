@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ljy.ljyutils">
+          package="com.ljy.ljyutils">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+    //设置视频壁纸的权限
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
-    <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission" />
+    <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
     <application
         android:name=".base.MyApplication"
@@ -24,24 +26,24 @@
             android:name=".broadcast.MyBroadcastReceiver1"
             android:permission="com.ljy.ljyutils.BroadcastReceiverPermission">
             <intent-filter android:priority="1">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         <receiver
             android:name=".broadcast.MyBroadcastReceiver2"
             android:exported="false">
             <intent-filter android:priority="100">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".broadcast.MyBroadcastReceiver3">
             <intent-filter android:priority="1000">
-                <action android:name="com.ljy.ljyutils.broadcast" />
+                <action android:name="com.ljy.ljyutils.broadcast"/>
             </intent-filter>
         </receiver>
         //注册service
-        <service android:name=".service.MyNormalService" />
-        <service android:name=".service.MyForegroundNormalService" />
+        <service android:name=".service.MyNormalService"/>
+        <service android:name=".service.MyForegroundNormalService"/>
         //注册并声明为远程服务
         //android:process=":remote" //将本地服务设置成远程服务
         //android:exported="true" //设置可被其他进程调用
@@ -52,20 +54,36 @@
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="com.ljy.ljyutils.IMyAidlInterface" />
+                <action android:name="com.ljy.ljyutils.IMyAidlInterface"/>
             </intent-filter>
         </service>
         //注册并声明intentService
         <service android:name=".service.MyIntentService">
             <intent-filter>
-                <action android:name="com.ljy.ljyutils.mIntentService" />
+                <action android:name="com.ljy.ljyutils.mIntentService"/>
             </intent-filter>
         </service>
         //注册音乐播放的service
         <service
             android:name=".service.PlayMusicService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
+
+        <!-- 配置视频壁纸Service -->
+        <service
+            android:name="com.ljy.ljyutils.service.VideoLiveWallpaper"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:process=":wallpaper">
+            <!-- 为实时壁纸配置intent-filter -->
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <!-- 为实时壁纸配置meta-data -->
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/livewallpaper" />
+        </service>
         //友盟推送 自定义service
         <!-- <service android:name="com.ljy.ljyutils.service.MyPushIntentService" /> -->
 
@@ -73,135 +91,137 @@
         //友盟Appkey
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="5a6ebbfaf43e482080000201" />
+            android:value="5a6ebbfaf43e482080000201"/>
         //友盟Umeng Message Secret
         <meta-data
             android:name="UMENG_MESSAGE_SECRET"
-            android:value="9b9048088c76f49a591774c52f57c3a2" />
+            android:value="9b9048088c76f49a591774c52f57c3a2"/>
         //meta-data end
         //activity
         //bugly
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent" />
+            android:theme="@android:style/Theme.Translucent"/>
         <activity
             android:name=".base.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.UseUtilsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GlideUtilActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ViewSizeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GestureLockActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RadarViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.Radar2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ArgueProgressActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.VoteActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RefreshListViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RefreshRecyclerViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PhotoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoActionBar" />
+            android:theme="@style/AppThemeNoActionBar"/>
         <activity
             android:name=".activity.GifActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.DemoDa2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.RetrofitActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.FishActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.BroadcastActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ServiceActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.FragmentDemoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.GreenDaoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.MusicActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoActionBar" />
+            android:theme="@style/AppThemeNoActionBar"/>
         <activity
             android:name=".activity.LottieActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.CalendarActivity"></activity>
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.CalendarActivity"/>
         <activity android:name=".activity.BallActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BezierActivity"></activity>
-        <activity android:name=".activity.AppUpdateActivity"></activity>
-        <activity android:name=".activity.BindDataActivity"></activity>
-        <activity android:name=".activity.DoodleActivity"></activity>
-        <activity android:name=".activity.PicUploadActivity"
-            android:theme="@android:style/Theme.Wallpaper"
-            ></activity>
-        <activity android:name=".activity.BuglyDemoActivity"></activity>
-        <activity android:name=".activity.CaptchaActivity"></activity>
+        <activity android:name=".activity.BezierActivity"/>
+        <activity android:name=".activity.AppUpdateActivity"/>
+        <activity android:name=".activity.BindDataActivity"/>
+        <activity android:name=".activity.DoodleActivity"/>
+        <activity
+            android:name=".activity.PicUploadActivity"
+            android:theme="@android:style/Theme.Wallpaper"/>
+        <activity android:name=".activity.BuglyDemoActivity"/>
+        <activity android:name=".activity.CaptchaActivity"/>
+        <activity android:name=".activity.VideoLiveWallpaperActivity">
+        </activity>
     </application>
 
 </manifest>

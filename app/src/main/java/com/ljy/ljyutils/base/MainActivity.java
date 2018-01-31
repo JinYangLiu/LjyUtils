@@ -36,6 +36,7 @@ import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
+import com.ljy.ljyutils.activity.VideoLiveWallpaperActivity;
 import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
@@ -71,7 +72,7 @@ public class MainActivity extends BaseActivity {
                 "拍照和选取图片工具类的使用", "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
                 "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用", "GreenDao的使用", "音乐播放demo",
                 "Lottie的demo", "calendar的demo", "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式","DataBinding的使用",
-                "一个涂鸦画板","上传图片","buglyDemo","验证码demo"};
+                "一个涂鸦画板","上传图片","buglyDemo","验证码demo","视频壁纸"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -80,7 +81,7 @@ public class MainActivity extends BaseActivity {
                 FishActivity.class, BroadcastActivity.class, ServiceActivity.class, FragmentDemoActivity.class,
                 GreenDaoActivity.class, MusicActivity.class, LottieActivity.class, CalendarActivity.class,
                 BallActivity.class, BezierActivity.class, AppUpdateActivity.class,null, BindDataActivity.class,
-                DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class};
+                DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class, VideoLiveWallpaperActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
