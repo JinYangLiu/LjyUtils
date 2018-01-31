@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.ljy.lib.R;
 import com.ljy.util.LjySystemUtil;
@@ -34,6 +35,12 @@ class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
         textPaint.setTextSize(textSize);
         textPaint.setAntiAlias(true);
         textPaint.setColor(Color.parseColor("#545454"));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.onTouchEvent(event);
     }
 
     @Override
