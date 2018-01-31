@@ -62,6 +62,10 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(mActivity);
         isNight = getSpUtilInstance().get(IS_NIGHT, false);
         setNightMode(isNight);
+
+        //设置首页不能右滑退出
+        getSwipeBackLayout().setEnableGesture(false);
+
         initData();
         initView();
     }

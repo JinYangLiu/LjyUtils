@@ -9,6 +9,11 @@
         <item name="colorPrimaryDark">@color/thin_green</item>
         <!--应用中android原始控件的颜色，如editText下划线，开关，radiobutton，progressbar-->
         <item name="colorAccent">@color/thin_red</item>
+        <!--右滑退出需要添加下面这行配置-->
+        <!--这个设置会在6.0及以上遇到一个问题：
+        点击进入应用， 进入最近程序列表界面（长按home 或者菜单键），
+        从最近程序列表界面进入， 点击back ， 会先闪一下 最近列表界面，再退出。-->
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar"/>

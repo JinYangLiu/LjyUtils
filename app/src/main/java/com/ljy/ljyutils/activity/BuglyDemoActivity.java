@@ -9,13 +9,19 @@ import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.tencent.bugly.beta.Beta;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class BuglyDemoActivity extends BaseActivity {
+
+    @BindView(R.id.btnShowToast)
+    Button showT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bugly_demo);
-        Button showT=findViewById(R.id.btnShowToast);
+        ButterKnife.bind(mActivity);
         showT.setTextColor(0xffff0000);
     }
 

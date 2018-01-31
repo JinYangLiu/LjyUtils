@@ -4,13 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.ljy.ljyutils.R;
-import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.service.VideoLiveWallpaper;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class VideoLiveWallpaperActivity extends BaseActivity {
+public class VideoLiveWallpaperActivity extends AppCompatActivity {
 
     @BindView(R.id.id_cb_voice)
     CheckBox mCbVoice;
@@ -27,8 +28,11 @@ public class VideoLiveWallpaperActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_live_wallpaper);
+        //将手机壁纸设置为应用背景
+        Drawable wallpaper = WallpaperManager.getInstance(this).getDrawable();
+        this.getWindow().setBackgroundDrawable(wallpaper);
 
-        ButterKnife.bind(mActivity);
+        ButterKnife.bind(this);
 
         initView();
     }

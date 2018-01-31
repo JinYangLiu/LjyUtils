@@ -6,18 +6,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.ljy.ljyutils.bean.DaoMaster;
 import com.ljy.ljyutils.bean.DaoSession;
 import com.ljy.util.LjySPUtil;
+import com.ljy.view.swipeBack.LjySwipeBackActivity;
 import com.umeng.message.PushAgent;
+
 
 /**
  * Created by Mr.LJY on 2018/1/22.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends LjySwipeBackActivity {
     public Context mContext = MyApplication.getMyApplicationContext();
     public Activity mActivity = this;
     private DaoSession daoSession;
