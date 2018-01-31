@@ -1,5 +1,6 @@
 package com.ljy.ljyutils.activity;
 
+import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -51,6 +52,7 @@ public class VideoLiveWallpaperActivity extends BaseActivity {
     }
 
     //btn click事件
+    @SuppressLint("ResourceType")
     public void onWallPaperClick(View view) {
         switch (view.getId()) {
             case R.id.btn_videoWallPaper:
@@ -65,6 +67,7 @@ public class VideoLiveWallpaperActivity extends BaseActivity {
                 WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
                 try {
                     wallpaperManager.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.music_bg));
+//                    wallpaperManager.setResource(R.drawable.music_bg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
