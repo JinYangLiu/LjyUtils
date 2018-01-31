@@ -71,18 +71,19 @@
 
         <!-- 配置视频壁纸Service -->
         <service
-            android:name="com.ljy.ljyutils.service.VideoLiveWallpaper"
+            android:name=".service.VideoLiveWallpaper"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_WALLPAPER"
             android:process=":wallpaper">
+
             <!-- 为实时壁纸配置intent-filter -->
             <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
+                <action android:name="android.service.wallpaper.WallpaperService"/>
             </intent-filter>
             <!-- 为实时壁纸配置meta-data -->
             <meta-data
                 android:name="android.service.wallpaper"
-                android:resource="@xml/livewallpaper" />
+                android:resource="@xml/livewallpaper"/>
         </service>
         //友盟推送 自定义service
         <!-- <service android:name="com.ljy.ljyutils.service.MyPushIntentService" /> -->
@@ -221,6 +222,10 @@
         <activity android:name=".activity.BuglyDemoActivity"/>
         <activity android:name=".activity.CaptchaActivity"/>
         <activity android:name=".activity.VideoLiveWallpaperActivity">
+        </activity>
+        <activity android:name=".activity.DrawerActivity">
+        </activity>
+        <activity android:name=".activity.SlidingMenuActivity">
         </activity>
     </application>
 

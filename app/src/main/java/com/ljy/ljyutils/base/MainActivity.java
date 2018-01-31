@@ -19,6 +19,7 @@ import com.ljy.ljyutils.activity.CalendarActivity;
 import com.ljy.ljyutils.activity.CaptchaActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.DoodleActivity;
+import com.ljy.ljyutils.activity.DrawerActivity;
 import com.ljy.ljyutils.activity.FishActivity;
 import com.ljy.ljyutils.activity.FragmentDemoActivity;
 import com.ljy.ljyutils.activity.GestureLockActivity;
@@ -35,6 +36,7 @@ import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
+import com.ljy.ljyutils.activity.SlidingMenuActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.VideoLiveWallpaperActivity;
 import com.ljy.ljyutils.activity.VideoPlayerActivity;
@@ -71,12 +73,15 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
-        String[] textArr = new String[]{"Utils的使用", "GlideUtil的使用", "setViewSize的使用", "手势锁view的使用", "雷达图view的使用",
-                "辩论view的使用", "投票view的使用", "刷新和加载更多ListView的使用", "刷新和加载更多RecycleView的使用",
-                "拍照和选取图片工具类的使用", "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
-                "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用", "GreenDao的使用", "音乐播放demo",
-                "Lottie的demo", "calendar的demo", "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式","DataBinding的使用",
-                "一个涂鸦画板","上传图片","buglyDemo","验证码demo","设置壁纸"};
+        String[] textArr = new String[]{"Utils的使用", "GlideUtil的使用", "setViewSize的使用",
+                "手势锁view的使用", "雷达图view的使用", "辩论view的使用", "投票view的使用",
+                "刷新和加载更多ListView的使用", "刷新和加载更多RecycleView的使用", "拍照和选取图片工具类的使用",
+                "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
+                "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用",
+                "GreenDao的使用", "音乐播放demo", "Lottie的demo", "calendar的demo",
+                "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式","DataBinding的使用",
+                "一个涂鸦画板","上传图片","buglyDemo","验证码demo",
+                "设置壁纸","DrawerLayout实现侧滑菜单","SlidingMenu实现侧滑菜单"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -85,7 +90,8 @@ public class MainActivity extends BaseActivity {
                 FishActivity.class, BroadcastActivity.class, ServiceActivity.class, FragmentDemoActivity.class,
                 GreenDaoActivity.class, MusicActivity.class, LottieActivity.class, CalendarActivity.class,
                 BallActivity.class, BezierActivity.class, AppUpdateActivity.class,null, BindDataActivity.class,
-                DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class, VideoLiveWallpaperActivity.class};
+                DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class,
+                VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
