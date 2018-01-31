@@ -23,6 +23,15 @@
                 android:padding="2dp"
                 android:layout_width="300dp"
                 android:layout_height="100dp" />
+            <com.ljy.view.captchaPic.LjyCaptchaPictureView
+                android:id="@+id/captCha"
+                android:layout_width="match_parent"
+                android:layout_marginTop="30dp"
+                app:mode="mode_nonbar"
+                app:src="@mipmap/mountain"
+                app:blockSize="50dp"
+                app:max_fail_count="5"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 
@@ -33,5 +42,13 @@
         android:onClick="onCaptchaBtnClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <CheckBox
+        android:id="@+id/checkbox_captcha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_reset"
+        android:checked="true"
+        android:textColor="@color/white"
+        android:text="是否显示拖动条" />
 
 </RelativeLayout>
