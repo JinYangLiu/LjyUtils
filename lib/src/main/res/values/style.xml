@@ -21,4 +21,9 @@
     <style name="AppCompatTextInputlayout">
         <item name="colorAccent">#8A000000</item>
     </style>
+
+    <style name="MySeekbarSytle" parent="Base.Widget.AppCompat.SeekBar">
+        <item name="android:thumb">@drawable/thumb</item>
+        <item name="android:progressDrawable">@drawable/po_seekbar</item>
+    </style>
 </resources>
