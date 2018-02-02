@@ -9,15 +9,18 @@ import android.view.View;
 
 import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.activity.AnimatorActivity;
 import com.ljy.ljyutils.activity.AppUpdateActivity;
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.BallActivity;
 import com.ljy.ljyutils.activity.BezierActivity;
+import com.ljy.ljyutils.activity.BindDataActivity;
 import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.BuglyDemoActivity;
 import com.ljy.ljyutils.activity.CalendarActivity;
 import com.ljy.ljyutils.activity.CaptchaActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
+import com.ljy.ljyutils.activity.DialogDemoActivity;
 import com.ljy.ljyutils.activity.DoodleActivity;
 import com.ljy.ljyutils.activity.DrawerActivity;
 import com.ljy.ljyutils.activity.FishActivity;
@@ -28,7 +31,6 @@ import com.ljy.ljyutils.activity.GlideUtilActivity;
 import com.ljy.ljyutils.activity.GreenDaoActivity;
 import com.ljy.ljyutils.activity.LottieActivity;
 import com.ljy.ljyutils.activity.MusicActivity;
-import com.ljy.ljyutils.activity.BindDataActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.PicUploadActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
@@ -79,9 +81,10 @@ public class MainActivity extends BaseActivity {
                 "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
                 "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用",
                 "GreenDao的使用", "音乐播放demo", "Lottie的demo", "calendar的demo",
-                "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式","DataBinding的使用",
-                "一个涂鸦画板","上传图片","buglyDemo","验证码demo",
-                "设置壁纸","DrawerLayout实现侧滑菜单","SlidingMenu实现侧滑菜单"};
+                "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式", "DataBinding的使用",
+                "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
+                "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
+                "动画的使用"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -89,9 +92,10 @@ public class MainActivity extends BaseActivity {
                 GifActivity.class, VideoPlayerActivity.class, DemoDa2Activity.class, RetrofitActivity.class,
                 FishActivity.class, BroadcastActivity.class, ServiceActivity.class, FragmentDemoActivity.class,
                 GreenDaoActivity.class, MusicActivity.class, LottieActivity.class, CalendarActivity.class,
-                BallActivity.class, BezierActivity.class, AppUpdateActivity.class,null, BindDataActivity.class,
+                BallActivity.class, BezierActivity.class, AppUpdateActivity.class, null, BindDataActivity.class,
                 DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class,
-                VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class};
+                VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
+                AnimatorActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);

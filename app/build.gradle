@@ -97,6 +97,7 @@ dependencies {
     compile 'com.meituan.android.walle:library:1.1.6'
     //友盟推送
     compile project(':push')
+    compile 'com.android.support:design:26.+'
 }
 
 // 依赖插件脚本

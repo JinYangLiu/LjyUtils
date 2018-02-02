@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--采用<translate /> 标签表示平移动画-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+           android:duration="2000"
+           android:startOffset="1000"
+           android:fillBefore="true"
+           android:fillAfter="false"
+           android:repeatMode="restart"
+           android:repeatCount="1"
+
+           android:fromXDelta="-200"
+           android:fromYDelta="-200"
+           android:toXDelta="200"
+           android:toYDelta="200"
+/>
+
+    <!--duration 持续时长
+        startOffset 延迟开始时间
+        fillBefore 播放完成后视图是否停留在动画开始的状态,默认true
+        fillAfter 播放完成后视图是否停留在动画结束状态，优先于fillBefore，默认false
+        fillEnable 是否应用fillBefore的设置，对fillAfter无影响，默认true
+        repeatMode 重复播放动画模式，restart是正序播放，reverse是倒叙播放
+        repeatCount 重复次数（0是不重复，即只播放1次；infinite是无限重复）
+        interpolator 插值器，影响动画的播放速度和加速度
+    -->

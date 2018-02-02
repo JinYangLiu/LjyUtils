@@ -22,7 +22,7 @@ import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
-import com.ljy.view.LjyMDDialog;
+import com.ljy.view.LjyMDDialogManager;
 import com.ljy.view.LjyTagView;
 import com.zhihu.matisse.Matisse;
 
@@ -192,8 +192,8 @@ public class PhotoActivity extends BaseActivity {
                         @Override
                         public boolean onLongClick(View v) {
                             LjyLogUtil.i("onLongClick");
-                            LjyMDDialog dialog=new LjyMDDialog(mActivity);
-                            dialog.alert("温馨提示", "是否删除" + tagView.getContent(), "确定", new LjyMDDialog.PositiveListener() {
+                            LjyMDDialogManager dialog=new LjyMDDialogManager(mActivity);
+                            dialog.alertTwoButton("温馨提示", "是否删除" + tagView.getContent(), "确定", new LjyMDDialogManager.OnPositiveListener() {
                                 @Override
                                 public void positive() {
                                     if (tagsContainer != null)

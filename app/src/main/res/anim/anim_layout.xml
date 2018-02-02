@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--// 采用LayoutAnimation标签-->
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:animation="@anim/view_animation"
+                 android:animationOrder="normal"
+                 android:delay="0.5"/>
+    <!--// 子元素开始动画的时间延迟-->
+    <!--// 如子元素入场动画的时间总长设置为300ms-->
+    <!--// 那么 delay = "0.5" 表示每个子元素都会延迟150ms才会播放动画效果-->
+    <!--// 第一个子元素延迟150ms播放入场效果；第二个延迟300ms，以此类推-->
+
+    <!--android:animationOrder="normal"-->
+    <!--// 表示子元素动画的顺序-->
+    <!--// 可设置属性为：-->
+    <!--// 1. normal ：顺序显示，即排在前面的子元素先播放入场动画-->
+    <!--// 2. reverse：倒序显示，即排在后面的子元素先播放入场动画-->
+    <!--// 3. random：随机播放入场动画-->
+
+    <!--android:animation="@anim/view_animation"-->
+    <!--// 设置入场的具体动画效果-->
+    <!--// 将步骤1的子元素出场动画设置到这里-->
+
+
+

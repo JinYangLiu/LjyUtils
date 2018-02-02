@@ -16,7 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.ljy.view.LjyMDDialog;
+import com.ljy.view.LjyMDDialogManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -173,8 +173,8 @@ public class LjySystemUtil {
                 result.success();
             } else {
                 //没权限请求权限
-                new LjyMDDialog(activity).alert("申请权限", "安装应用需要打开未知来源权限，请去设置中开启权限",
-                        "好的", new LjyMDDialog.PositiveListener() {
+                new LjyMDDialogManager(activity).alertTwoButton("申请权限", "安装应用需要打开未知来源权限，请去设置中开启权限",
+                        "好的", new LjyMDDialogManager.OnPositiveListener() {
                             @Override
                             public void positive() {
                                 //没权限-申请权限

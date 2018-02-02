@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.AnimatorActivity">
+    <HorizontalScrollView
+        android:id="@+id/hs"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+
+        <!--指定layoutAnimation属性用以指定子元素的入场动画-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layoutAnimation="@anim/anim_layout"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_anim_frame"
+                android:text="帧动画"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_tween_xml"
+                android:text="补间XMl动画"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_tween_java"
+                android:text="补间java动画"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_value_ofInt"
+                android:text="属性ofInt"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_value_ofObject"
+                android:text="属性ofObject"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_obj"
+                android:text="属性动画ObjectAnim"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_above="@+id/hs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/iv_frame"
+            android:background="@color/thin_blue"
+            android:layout_centerInParent="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>

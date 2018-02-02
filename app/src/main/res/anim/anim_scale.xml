@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scale xmlns:android="http://schemas.android.com/apk/res/android"
+       android:duration="2000"
+       android:startOffset="1000"
+       android:fillBefore="true"
+       android:fillAfter="false"
+       android:repeatMode="restart"
+       android:repeatCount="1"
+
+       android:fromXScale="0"
+       android:fromYScale="0"
+       android:toXScale="2"
+       android:toYScale="2"
+
+       android:pivotX="50%"
+       android:pivotY="50%"
+/>
+    <!--
+    pivotX 缩放轴点的x坐标
+    pivotY 缩放轴点的y坐标
+    可取值为数字，百分比，或者百分比p
+    // 设置为数字时（如50），轴点为View的左上角的原点在x方向和y方向加上50px的点。
+    在Java代码里面设置这个参数的对应参数是Animation.ABSOLUTE。
+    // 设置为百分比时（如50%），轴点为View的左上角的原点在x方向加上自身宽度50%和y方向自身高度50%的点。
+    在Java代码里面设置这个参数的对应参数是Animation.RELATIVE_TO_SELF。
+    // 设置为百分比p时（如50%p），轴点为View的左上角的原点在x方向加上父控件宽度50%和y方向父控件高度50%的点。
+    在Java代码里面设置这个参数的对应参数是Animation.RELATIVE_TO_PARENT
+    -->

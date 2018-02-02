@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.DialogDemoActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btn_normal"
+            android:text="普通的Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_neutralBtn"
+            android:text="只显示Neutral的Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_singleBtn"
+            android:text="单按钮的Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_editable"
+            android:text="输入框Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_singleEditable"
+            android:text="单按钮输入框Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_list"
+            android:text="列表Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_singleChoice"
+            android:text="singleChoice Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_multiChoice"
+            android:text="multiChoice Dialog"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_waitingShow"
+            android:text="waiting Dialog show"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_progressShow"
+            android:text="progress Dialog show"
+            android:textAllCaps="false"
+            android:onClick="onDialogBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</ScrollView>

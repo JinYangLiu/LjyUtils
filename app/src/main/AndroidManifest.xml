@@ -227,6 +227,10 @@
         </activity>
         <activity android:name=".activity.SlidingMenuActivity">
         </activity>
+        <activity android:name=".activity.DialogDemoActivity">
+        </activity>
+        <activity android:name=".activity.AnimatorActivity">
+        </activity>
     </application>
 
 </manifest>
