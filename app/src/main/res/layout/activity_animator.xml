@@ -25,30 +25,35 @@
             <Button
                 android:id="@+id/btn_anim_tween_xml"
                 android:text="补间XMl动画"
+                android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btn_anim_tween_java"
                 android:text="补间java动画"
+                android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btn_anim_value_ofInt"
                 android:text="属性ofInt"
+                android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btn_anim_value_ofObject"
                 android:text="属性ofObject"
+                android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btn_anim_obj"
                 android:text="属性动画ObjectAnim"
+                android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

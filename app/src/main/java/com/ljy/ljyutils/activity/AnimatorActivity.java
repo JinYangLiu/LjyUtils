@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.OvershootInterpolator;
@@ -94,10 +95,14 @@ public class AnimatorActivity extends BaseActivity {
         objAnimTrans = ObjectAnimator.ofFloat(ivFrame, "translationY",  0, 200, -200,0);
         objAnimTrans.setDuration(2000);
         objAnimTrans.setStartDelay(6000);
+        Interpolator interpolator = new BounceInterpolator();//最后阶段弹球效果
+        objAnimTrans.setInterpolator(interpolator);
         //缩放
         objAnimScale = ObjectAnimator.ofFloat(ivFrame, "scaleX", 1f, 3f, 1f);
         objAnimScale.setDuration(2000);
         objAnimScale.setStartDelay(9000);
+        Interpolator interpolator2 = new OvershootInterpolator();//超出再回到最后位置
+        objAnimScale.setInterpolator(interpolator2);
 
     }
 
@@ -316,13 +321,14 @@ public class AnimatorActivity extends BaseActivity {
 
 
         setAnimation2 = new AnimationSet(true);
+        //创建对应的插值器
+        Interpolator overshootInterpolator = new OvershootInterpolator();//快速完成动画，超出再回到结束样式
+        setAnimation2.setInterpolator(overshootInterpolator);
+
         setAnimation2.addAnimation(translateAnimation2);
 //        setAnimation2.addAnimation(scaleAnimation2);
         setAnimation2.addAnimation(rotateAnimation2);
         setAnimation2.addAnimation(alphaAnimation2);
-        //创建对应的插值器
-        Interpolator overshootInterpolator = new OvershootInterpolator();//快速完成动画，超出再回到结束样式
-        setAnimation2.setInterpolator(overshootInterpolator);
 /**
  * 作用	        资源ID	                                对应的Java类
  动画加速进行 	@android:anim/accelerate_interpolator	AccelerateInterpolator
