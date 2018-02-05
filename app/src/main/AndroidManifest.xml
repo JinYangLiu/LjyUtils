@@ -231,6 +231,8 @@
         </activity>
         <activity android:name=".activity.AnimatorActivity">
         </activity>
+        <activity android:name=".activity.ConstraintLayoutActivity">
+        </activity>
     </application>
 
 </manifest>

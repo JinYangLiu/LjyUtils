@@ -19,6 +19,7 @@ import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.BuglyDemoActivity;
 import com.ljy.ljyutils.activity.CalendarActivity;
 import com.ljy.ljyutils.activity.CaptchaActivity;
+import com.ljy.ljyutils.activity.ConstraintLayoutActivity;
 import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.DialogDemoActivity;
 import com.ljy.ljyutils.activity.DoodleActivity;
@@ -84,7 +85,7 @@ public class MainActivity extends BaseActivity {
                 "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式", "DataBinding的使用",
                 "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
-                "动画的使用"};
+                "动画的使用","ConstraintLayout的使用"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -95,7 +96,7 @@ public class MainActivity extends BaseActivity {
                 BallActivity.class, BezierActivity.class, AppUpdateActivity.class, null, BindDataActivity.class,
                 DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class,
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
-                AnimatorActivity.class};
+                AnimatorActivity.class, ConstraintLayoutActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
