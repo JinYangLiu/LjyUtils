@@ -164,7 +164,7 @@ public class LjySystemUtil {
     /**
      * 8.0以上允许未知来源权限(更新app时使用到)
      */
-    public static void checkRequestPermision(final Activity activity, PermissionResult result) {
+    public static void checkInstallPermision(final Activity activity, PermissionResult result) {
         //8.0以上允许未知来源权限
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             boolean haveInstallPermission = activity.getPackageManager().canRequestPackageInstalls();
@@ -186,7 +186,7 @@ public class LjySystemUtil {
                         }, "", null, true);
             }
         } else {
-            //有权限直接更新
+            //小于8.0直接更新
             result.success();
         }
     }

@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
+    //8.0安装未知来源权限
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     //设置视频壁纸的权限
     <uses-permission android:name="android.permission.SET_WALLPAPER"/>
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限

@@ -144,9 +144,7 @@ public class AppUpdateActivity extends BaseActivity {
                 @Override
                 public void onCompleted(boolean isSuccess) {
                     if (isDone && isSuccess) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(mDownloadBean.getSaveFile()), "application/vnd.android.package-archive");
-                        startActivity(intent);
+                        installApk();
                     } else {
                         LjyToastUtil.toast(mContext, "下载失败");
                     }
@@ -155,6 +153,23 @@ public class AppUpdateActivity extends BaseActivity {
         } else {
             LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
         }
+    }
+
+    private void installApk() {
+        LjySystemUtil.checkInstallPermision(mActivity, new LjySystemUtil.PermissionResult() {
+            @Override
+            public void success() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(mDownloadBean.getSaveFile()), "application/vnd.android.package-archive");
+                startActivity(intent);
+            }
+
+            @Override
+            public void fail(List<Integer> disAllowIndexs) {
+                LjyToastUtil.toast(mContext,"请允许安装权限");
+            }
+        });
+
     }
 
     MyHandler mHandler = new MyHandler(this);
