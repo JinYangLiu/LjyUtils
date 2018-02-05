@@ -100,6 +100,23 @@
             android:name="UMENG_MESSAGE_SECRET"
             android:value="9b9048088c76f49a591774c52f57c3a2"/>
         //meta-data end
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.ljy.ljyutils.fileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+        /*
+        authorities：app的包名.fileProvider
+        grantUriPermissions：必须是true，表示授予 URI 临时访问权限
+        exported：必须是false
+        resource：中的@xml/file_paths是我们接下来要添加的文件
+        */
+
         //activity
         //bugly
         <activity

@@ -1,6 +1,5 @@
 package com.ljy.util;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ClipData;
@@ -15,8 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
-
-import com.ljy.view.LjyMDDialogManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -162,36 +159,6 @@ public class LjySystemUtil {
     }
 
     /**
-     * 8.0以上允许未知来源权限(更新app时使用到)
-     */
-    public static void checkInstallPermision(final Activity activity, PermissionResult result) {
-        //8.0以上允许未知来源权限
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            boolean haveInstallPermission = activity.getPackageManager().canRequestPackageInstalls();
-            if (haveInstallPermission) {
-                //有权限直接更新
-                result.success();
-            } else {
-                //没权限请求权限
-                new LjyMDDialogManager(activity).alertTwoButton("申请权限", "安装应用需要打开未知来源权限，请去设置中开启权限",
-                        "好的", new LjyMDDialogManager.OnPositiveListener() {
-                            @Override
-                            public void positive() {
-                                //没权限-申请权限
-                                ActivityCompat.requestPermissions(activity,
-                                        new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES},
-                                        111);
-
-                            }
-                        }, "", null, true);
-            }
-        } else {
-            //小于8.0直接更新
-            result.success();
-        }
-    }
-
-    /**
      * 判断服务是否启动了
      *
      * @param context
@@ -303,7 +270,7 @@ public class LjySystemUtil {
      */
     public static String getAppName(Context context) {
         PackageInfo packInfo = getPackageInfo(context);
-        return packInfo==null?"":packInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+        return packInfo == null ? "" : packInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
     }
 
     /**
@@ -311,7 +278,7 @@ public class LjySystemUtil {
      */
     public static String getVersionName(Context context) {
         PackageInfo packInfo = getPackageInfo(context);
-        return packInfo==null?"":packInfo.versionName;
+        return packInfo == null ? "" : packInfo.versionName;
     }
 
     /**
@@ -319,14 +286,14 @@ public class LjySystemUtil {
      */
     public static int getVersionCode(Context context) {
         PackageInfo packInfo = getPackageInfo(context);
-        return packInfo==null?-1:packInfo.versionCode;
+        return packInfo == null ? -1 : packInfo.versionCode;
     }
 
     /**
      * 获取app 的 PackageInfo
      */
     private static PackageInfo getPackageInfo(Context context) {
-        context=context.getApplicationContext();
+        context = context.getApplicationContext();
         //获取packagemanager的实例
         PackageManager packageManager = context.getPackageManager();
         //getPackageName()是你当前类的包名，0代表是获取版本信息
@@ -339,10 +306,11 @@ public class LjySystemUtil {
 
     /**
      * 复制文字到剪切板
+     *
      * @param context
      * @param info
      */
-    public static void copyToClipboard(Context context,String info){
+    public static void copyToClipboard(Context context, String info) {
         if (android.os.Build.VERSION.SDK_INT > 11) {
             android.content.ClipboardManager c = (android.content.ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
             c.setPrimaryClip(ClipData.newPlainText("tag", info));

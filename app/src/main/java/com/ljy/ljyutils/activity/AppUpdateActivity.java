@@ -2,16 +2,20 @@ package com.ljy.ljyutils.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ljy.bean.DownloadBean;
+import com.ljy.ljyutils.BuildConfig;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyEncryUtil;
@@ -21,8 +25,10 @@ import com.ljy.util.LjyRetrofitUtil;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
+import com.ljy.view.LjyMDDialogManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,47 +80,68 @@ public class AppUpdateActivity extends BaseActivity {
     public void onUpdateBtnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_update_jd:
-                mDownloadBean=beans.get(0);
+                mDownloadBean = beans.get(0);
                 updateApp();
                 break;
             case R.id.btn_update_qqmail:
-                mDownloadBean=beans.get(1);
+                mDownloadBean = beans.get(1);
                 updateApp();
                 break;
             case R.id.btn_update_wx:
-                mDownloadBean=beans.get(2);
+                mDownloadBean = beans.get(2);
                 updateApp();
                 break;
             case R.id.btn_getApkHash:
-                if (mDownloadBean==null)
+                if (mDownloadBean == null)
                     return;
                 byte[] apkHash = LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(mDownloadBean.getSaveFile()));
                 String hash1 = new String(apkHash);
                 String hash2 = LjyStringUtil.byte2base64(apkHash);
                 String hash3 = LjyStringUtil.byte2hex(apkHash);
-                textInfo2.setText("apk_hash_md5_hex: "+hash3);
+                textInfo2.setText("apk_hash_md5_hex: " + hash3);
                 LjyLogUtil.i("hash1:" + hash1);
                 LjyLogUtil.i("hash2:" + hash2);
                 LjyLogUtil.i("hash3:" + hash3);
                 break;
             case R.id.btn_pause:
-                if (subscriber!=null&&!subscriber.isUnsubscribed())
+                if (subscriber != null && !subscriber.isUnsubscribed())
                     subscriber.unsubscribe();
                 break;
             case R.id.btn_deleteApk:
-                for (DownloadBean downloadBean:beans){
+                for (DownloadBean downloadBean : beans) {
                     LjyFileUtil.deleteFile(downloadBean.getSaveFile());
                 }
+                break;
+            case R.id.btn_save:
+                if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    saveApk();
+                } else {
+                    LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 666);
+                }
+                break;
+            case R.id.btn_install:
+                installApk();
                 break;
             default:
                 break;
         }
     }
 
+    private void saveApk() {
+        final File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "LjyUtils" + "_1111" + ".apk");
+        try {
+            boolean isSave = LjyFileUtil.writeBytesToFile(mActivity.getAssets().open("LjyUtils.apk"), apkFile);
+            LjyToastUtil.toast(mContext, isSave ? "保存成功" : "保存失败");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateApp() {
         if (mDownloadBean.isDone())
             return;
-        if (subscriber!=null&&subscriber==mDownloadBean.getSubscriber()&&!subscriber.isUnsubscribed())
+        if (subscriber != null && subscriber == mDownloadBean.getSubscriber() && !subscriber.isUnsubscribed())
             return;
         if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
@@ -144,7 +171,7 @@ public class AppUpdateActivity extends BaseActivity {
                 @Override
                 public void onCompleted(boolean isSuccess) {
                     if (isDone && isSuccess) {
-                        installApk();
+                        LjyToastUtil.toast(mContext, "下载成功");
                     } else {
                         LjyToastUtil.toast(mContext, "下载失败");
                     }
@@ -156,20 +183,59 @@ public class AppUpdateActivity extends BaseActivity {
     }
 
     private void installApk() {
-        LjySystemUtil.checkInstallPermision(mActivity, new LjySystemUtil.PermissionResult() {
-            @Override
-            public void success() {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(mDownloadBean.getSaveFile()), "application/vnd.android.package-archive");
-                startActivity(intent);
-            }
 
-            @Override
-            public void fail(List<Integer> disAllowIndexs) {
-                LjyToastUtil.toast(mContext,"请允许安装权限");
-            }
-        });
+        final File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "LjyUtils" + "_1111" + ".apk");
 
+        if (LjyFileUtil.getBytesFromFile(apkFile)==null){
+            LjyToastUtil.toast(mContext, "请先点击左侧按钮保存要安装的apk");
+            return;
+        }
+
+        String fileMd5 = LjyStringUtil.byte2hex(LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
+        if (!fileMd5.equals("7449AE7BFB3A0632060D13AE2F8C02D2")) {
+            LjyToastUtil.toast(mContext, "请先点击左侧按钮保存要安装的apk");
+            return;
+        }
+
+        //8.0以上允许未知来源权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (getPackageManager().canRequestPackageInstalls()) {
+                doInstall(apkFile);
+            } else {
+                new LjyMDDialogManager(mActivity).alertSingleButton("申请权限",
+                        "安装应用需要打开未知来源权限，请去设置中开启权限", "好的",
+                        new LjyMDDialogManager.OnPositiveListener() {
+                            @Override
+                            public void positive() {
+                                //没权限-申请权限
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                                    mActivity.startActivityForResult(intent, 222);
+                                }
+                            }
+                        }, false);
+            }
+        } else {
+            doInstall(apkFile);
+        }
+
+    }
+
+    private void doInstall(File apkFile) {
+        Uri apkUri;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        //判断是否是AndroidN(7.0)以及更高的版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            apkUri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".fileProvider", apkFile);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            apkUri = Uri.fromFile(apkFile);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (apkUri != null)
+            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        startActivity(intent);
     }
 
     MyHandler mHandler = new MyHandler(this);
@@ -198,6 +264,7 @@ public class AppUpdateActivity extends BaseActivity {
                 }
             }
         }
+
     }
 
     @Override
@@ -208,6 +275,9 @@ public class AppUpdateActivity extends BaseActivity {
             public void success() {
                 if (requestCode == 999) {
                     updateApp();
+                }
+                if (requestCode==666){
+                    saveApk();
                 }
             }
 
@@ -220,5 +290,10 @@ public class AppUpdateActivity extends BaseActivity {
         });
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 222)
+            installApk();
+    }
 }

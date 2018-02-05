@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -66,6 +67,11 @@ public class LjyFileUtil {
         }
     }
 
+    /**
+     * file转byte[]
+     * @param file
+     * @return
+     */
     public static byte[] getBytesFromFile(File file) {
         byte[] buffer = null;
         try {
@@ -85,6 +91,34 @@ public class LjyFileUtil {
             e.printStackTrace();
         }
         return buffer;
+    }
+
+    /**
+     * InputStream 转 File
+     * @param is
+     * @param file
+     */
+    public static boolean writeBytesToFile(InputStream is, File file) {
+        FileOutputStream fos = null;
+        try {
+            byte[] data = new byte[2048];
+            int nbread ;
+            fos = new FileOutputStream(file);
+            while ((nbread = is.read(data)) > -1) {
+                fos.write(data, 0, nbread);
+            }
+            return true;
+        } catch (Exception ex) {
+            return false;
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**

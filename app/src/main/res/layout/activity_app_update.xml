@@ -30,6 +30,18 @@
                       android:orientation="horizontal"
                       android:layout_height="wrap_content">
             <Button
+                android:id="@+id/btn_save"
+                android:onClick="onUpdateBtnClick"
+                android:text="保存apk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_install"
+                android:onClick="onUpdateBtnClick"
+                android:text="安装apk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
                 android:id="@+id/btn_getApkHash"
                 android:onClick="onUpdateBtnClick"
                 android:text="取得apkHash"
