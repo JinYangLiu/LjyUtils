@@ -108,6 +108,18 @@
                 android:onClick="onPhotoBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_rgb"
+                android:text="改变图片rgb值"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_Steganography"
+                android:text="图片隐写术"
+                android:onClick="onPhotoBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </HorizontalScrollView>

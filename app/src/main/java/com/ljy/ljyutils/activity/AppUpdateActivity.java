@@ -120,7 +120,11 @@ public class AppUpdateActivity extends BaseActivity {
                 }
                 break;
             case R.id.btn_install:
-                installApk();
+                if (LjySystemUtil.getVersionCode(mContext)==14){
+                    LjyToastUtil.toast(mContext,"已经是最新了哦");
+                }else {
+                    installApk();
+                }
                 break;
             default:
                 break;

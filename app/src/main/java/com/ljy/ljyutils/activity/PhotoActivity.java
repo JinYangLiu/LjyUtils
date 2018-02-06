@@ -2,7 +2,9 @@ package com.ljy.ljyutils.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyBitmapUtil;
+import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjySystemUtil;
@@ -192,14 +195,14 @@ public class PhotoActivity extends BaseActivity {
                         @Override
                         public boolean onLongClick(View v) {
                             LjyLogUtil.i("onLongClick");
-                            LjyMDDialogManager dialog=new LjyMDDialogManager(mActivity);
+                            LjyMDDialogManager dialog = new LjyMDDialogManager(mActivity);
                             dialog.alertTwoButton("温馨提示", "是否删除" + tagView.getContent(), "确定", new LjyMDDialogManager.OnPositiveListener() {
                                 @Override
                                 public void positive() {
                                     if (tagsContainer != null)
                                         tagsContainer.removeView(tagView);
                                 }
-                            }, "取消", null,false);
+                            }, "取消", null, false);
 
                             return false;
                         }
@@ -210,6 +213,26 @@ public class PhotoActivity extends BaseActivity {
                 case R.id.btn_clearlabel:
                     if (tagsContainer != null)
                         tagsContainer.removeAllViews();
+                    break;
+                case R.id.btn_rgb:
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.mountain);
+                    int x = bitmap.getWidth();
+                    int y = bitmap.getHeight();
+                    Bitmap bitmapNew=Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+                    for (int j = 0; j < y; j++) {
+                        for (int i = 0; i < x; i++) {
+                                int pixel = bitmap.getPixel(i, j);
+                                int alpha=LjyColorUtil.alpha(pixel);
+                                int red = LjyColorUtil.red(pixel);
+                                int green = LjyColorUtil.green(pixel);
+                                int blue = LjyColorUtil.blue(pixel);
+//                                String binaryString= Integer.toBinaryString(pixel);//int转2进制
+//                                LjyLogUtil.i( String.format("pixel:%s,alpha:%s,red:%s,green:%s,blue:%s,binaryString:%s",pixel,alpha,red,green,blue,binaryString));
+                            bitmapNew.setPixel(i, j, Color.argb(alpha,255,green,blue));
+                        }
+                    }
+                    mImageView1.setImageBitmap(bitmapNew);
+                    LjyLogUtil.i("bitmapNew over");
                     break;
                 default:
                     break;

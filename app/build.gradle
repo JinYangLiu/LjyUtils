@@ -11,8 +11,8 @@ android {
         applicationId "com.ljy.ljyutils"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 14
-        versionName "1.1.4"
+        versionCode 15
+        versionName "1.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // 开启multidex
         multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
@@ -25,18 +25,24 @@ android {
             storeFile file('ljyKeyStore.jks')
             storePassword '222222'
             v2SigningEnabled true
-
         }
     }
 
     buildTypes {
         release {
             buildConfigField("boolean", "isDebug", "false")
-            minifyEnabled false
+            minifyEnabled true
             debuggable false
             shrinkResources false // 是否去除无效的资源文件
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField("boolean", "isDebug", "true")
+            minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 
