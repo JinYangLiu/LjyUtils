@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity {
     private void initData() {
         String[] textArr = new String[]{"Utils的使用", "GlideUtil的使用", "setViewSize的使用",
                 "手势锁view的使用", "雷达图view的使用", "辩论view的使用", "投票view的使用",
-                "刷新和加载更多ListView的使用", "刷新和加载更多RecycleView的使用", "拍照和选取图片工具类的使用",
+                "刷新和加载更多ListView的使用", "刷新和加载更多RecycleView的使用", "拍照/选取图片&&图片处理压缩等",
                 "gifView的使用", "videoPlayer的使用", "dagger2的使用", "retrofit的使用",
                 "fishView的使用", "broadcast的使用", "service的使用", "fragment的使用",
                 "GreenDao的使用", "音乐播放demo", "Lottie的demo", "calendar的demo",

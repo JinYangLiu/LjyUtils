@@ -248,17 +248,11 @@ public class PhotoActivity extends BaseActivity {
     }
 
     private void readInfo() {
-        mImageView1.setDrawingCacheEnabled(true);
-//        if (bitmapNew == null)
-//            return;
-//        final Bitmap bitmap = bitmapNew;
-        if (TextUtils.isEmpty(steganographyPath)) {
+        final Bitmap bitmap = BitmapFactory.decodeFile(steganographyPath);
+        if (bitmap==null){
             LjyToastUtil.toast(mContext, "请先写入文件哦");
             return;
         }
-        final Bitmap bitmap = BitmapFactory.decodeFile(steganographyPath);
-        if (bitmap==null)
-            return;
         if (progressDialog == null)
             progressDialog = LjyMDDialogManager.getWaitingDialog(mActivity, null, null, false);
         progressDialog.setMessage("读取中...");
