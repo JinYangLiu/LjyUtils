@@ -187,7 +187,7 @@ public class AppUpdateActivity extends BaseActivity {
         final File apkFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "LjyUtils" + "_1111" + ".apk");
 
-        if (LjyFileUtil.getBytesFromFile(apkFile)==null){
+        if (LjyFileUtil.getBytesFromFile(apkFile) == null) {
             LjyToastUtil.toast(mContext, "请先点击左侧按钮保存要安装的apk");
             return;
         }
@@ -225,16 +225,17 @@ public class AppUpdateActivity extends BaseActivity {
     private void doInstall(File apkFile) {
         Uri apkUri;
         Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //判断是否是AndroidN(7.0)以及更高的版本
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             apkUri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".fileProvider", apkFile);
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         } else {
             apkUri = Uri.fromFile(apkFile);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        if (apkUri != null)
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        if (apkUri == null)
+            return;
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
         startActivity(intent);
     }
 
@@ -276,7 +277,7 @@ public class AppUpdateActivity extends BaseActivity {
                 if (requestCode == 999) {
                     updateApp();
                 }
-                if (requestCode==666){
+                if (requestCode == 666) {
                     saveApk();
                 }
             }
