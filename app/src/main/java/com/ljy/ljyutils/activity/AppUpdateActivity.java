@@ -197,8 +197,9 @@ public class AppUpdateActivity extends BaseActivity {
         }
 
         String fileMd5 = LjyStringUtil.byte2hex(LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
-        if (!fileMd5.equals("7449AE7BFB3A0632060D13AE2F8C02D2")) {
-            LjyToastUtil.toast(mContext, "请先点击左侧按钮保存要安装的apk");
+        LjyLogUtil.i("fileMd5:"+fileMd5);
+        if (!fileMd5.equals("FBDC5A5E6CD4D6009B27BBC3E1651BEF")) {
+            LjyToastUtil.toast(mContext, "apk的hash值不匹配哦");
             return;
         }
 
