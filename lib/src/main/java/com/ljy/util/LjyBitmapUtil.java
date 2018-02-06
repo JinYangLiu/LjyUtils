@@ -383,4 +383,23 @@ public class LjyBitmapUtil {
         return bitmap;
     }
 
+    /**
+     * 保存bitmap为File文件（无损）
+     * @param bitmap
+     * @param targetPath
+     */
+    public static void bitmapToFile(Bitmap bitmap, String targetPath) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(targetPath));
+            fos.write(baos.toByteArray());
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

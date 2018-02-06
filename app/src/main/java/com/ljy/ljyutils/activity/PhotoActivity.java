@@ -1,6 +1,7 @@
 package com.ljy.ljyutils.activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPhotoUtil;
+import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyMDDialogManager;
@@ -48,6 +50,10 @@ public class PhotoActivity extends BaseActivity {
     RelativeLayout tagsContainer;
     private int REQUEST_CODE_CHOOSE = 222;
     private boolean isWatermark = false;
+    private Bitmap bitmapNew;
+    private ProgressDialog progressDialog;
+    private String readInfo;
+    private String steganographyPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +71,8 @@ public class PhotoActivity extends BaseActivity {
         if (!tempFile.exists()) {
             tempFile.mkdirs();
         }
+
+        steganographyPath = picFilesPath + File.separator + "pic_yxs.png";
     }
 
     private void initPhotoUtil() {
@@ -215,24 +223,20 @@ public class PhotoActivity extends BaseActivity {
                         tagsContainer.removeAllViews();
                     break;
                 case R.id.btn_rgb:
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.mountain);
-                    int x = bitmap.getWidth();
-                    int y = bitmap.getHeight();
-                    Bitmap bitmapNew=Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-                    for (int j = 0; j < y; j++) {
-                        for (int i = 0; i < x; i++) {
-                                int pixel = bitmap.getPixel(i, j);
-                                int alpha=LjyColorUtil.alpha(pixel);
-                                int red = LjyColorUtil.red(pixel);
-                                int green = LjyColorUtil.green(pixel);
-                                int blue = LjyColorUtil.blue(pixel);
-//                                String binaryString= Integer.toBinaryString(pixel);//int转2进制
-//                                LjyLogUtil.i( String.format("pixel:%s,alpha:%s,red:%s,green:%s,blue:%s,binaryString:%s",pixel,alpha,red,green,blue,binaryString));
-                            bitmapNew.setPixel(i, j, Color.argb(alpha,255,green,blue));
+                    changeRgb();
+                    break;
+                case R.id.btn_writeInfo:
+                    new LjyMDDialogManager(mActivity).alertEditTextMD("请输入要写入的字符串:", new LjyMDDialogManager.PositiveListenerText() {
+                        @Override
+                        public void positive(String text) {
+                            if (TextUtils.isEmpty(text))
+                                text = "LJY是个码农哦，192.168.0.1";
+                            writeInfo(text);
                         }
-                    }
-                    mImageView1.setImageBitmap(bitmapNew);
-                    LjyLogUtil.i("bitmapNew over");
+                    }, null);
+                    break;
+                case R.id.btn_readInfo:
+                    readInfo();
                     break;
                 default:
                     break;
@@ -241,6 +245,173 @@ public class PhotoActivity extends BaseActivity {
             LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
+    }
+
+    private void readInfo() {
+        mImageView1.setDrawingCacheEnabled(true);
+//        if (bitmapNew == null)
+//            return;
+//        final Bitmap bitmap = bitmapNew;
+        if (TextUtils.isEmpty(steganographyPath)) {
+            LjyToastUtil.toast(mContext, "请先写入文件哦");
+            return;
+        }
+        final Bitmap bitmap = BitmapFactory.decodeFile(steganographyPath);
+        if (bitmap==null)
+            return;
+        if (progressDialog == null)
+            progressDialog = LjyMDDialogManager.getWaitingDialog(mActivity, null, null, false);
+        progressDialog.setMessage("读取中...");
+        progressDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int x = bitmap.getWidth();
+                int y = bitmap.getHeight();
+                StringBuffer stringBuffer = new StringBuffer();
+                for (int j = 0; j < y; j++) {
+                    for (int i = 0; i < x; i++) {
+                        int pixel = bitmap.getPixel(i, j);
+                        readitem(pixel, stringBuffer);
+                    }
+                }
+                String infoBinary = stringBuffer.toString().split(" 00000000")[0];
+
+                LjyLogUtil.i("infoBinary_read:" + infoBinary);
+                readInfo = LjyStringUtil.binaryToString(infoBinary);
+                LjyLogUtil.i("readInfo:" + readInfo);
+                mHandler.sendEmptyMessage(777);
+                tempRead = 0;
+            }
+        }).start();
+
+
+    }
+
+    int tempRead = 0;
+
+    private void readitem(int pixel, StringBuffer stringBuffer) {
+        int alpha = LjyColorUtil.alpha(pixel);
+        int red = LjyColorUtil.red(pixel);
+        int green = LjyColorUtil.green(pixel);
+        int blue = LjyColorUtil.blue(pixel);
+
+        String binaryAlpha = Integer.toBinaryString(alpha);//int转2进制
+        stringBuffer.append(binaryAlpha.charAt(binaryAlpha.length() - 1));
+        tempRead++;
+        if (tempRead == 8) {
+            stringBuffer.append(" ");
+            tempRead = 0;
+        }
+
+        String binaryRed = Integer.toBinaryString(red);//int转2进制
+        stringBuffer.append(binaryRed.charAt(binaryRed.length() - 1));
+        tempRead++;
+        if (tempRead == 8) {
+            stringBuffer.append(" ");
+            tempRead = 0;
+        }
+
+        String binaryGreen = Integer.toBinaryString(green);//int转2进制
+        stringBuffer.append(binaryGreen.charAt(binaryGreen.length() - 1));
+        tempRead++;
+        if (tempRead == 8) {
+            stringBuffer.append(" ");
+            tempRead = 0;
+        }
+
+        String binaryBlue = Integer.toBinaryString(blue);//int转2进制
+        stringBuffer.append(binaryBlue.charAt(binaryBlue.length() - 1));
+        tempRead++;
+        if (tempRead == 8) {
+            stringBuffer.append(" ");
+            tempRead = 0;
+        }
+    }
+
+    private void writeInfo(final String info) {
+        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.mountain);
+        if (progressDialog == null)
+            progressDialog = LjyMDDialogManager.getWaitingDialog(mActivity, null, null, false);
+        progressDialog.setMessage("写入中...");
+        progressDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String infoBinary = LjyStringUtil.stringToBinary(info);
+                LjyLogUtil.i("infoBinary_write:" + infoBinary);
+                int x = bitmap.getWidth();
+                int y = bitmap.getHeight();
+                bitmapNew = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+                index = 0;
+                for (int j = 0; j < y; j++) {
+                    for (int i = 0; i < x; i++) {
+                        int pixel = bitmap.getPixel(i, j);
+                        int pixelNew = writeItem(pixel, infoBinary);
+                        bitmapNew.setPixel(i, j, pixelNew);
+                    }
+                }
+
+                //保存到文件中：
+                LjyLogUtil.i("steganographyPath:" + steganographyPath);
+                LjyBitmapUtil.bitmapToFile(bitmapNew, steganographyPath);
+                LjyLogUtil.i("writeInfo over");
+                mHandler.sendEmptyMessage(666);
+            }
+        }).start();
+
+    }
+
+    int index = 0;
+
+    private int writeItem(int pixel, String infoBinary) {
+        int alpha = LjyColorUtil.alpha(pixel);
+        int red = LjyColorUtil.red(pixel);
+        int green = LjyColorUtil.green(pixel);
+        int blue = LjyColorUtil.blue(pixel);
+
+        String binaryAlpha = Integer.toBinaryString(alpha);//int转2进制
+        binaryAlpha = binaryAlpha.substring(0, binaryAlpha.length() - 1);
+        binaryAlpha += index < infoBinary.length() ? infoBinary.charAt(index++) : "0";
+        int alphaNew = Integer.parseInt(binaryAlpha, 2);
+
+        String binaryRed = Integer.toBinaryString(red);//int转2进制
+        binaryRed = binaryRed.substring(0, binaryRed.length() - 1);
+        binaryRed += index < infoBinary.length() ? infoBinary.charAt(index++) : "0";
+        int redNew = Integer.parseInt(binaryRed, 2);
+
+        String binaryGreen = Integer.toBinaryString(green);//int转2进制
+        binaryGreen = binaryGreen.substring(0, binaryGreen.length() - 1);
+        binaryGreen += index < infoBinary.length() ? infoBinary.charAt(index++) : "0";
+        int greenNew = Integer.parseInt(binaryGreen, 2);
+
+        String binaryBlue = Integer.toBinaryString(blue);//int转2进制
+        binaryBlue = binaryBlue.substring(0, binaryBlue.length() - 1);
+        binaryBlue += index < infoBinary.length() ? infoBinary.charAt(index++) : "0";
+        int blueNew = Integer.parseInt(binaryBlue, 2);
+
+        return Color.argb(alphaNew, redNew, greenNew, blueNew);
+    }
+
+    private void changeRgb() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.mountain);
+        int x = bitmap.getWidth();
+        int y = bitmap.getHeight();
+        Bitmap bitmapNew = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+        for (int j = 0; j < y; j++) {
+            for (int i = 0; i < x; i++) {
+                int pixel = bitmap.getPixel(i, j);
+                int alpha = LjyColorUtil.alpha(pixel);
+                int red = LjyColorUtil.red(pixel);
+                int green = LjyColorUtil.green(pixel);
+                int blue = LjyColorUtil.blue(pixel);
+//                                String binaryString= Integer.toBinaryString(pixel);//int转2进制
+//                                LjyLogUtil.i( String.format("pixel:%s,alpha:%s,red:%s,green:%s,blue:%s,binaryString:%s",pixel,alpha,red,green,blue,binaryString));
+                bitmapNew.setPixel(i, j, Color.argb(alpha, 255, green, blue));
+            }
+        }
+        mImageView1.setImageBitmap(bitmapNew);
+        LjyLogUtil.i("changeRgb over");
     }
 
     private void doWatermark() {
@@ -378,6 +549,13 @@ public class PhotoActivity extends BaseActivity {
                     Glide.with(activity.mActivity).load(activity.mSelected.get(count++)).into(activity.mImageView1);
                     sendEmptyMessageDelayed(1, 1200);
                 }
+            } else if (msg.what == 666) {
+                if (activity.bitmapNew != null)
+                    activity.mImageView1.setImageBitmap(activity.bitmapNew);
+                activity.progressDialog.dismiss();
+            } else if (msg.what == 777) {
+                LjyToastUtil.toast(activity.mContext, "read:" + activity.readInfo);
+                activity.progressDialog.dismiss();
             }
         }
     }

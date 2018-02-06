@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 
 /**
  * Created by Mr.LJY on 2017/12/25.
- *
+ * <p>
  * 字符串操作的工具类
  */
 
@@ -29,7 +29,7 @@ public class LjyStringUtil {
     /**
      * 使用BigDecimal进行精确运算
      * 保留len位小数
-     *
+     * <p>
      * 1 public BigDecimal add(BigDecimal value);      //加法
      * 2 public BigDecimal subtract(BigDecimal value); //减法
      * 3 public BigDecimal multiply(BigDecimal value); //乘法
@@ -114,6 +114,7 @@ public class LjyStringUtil {
     }
 
     private static final String SHA1PRNG = "SHA1PRNG";//// SHA1PRNG 强随机种子算法, 要区别4.2以上版本的调用方法
+
     /**
      * 生成随机数，可以当做动态的密钥
      */
@@ -127,4 +128,40 @@ public class LjyStringUtil {
             return null;
         }
     }
+
+    /**
+     * 2进制转字符串
+     */
+    public static String binaryToString(String binStr) {
+        String[] tempStr = binStr.split(" ");
+        byte[] bytes = new byte[tempStr.length];
+        for (int i = 0; i < tempStr.length; i++) {
+            bytes[i] = Long.valueOf(tempStr[i], 2).byteValue();
+        }
+        return new String(bytes);
+    }
+
+    /**
+     * 字符串转2进制
+     */
+    public static String stringToBinary(String info) {
+        byte[] strChar = info.getBytes();
+        return byteToBinary(strChar);
+    }
+
+    /**
+     * byte数组转换为二进制字符串
+     **/
+    private static String byteToBinary(byte[] b) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < b.length; i++) {
+            String bStr = Long.toString(b[i] & 0xff, 2);
+            while (bStr.length() <8) {
+                bStr = "0" + bStr;
+            }
+            result.append(bStr);
+        }
+        return result.toString();
+    }
+
 }
