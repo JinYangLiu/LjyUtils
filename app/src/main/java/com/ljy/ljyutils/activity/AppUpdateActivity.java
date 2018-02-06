@@ -120,7 +120,7 @@ public class AppUpdateActivity extends BaseActivity {
                 }
                 break;
             case R.id.btn_install:
-                if (LjySystemUtil.getVersionCode(mContext)==14){
+                if (LjySystemUtil.getVersionCode(mContext)==999){
                     LjyToastUtil.toast(mContext,"已经是最新了哦");
                 }else {
                     installApk();
@@ -198,7 +198,7 @@ public class AppUpdateActivity extends BaseActivity {
 
         String fileMd5 = LjyStringUtil.byte2hex(LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
         LjyLogUtil.i("fileMd5:"+fileMd5);
-        if (!fileMd5.equals("FBDC5A5E6CD4D6009B27BBC3E1651BEF")) {
+        if (!fileMd5.equals("8523F7F2E26F8B43B2A01D92FE1A4D5B")) {
             LjyToastUtil.toast(mContext, "apk的hash值不匹配哦");
             return;
         }

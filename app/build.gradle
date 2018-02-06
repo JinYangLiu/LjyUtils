@@ -11,7 +11,7 @@ android {
         applicationId "com.ljy.ljyutils"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 15
+        versionCode 115
         versionName "1.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // 开启multidex
