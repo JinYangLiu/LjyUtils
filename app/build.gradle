@@ -18,6 +18,13 @@ android {
         multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
     }
 
+    //用来关闭Android Studio的PNG合法性检查的，直接不让它检查
+    //（添加这一行的原因是girl.png并不是一个合法的png图片，其本质是个jpeg图片）
+    aaptOptions{
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
+
     signingConfigs {
         config {
             keyAlias 'key'

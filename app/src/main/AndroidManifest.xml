@@ -100,12 +100,11 @@
             android:name="UMENG_MESSAGE_SECRET"
             android:value="9b9048088c76f49a591774c52f57c3a2"/>
         //meta-data end
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.ljy.ljyutils.fileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"/>
@@ -251,6 +250,8 @@
         <activity android:name=".activity.AnimatorActivity">
         </activity>
         <activity android:name=".activity.ConstraintLayoutActivity">
+        </activity>
+        <activity android:name=".activity.JigsawActivity">
         </activity>
     </application>
 

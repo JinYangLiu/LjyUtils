@@ -229,8 +229,15 @@ public class PhotoActivity extends BaseActivity {
                     new LjyMDDialogManager(mActivity).alertEditTextMD("请输入要写入的字符串:", new LjyMDDialogManager.PositiveListenerText() {
                         @Override
                         public void positive(String text) {
-                            if (TextUtils.isEmpty(text))
+                            if (TextUtils.isEmpty(text)) {
                                 text = "LJY是个码农哦，192.168.0.1";
+                                LjyToastUtil.toast(mContext,"没有输入则默认信息为: "+text);
+                            }
+                            if (text.contains("#&#")){
+                                LjyToastUtil.toast(mContext,"需要写入的信息不能包含: #&#");
+                                return;
+                            }
+                            text+="#&#";
                             writeInfo(text);
                         }
                     }, null);
@@ -269,7 +276,7 @@ public class PhotoActivity extends BaseActivity {
                         readitem(pixel, stringBuffer);
                     }
                 }
-                String infoBinary = stringBuffer.toString().split(" 00000000")[0];
+                String infoBinary = stringBuffer.toString().split(" 00100011 00100110 00100011")[0];
 
                 LjyLogUtil.i("infoBinary_read:" + infoBinary);
                 readInfo = LjyStringUtil.binaryToString(infoBinary);
