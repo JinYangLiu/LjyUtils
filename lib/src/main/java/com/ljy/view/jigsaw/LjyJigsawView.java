@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.ljy.lib.R;
 
@@ -449,7 +448,6 @@ public class LjyJigsawView extends RelativeLayout implements View.OnClickListene
             handler.removeMessages(TIME_CHANGED);
 
             Log.i("tag", "成功");
-            Toast.makeText(getContext(), "成功,进入下一关！", Toast.LENGTH_LONG).show();
             handler.sendEmptyMessage(NEXT_LEVEL);
 
         }
