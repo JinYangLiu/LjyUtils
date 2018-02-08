@@ -1,6 +1,7 @@
 package com.ljy.ljyutils.base;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
@@ -25,6 +26,7 @@ import com.umeng.message.common.inter.ITagManager;
 import com.umeng.message.entity.UMessage;
 import com.umeng.message.tag.TagManager;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +37,7 @@ import java.util.Locale;
 
 public class MyApplication extends Application {
     private static Context applicationContext;
-
+    private List<Activity> actList;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -49,10 +51,10 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         applicationContext = getApplicationContext();
+        actList = new ArrayList<>();
         initMyUtil();
         initBugly();
         initUmengPush();
-
     }
 
     private void initUmengPush() {
@@ -425,5 +427,57 @@ public class MyApplication extends Application {
 
         //小米，华为，魅族 Push通道的使用，请参考官方文档
         //http://dev.umeng.com/sdk_integate/android_sdk/android_push_doc#3_6
+    }
+
+    /**
+     * 添加Activity
+     */
+    public void addActivity_(Activity activity) {
+        // 判断当前集合中不存在该Activity
+        if (actList != null && !actList.contains(activity)) {
+            actList.add(activity);//把当前Activity添加到集合中
+        }
+    }
+
+    /**
+     * 销毁单个Activity
+     */
+    public void removeActivity_(Activity activity) {
+        //判断当前集合中存在该Activity
+        if (actList != null && actList.contains(activity)) {
+            actList.remove(activity);//从集合中移除
+            activity.finish();//销毁当前Activity
+            activity.overridePendingTransition(0, 0);
+        }
+    }
+
+    /**
+     * 销毁所有的Activity
+     */
+    public void removeALLActivity_() {
+        //通过循环，把集合中的所有Activity销毁
+        if (actList != null) {
+            for (Activity activity : actList) {
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            }
+            actList.clear();
+        }
+    }
+
+    /**
+     * 销毁所有除了 MainActivity 之外的的Activity
+     */
+    public void removeALLActivityExceptMain_() {
+        //通过循环，把集合中的所有Activity销毁
+        if (actList != null) {
+            for (Activity activity : actList) {
+                if (!(activity instanceof MainActivity)) {
+                    activity.finish();
+                    activity.overridePendingTransition(0, 0);
+                }
+            }
+            actList.clear();
+        }
     }
 }

@@ -23,12 +23,27 @@ public class BaseActivity extends LjySwipeBackActivity {
     public Activity mActivity = this;
     private DaoSession daoSession;
     private LjySPUtil spUtil;
+    private MyApplication mApplication;
+    private BaseActivity currentAct;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         //Umeng push要求，此方法与统计分析sdk中统计日活的方法无关！请务必调用此方法！
         PushAgent.getInstance(mContext).onAppStart();
+
+        if (mApplication == null) {
+            // 得到Application对象
+            mApplication = (MyApplication) getApplication();
+        }
+        currentAct = this;// 把当前的上下文对象赋值给BaseActivity
+        addActivity();// 调用添加方法
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        removeActivity();
     }
 
     public DaoSession getDaoInstance() {
@@ -49,5 +64,29 @@ public class BaseActivity extends LjySwipeBackActivity {
         if (spUtil == null)
             spUtil = new LjySPUtil(mContext);
         return spUtil;
+    }
+
+    // 添加Activity方法
+    public void addActivity() {
+        if (mApplication != null && currentAct != null)
+            mApplication.addActivity_(currentAct);// 调用myApplication的添加Activity方法
+    }
+
+    //销毁当个Activity方法
+    public void removeActivity() {
+        if (mApplication != null && currentAct != null)
+            mApplication.removeActivity_(currentAct);// 调用myApplication的销毁单个Activity方法
+    }
+
+    //销毁所有Activity方法
+    public void removeALLActivity() {
+        if (mApplication != null)
+            mApplication.removeALLActivity_();// 调用myApplication的销毁所有Activity方法
+    }
+
+    //销毁所有MainActivity之外的Activity方法
+    public void removeALLActivityExceptMainTab() {
+        if (mApplication != null)
+            mApplication.removeALLActivityExceptMain_();// 调用myApplication的销毁所有Activity方法
     }
 }
