@@ -46,6 +46,7 @@ import com.ljy.ljyutils.activity.VideoLiveWallpaperActivity;
 import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
+import com.ljy.ljyutils.service.TimerService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,19 @@ public class MainActivity extends BaseActivity {
 
         initData();
         initView();
+
+        //启动Android定时器，并且启动服务
+        TimerService.getConnet(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //停止由AlarmManager启动的循环
+        TimerService.stop(this);
+        //停止由服务启动的循环
+        Intent intent = new Intent(this, TimerService.class);
+        stopService(intent);
     }
 
     private void initData() {
