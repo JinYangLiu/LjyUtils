@@ -70,9 +70,9 @@ public class MusicActivity extends BaseActivity {
     }
 
 
-    public static String action_act = "com.ljy.ljyutils.activity.broadcastReceiver";
-    public static String action_act_seekto = "com.ljy.ljyutils.activity.broadcastReceiver.seekTo";
-    public static String action_act_changeUI = "com.ljy.ljyutils.activity.broadcastReceiver.changeUI";
+    public static final String action_act = "com.ljy.ljyutils.activity.broadcastReceiver";
+    public static final String action_act_seekto = "com.ljy.ljyutils.activity.broadcastReceiver.seekTo";
+    public static final String action_act_changeUI = "com.ljy.ljyutils.activity.broadcastReceiver.changeUI";
 
     private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {

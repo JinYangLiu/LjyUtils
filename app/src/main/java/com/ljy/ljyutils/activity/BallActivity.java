@@ -20,6 +20,8 @@ public class BallActivity extends BaseActivity {
             case R.id.btn_fast:
                 LjySystemUtil.addShortcut(mContext, BallActivity.class.getName(),"小球快捷入口",R.drawable.ic_music);
                 break;
+            default:
+                break;
         }
     }
 }

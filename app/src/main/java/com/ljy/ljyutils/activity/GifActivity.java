@@ -103,6 +103,8 @@ public class GifActivity extends BaseActivity {
                 gifImageView.setGifResource(R.drawable.aaa);
                 playCycle();
                 break;
+            default:
+                break;
 
         }
     }

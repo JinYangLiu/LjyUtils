@@ -31,10 +31,10 @@ import com.ljy.util.LjyToastUtil;
 public class PlayMusicService extends Service {
 
     private MediaPlayer mediaPlayer;
-    public static int MUSIC_PLAY = 1;//开始
-    public static int MUSIC_PAUSE = 2;//暂停
-    public static int MUSIC_STOP = 3;//结束
-    public static int MUSIC_SEEK = 4;//拖动
+    public static final int MUSIC_PLAY = 1;//开始
+    public static final int MUSIC_PAUSE = 2;//暂停
+    public static final int MUSIC_STOP = 3;//结束
+    public static final int MUSIC_SEEK = 4;//拖动
     private boolean isStop = true;
     private Handler mHandler = new Handler();
     private Runnable mRunnable = new Runnable() {
@@ -51,7 +51,7 @@ public class PlayMusicService extends Service {
         }
     };
     private BroadcastReceiver broadcastReceiver;
-    public static String action_ser = "com.ljy.ljyutils.service.broadcastReceiver";
+    public static final String action_ser = "com.ljy.ljyutils.service.broadcastReceiver";
 
     @Override
     public void onCreate() {
@@ -119,6 +119,8 @@ public class PlayMusicService extends Service {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (intent==null)
+                    return;
                 if (action_ser.equals(intent.getAction())) {
                     playMusic(intent);
                     boolean isChangeUI = intent.getBooleanExtra("isChangeUI", false);
@@ -149,6 +151,8 @@ public class PlayMusicService extends Service {
     }
 
     private void playMusic(Intent intent) {
+        if (intent==null)
+            return;
         switch (intent.getIntExtra("type", -1)) {
             case 1:
                 if (isStop) {//重新播放
@@ -204,7 +208,7 @@ public class PlayMusicService extends Service {
                 stopSelf();
                 break;
             case 4://拖动后设置播放进度
-                if (mediaPlayer != null && intent != null) {
+                if (mediaPlayer != null ) {
                     int seekTo = intent.getIntExtra("seekTo", -1);
                     if (seekTo >= 0)
                         mediaPlayer.seekTo(seekTo);
@@ -214,7 +218,8 @@ public class PlayMusicService extends Service {
                 intent2.setAction(MusicActivity.action_act_seekto);
                 sendBroadcast(intent2);
                 break;
-
+            default:
+                break;
         }
     }
 

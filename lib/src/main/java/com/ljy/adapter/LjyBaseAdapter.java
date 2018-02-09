@@ -22,13 +22,11 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     private RecyclerView recyclerView;
     private Context mContext;
     public List<T> list;
-    protected LayoutInflater mInflater;
     private int mItemLayoutId;
 
     public LjyBaseAdapter(Context context, RecyclerView recyclerView) {
         this.mContext = context;
         this.recyclerView = recyclerView;
-        this.mInflater = LayoutInflater.from(mContext);
         this.mItemLayoutId = new LinearLayout(mContext).getId();
         this.list = new ArrayList<T>();
 
@@ -37,7 +35,6 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     public LjyBaseAdapter(Context context, List<T> list, RecyclerView recyclerView) {
         this.mContext = context;
         this.recyclerView = recyclerView;
-        this.mInflater = LayoutInflater.from(mContext);
         this.mItemLayoutId = new LinearLayout(mContext).getId();
         this.list = list;
 
@@ -46,7 +43,6 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     public LjyBaseAdapter(Context context, List<T> list, RecyclerView recyclerView, int itemLayoutId) {
         this.mContext = context;
         this.recyclerView = recyclerView;
-        this.mInflater = LayoutInflater.from(mContext);
         this.mItemLayoutId = itemLayoutId;
         this.list = list;
 
@@ -55,7 +51,6 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     public LjyBaseAdapter(Context context, int itemLayoutId, RecyclerView recyclerView) {
         this.mContext = context;
         this.recyclerView = recyclerView;
-        this.mInflater = LayoutInflater.from(mContext);
         this.mItemLayoutId = itemLayoutId;
         this.list = new ArrayList<T>();
 
@@ -136,14 +131,13 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
 
     public static class LjyViewHolder extends RecyclerView.ViewHolder {
 
-        private Context mContext;
         private View mConvertView;
         private SparseArray<View> mViews;
 
         public LjyViewHolder(View itemView) {
             super(itemView);
             mConvertView = itemView;
-            this.mViews = new SparseArray<View>();
+            this.mViews = new SparseArray<>();
         }
 
         public static LjyViewHolder get(Context context, ViewGroup parent, int layoutId, int position) {

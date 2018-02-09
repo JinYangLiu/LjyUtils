@@ -103,7 +103,7 @@ public class RefreshListViewActivity extends BaseActivity {
         }, 100 * 8);
     }
 
-    public class MyAdapter extends BaseAdapter {
+    private static class MyAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
         public List<Map<String, Object>> mData;
@@ -153,11 +153,11 @@ public class RefreshListViewActivity extends BaseActivity {
             return convertView;
         }
 
-        public final class ViewHolder {
+        static final class ViewHolder {
             private TextView textTitle;
             private TextView textInfo;
             private ImageView imgIcon;
-            public LinearLayout itemRoot;
+            private LinearLayout itemRoot;
         }
 
     }

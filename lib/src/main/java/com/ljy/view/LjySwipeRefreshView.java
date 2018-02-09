@@ -166,6 +166,8 @@ public class LjySwipeRefreshView extends SwipeRefreshLayout {
                     loadData();
                 }
                 break;
+            default:
+                break;
         }
         boolean res;
         try {

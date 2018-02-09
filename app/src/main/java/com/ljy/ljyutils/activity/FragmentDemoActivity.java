@@ -132,6 +132,8 @@ public class FragmentDemoActivity extends BaseActivity {
             case R.id.btn_333:
                 currentCount = 2;
                 break;
+            default:
+                break;
         }
         //通过FragmentManager+Fragment实现
         switchFragment( currentCount);

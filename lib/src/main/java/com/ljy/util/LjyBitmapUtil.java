@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Mr.LJY on 2017/12/26.
@@ -103,7 +104,11 @@ public class LjyBitmapUtil {
      * @param optimize   是否采用哈弗曼表数据计算 品质相差5-10倍
      */
     public static void compressHuffman(Bitmap bit, String targetPath, int quality, boolean optimize) {
-        NativeUtil.compressBitmap(bit, bit.getWidth(), bit.getHeight(), quality, targetPath.getBytes(), optimize);
+        try {
+            NativeUtil.compressBitmap(bit, bit.getWidth(), bit.getHeight(), quality, targetPath.getBytes("utf-8"), optimize);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -120,12 +125,14 @@ public class LjyBitmapUtil {
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
         // 压缩原Bitmap到按对应尺寸压缩的bitmap
-        Bitmap result = compressSize(image,ratio);
+        Bitmap resultBitmap = compressSize(image, ratio);
         //step2：质量压缩
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
         int quality = 100;
-        result.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        if (resultBitmap==null)
+            return;
+        resultBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         // 循环判断如果压缩后图片是否大于最大值,大于继续压缩
         while (baos.toByteArray().length / 1024 > maxSizeKB) {
             // 重置baos即清空baos
@@ -137,15 +144,15 @@ public class LjyBitmapUtil {
                 break;
             }
             // 这里压缩options%，把压缩后的数据存放到baos中
-            result.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            resultBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         }
         //step3：哈夫曼压缩
         // JNI调用哈夫曼压缩并保存图片到SD卡 这个关键
-        compressHuffman(result, targetPath, quality, true);
+        compressHuffman(resultBitmap, targetPath, quality, true);
         // 释放Bitmap
-        if (result != null && !result.isRecycled()) {
-            result.recycle();
-            result = null;
+        if (resultBitmap != null && !resultBitmap.isRecycled()) {
+            resultBitmap.recycle();
+            resultBitmap = null;
         }
     }
 
@@ -180,6 +187,7 @@ public class LjyBitmapUtil {
 
     /**
      * 计算缩放比例：缩放到1080*1920
+     *
      * @param currentWidth
      * @param currentHeight
      * @return
@@ -279,6 +287,8 @@ public class LjyBitmapUtil {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     degree = 270;
                     break;
+                default:
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -293,17 +303,21 @@ public class LjyBitmapUtil {
      * @param watermarkText  水印文字
      * @param watermarkColor 水印颜色
      */
-    public static void addWatermark(Bitmap targetBitmap, String watermarkText, int watermarkColor,String savePath) {
-        Bitmap result=addWatermark(targetBitmap,watermarkText,watermarkColor);
+    public static void addWatermark(Bitmap targetBitmap, String watermarkText, int watermarkColor, String savePath) {
+        Bitmap result = addWatermark(targetBitmap, watermarkText, watermarkColor);
         compressQuality(result, savePath, 100);
     }
 
     public static Bitmap addWatermark(Bitmap targetBitmap, String watermarkText, int watermarkColor) {
         if (TextUtils.isEmpty(watermarkText))
             return targetBitmap;
+        StringBuffer stringBuffer=new StringBuffer();
         for (int i = 0; i < 9; i++) {
-            watermarkText += "        " + watermarkText;
+            stringBuffer.append(watermarkText);
+            if (i!=8)
+                stringBuffer.append("        ");
         }
+        watermarkText=stringBuffer.toString();
         int width = targetBitmap.getWidth(), hight = targetBitmap.getHeight();
         Bitmap icon = Bitmap.createBitmap(width, hight, Bitmap.Config.ARGB_8888); //建立一个空的BItMap
         Canvas canvas = new Canvas(icon);//初始化画布绘制的图像到icon上
@@ -318,13 +332,13 @@ public class LjyBitmapUtil {
         canvas.drawBitmap(targetBitmap, src, dst, photoPaint);//将photo 缩放或则扩大到 dst使用的填充区photoPaint
         canvas.restore();
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);//设置画笔
-        float textSize=20;
-        if (width>1440||hight>2560){
-            textSize=80;
-        }else if (width>1080||hight>1920){
-            textSize=60;
-        }else if (width>720||hight>1280){
-            textSize=40;
+        float textSize = 20;
+        if (width > 1440 || hight > 2560) {
+            textSize = 80;
+        } else if (width > 1080 || hight > 1920) {
+            textSize = 60;
+        } else if (width > 720 || hight > 1280) {
+            textSize = 40;
         }
         textPaint.setTextSize(textSize);//字体大小
         textPaint.setTypeface(Typeface.DEFAULT_BOLD);//采用默认的宽度
@@ -344,8 +358,8 @@ public class LjyBitmapUtil {
     }
 
     /**
-	 * bitmap转base64
-	 */
+     * bitmap转base64
+     */
     public static String bitmapToBase64(Bitmap bitmap) {
         String result = "";
         ByteArrayOutputStream bos = null;
@@ -385,19 +399,28 @@ public class LjyBitmapUtil {
 
     /**
      * 保存bitmap为File文件（无损）
+     *
      * @param bitmap
      * @param targetPath
      */
     public static void bitmapToFile(Bitmap bitmap, String targetPath) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        FileOutputStream fos = null;
         try {
-            FileOutputStream fos = new FileOutputStream(new File(targetPath));
+            fos = new FileOutputStream(new File(targetPath));
             fos.write(baos.toByteArray());
             fos.flush();
-            fos.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

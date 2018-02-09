@@ -6,14 +6,21 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
@@ -47,7 +54,12 @@ public class LjyEncryUtil {
      * //array[i] = (char) (array[i] + key);
      */
     public static String encodeCaesar(String value, int key) {
-        byte[] bytes = encodeCaesar(value.getBytes(), key);
+        byte[] bytes = new byte[0];
+        try {
+            bytes = encodeCaesar(value.getBytes("utf-8"), key);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return LjyStringUtil.byte2hex(bytes);
     }
 
@@ -67,7 +79,12 @@ public class LjyEncryUtil {
      */
     public static String decodeCaesar(String value, int key) {
         byte[] bytes = decodeCaesar(LjyStringUtil.hex2byte(value), key);
-        return new String(bytes);
+        try {
+            return new String(bytes,"utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        return "";
     }
 
     public static byte[] decodeCaesar(byte[] value, int key) {
@@ -95,7 +112,12 @@ public class LjyEncryUtil {
      * @return
      */
     public static String encodeAES(String value, String key, boolean isHex) {
-        byte[] bytes = encodeAES(value.getBytes(), key);
+        byte[] bytes = new byte[0];
+        try {
+            bytes = encodeAES(value.getBytes("utf-8"), key);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return isHex?LjyStringUtil.byte2hex(bytes):LjyStringUtil.byte2base64(bytes);
     }
 
@@ -103,18 +125,31 @@ public class LjyEncryUtil {
     public static byte[] encodeAES(byte[] value, String key) {
         if (key == null)
             return null;
-        byte[] raw = key.getBytes();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher;// "算法/模式/补码方式"0102030405060708
+
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            IvParameterSpec iv = new IvParameterSpec(e.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
+            byte[] raw = key.getBytes("utf-8");
+            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");// "算法/模式/补码方式"0102030405060708
+            IvParameterSpec iv = new IvParameterSpec(e.getBytes("utf-8"));// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
             return cipher.doFinal(value);
             // 此处使用BASE64做转码功能，同时能起到2次加密的作用。
-        } catch (Exception e) {
-            return null;
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchPaddingException e1) {
+            e1.printStackTrace();
+        } catch (BadPaddingException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeyException e1) {
+            e1.printStackTrace();
+        } catch (IllegalBlockSizeException e1) {
+            e1.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e1) {
+            e1.printStackTrace();
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -127,23 +162,41 @@ public class LjyEncryUtil {
      */
     public static String decodeAES(String value, String key, boolean isHex) {
         byte[] bytes=decodeAES(isHex?LjyStringUtil.hex2byte(value):LjyStringUtil.base642byte(value),key);
-        return new String(bytes);
+        try {
+            return new String(bytes,"utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        return "";
     }
 
     public static byte[] decodeAES(byte[] value, String key) {
-        try {
             // 判断Key是否正确
             if (key == null)
                 return null;
-            byte[] raw = key.getBytes("ASCII");
+        try {
+            byte[] raw = key.getBytes("utf-8");
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            IvParameterSpec iv = new IvParameterSpec(e.getBytes());
+            IvParameterSpec iv = new IvParameterSpec(e.getBytes("utf-8"));
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
             return cipher.doFinal(value);
-        } catch (Exception ex) {
-            return null;
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeyException e1) {
+            e1.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchPaddingException e1) {
+            e1.printStackTrace();
+        } catch (BadPaddingException e1) {
+            e1.printStackTrace();
+        } catch (IllegalBlockSizeException e1) {
+            e1.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -155,23 +208,43 @@ public class LjyEncryUtil {
      * @return
      */
     public static String encodeDES(String value, String key, String ivStr) {
-        byte[] bytes=encodeDES(value.getBytes(),key,ivStr);
+        byte[] bytes= new byte[0];
+        try {
+            bytes = encodeDES(value.getBytes("utf-8"),key,ivStr);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return LjyStringUtil.byte2hex(bytes);
     }
 
     public static byte[] encodeDES(byte[] value, String key, String ivStr) {
         try {
-            byte[] ivs = ivStr.getBytes();//StringToByte(ivStr, "UTF-8");
+            byte[] ivs  = ivStr.getBytes("utf-8");//StringToByte(ivStr, "UTF-8");
             Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-            DESKeySpec desKeySpec = new DESKeySpec(key.getBytes());
+            DESKeySpec desKeySpec = new DESKeySpec(key.getBytes("utf-8"));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
             IvParameterSpec iv = new IvParameterSpec(ivs);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
             return cipher.doFinal(value);
-        } catch (Exception e1) {
-            return null;
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeyException e1) {
+            e1.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchPaddingException e1) {
+            e1.printStackTrace();
+        } catch (BadPaddingException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeySpecException e1) {
+            e1.printStackTrace();
+        } catch (IllegalBlockSizeException e1) {
+            e1.printStackTrace();
         }
+        return null;
 
     }
 
@@ -185,12 +258,19 @@ public class LjyEncryUtil {
      */
     public static String decodeDES(String value, String key, String ivStr) {
         byte[] bytes=decodeDES(LjyStringUtil.hex2byte(value),key,ivStr);
-        return new String(bytes);
+        try {
+            return new String(bytes,"utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        return "";
     }
 
     public static byte[] decodeDES(byte[] value, String key, String ivStr) {
+
+        byte[] ivs = new byte[0];//StringToByte(ivStr, "UTF-8");
         try {
-            byte[] ivs = ivStr.getBytes();//StringToByte(ivStr, "UTF-8");
+            ivs = ivStr.getBytes("utf-8");
             Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
             DESKeySpec desKeySpec = new DESKeySpec(key.getBytes("utf-8"));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
@@ -198,9 +278,24 @@ public class LjyEncryUtil {
             IvParameterSpec iv = new IvParameterSpec(ivs);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
             return cipher.doFinal(value);
-        } catch (Exception e1) {
-            return null;
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeyException e1) {
+            e1.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchPaddingException e1) {
+            e1.printStackTrace();
+        } catch (BadPaddingException e1) {
+            e1.printStackTrace();
+        } catch (InvalidKeySpecException e1) {
+            e1.printStackTrace();
+        } catch (IllegalBlockSizeException e1) {
+            e1.printStackTrace();
         }
+        return null;
     }
 
     //生成密钥对
@@ -217,7 +312,12 @@ public class LjyEncryUtil {
 
     //公钥加密
     public static String encodeRSA(String value, PublicKey publicKey) {
-        byte[] bytes=encodeRSA(value.getBytes(),publicKey);
+        byte[] bytes= new byte[0];
+        try {
+            bytes = encodeRSA(value.getBytes("utf-8"),publicKey);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] encodeRSA(byte[] value, PublicKey publicKey) {
@@ -233,7 +333,12 @@ public class LjyEncryUtil {
     //私钥解密
     public static String decodeRSA(String value, PrivateKey privateKey) {
         byte[] bytes=decodeRSA(LjyStringUtil.hex2byte(value),privateKey);
-        return new String(bytes);
+        try {
+            return new String(bytes,"utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        return "";
     }
     public static byte[] decodeRSA(byte[] value, PrivateKey privateKey) {
         try {
@@ -253,7 +358,12 @@ public class LjyEncryUtil {
      * @return
      */
     public static String getMD5(String value) {
-        byte[] bytes=getMD5(value.getBytes());
+        byte[] bytes= new byte[0];
+        try {
+            bytes = getMD5(value.getBytes("utf-8"));
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] getMD5(byte[] value) {
@@ -267,8 +377,8 @@ public class LjyEncryUtil {
         }
     }
 
-    public static String SHA_256 = "SHA-256";
-    public static String SHA_512 = "SHA-512";
+    public static final String SHA_256 = "SHA-256";
+    public static final String SHA_512 = "SHA-512";
 
     /**
      * 获取哈希（默认SHA512）
@@ -278,7 +388,12 @@ public class LjyEncryUtil {
      * @return 加密后的字符串
      */
     public static String getSHA(String value, String encName) {
-        byte[] bytes=getSHA(value.getBytes(),encName);
+        byte[] bytes= new byte[0];
+        try {
+            bytes = getSHA(value.getBytes("utf-8"),encName);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
         return LjyStringUtil.byte2hex(bytes);
     }
     public static byte[] getSHA(byte[] value, String encName) {

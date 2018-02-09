@@ -38,10 +38,10 @@ public class LjyVoteRadioGroup extends RadioGroup {
     private List<ProgressBar> mProgressBars;
     private List<TextView> mTextViews;
     private SubmitButtonListener submitListener;
-    public static int VOTE_BTN_SIZE = 60;
-    public static int PADDING_ITEM=40;
-    public static int PADDING_LEFT=33;
-    public static int HEIGHT_PROGRESS=12;
+    private  int VOTE_BTN_SIZE = 60;
+    private  int PADDING_ITEM=40;
+    private  int PADDING_LEFT=33;
+    private  int HEIGHT_PROGRESS=12;
 
     public LjyVoteRadioGroup(Context context) {
         this(context, null);

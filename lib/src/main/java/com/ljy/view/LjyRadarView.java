@@ -245,7 +245,7 @@ public class LjyRadarView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        radius = Math.min(h, w) / 2 * radarPercent;
+        radius = Math.min(h, w) / 2f * radarPercent;
         MAX_TEXT_WIDTH = (int) (Math.min(h, w) / 2 * (1 - radarPercent));
         //中心坐标
         centerX = w / 2;
@@ -406,7 +406,7 @@ public class LjyRadarView extends View {
 
     // 画 文字和图标
     private void drawText(Canvas canvas) {
-        Paint.FontMetrics fontMetrics = titlePaint.getFontMetrics();
+//        Paint.FontMetrics fontMetrics = titlePaint.getFontMetrics();
         for (int i = 0; i < count; i++) {
             float x = 0f, y = 0f, curAngle;
 
@@ -432,7 +432,7 @@ public class LjyRadarView extends View {
             }
             if (Math.abs(curAngle - 3 * Math.PI / 2) < 0.1 || Math.abs(curAngle - Math.PI / 2) < 0.1) {
                 if (Math.abs(curAngle - Math.PI / 2) < 0.1) {
-                    drawMultiLinesTextAndIcon(canvas, x - MAX_TEXT_WIDTH / 2, y, ss, drawables[i], 1, i);
+                    drawMultiLinesTextAndIcon(canvas, x - MAX_TEXT_WIDTH / 2f, y, ss, drawables[i], 1, i);
                 } else if (Math.abs(curAngle - Math.PI * 3 / 2) < 0.1) {
                     drawMultiLinesTextAndIcon(canvas, x - MAX_TEXT_WIDTH / 2, y, ss, drawables[i], -1, i);
                 } else {
@@ -561,8 +561,8 @@ public class LjyRadarView extends View {
             canvas.translate(x, y + descPadding);
             rect = new Rect((int) x, (int) (y + descPadding), (int) x + rectWidth, (int) (y + descPadding) + layout.getHeight());
         } else {
-            canvas.translate(x, y - layout.getHeight() / 2);
-            rect = new Rect((int) x, (int) (y - layout.getHeight() / 2), (int) x + rectWidth, (int) (y - layout.getHeight() / 2) + layout.getHeight());
+            canvas.translate(x, y - layout.getHeight() / 2f);
+            rect = new Rect((int) x, (int) (y - layout.getHeight() / 2f), (int) x + rectWidth, (int) (y - layout.getHeight() / 2) + layout.getHeight());
         }
         titleRects.set(position, rect);
         layout.draw(canvas);

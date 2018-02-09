@@ -71,6 +71,8 @@ public class DoodleActivity extends BaseActivity {
                 String path = mDoodleView.saveBitmap(mDoodleView);
                 Toast.makeText(this, "保存图片的路径为：" + path, Toast.LENGTH_SHORT).show();
                 break;
+            default:
+                break;
         }
         return true;
     }

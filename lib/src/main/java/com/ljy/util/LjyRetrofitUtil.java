@@ -3,6 +3,7 @@ package com.ljy.util;
 import com.ljy.bean.DownloadBean;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -48,11 +49,9 @@ import rx.schedulers.Schedulers;
  * 网络请求工具类
  */
 public class LjyRetrofitUtil {
-    private static LjyRetrofitUtil retrofitManager;
     private static String mBaseUrl;
     private ApiService apiService;
     private Retrofit retrofit;
-    private OkHttpClient okHttpClient;
     private static int mConnectTimeout = 10;
     private static int mReadTimeout = 30;
     private static int mWriteTimeout = 30;
@@ -61,10 +60,11 @@ public class LjyRetrofitUtil {
      * 获得RetrofitManager单例
      */
     public static LjyRetrofitUtil getInstance() {
-        if (retrofitManager == null) {
-            retrofitManager = new LjyRetrofitUtil();
-        }
-        return retrofitManager;
+        return LjyRetrofitUtilHolder.retrofitUtil;
+    }
+
+    private static class LjyRetrofitUtilHolder {
+        private static final LjyRetrofitUtil retrofitUtil = new LjyRetrofitUtil();
     }
 
     /**
@@ -89,18 +89,15 @@ public class LjyRetrofitUtil {
      * OkHttpClient配置
      */
     private OkHttpClient getOkHttpClient() {
-        if (okHttpClient == null) {
-            synchronized (LjyRetrofitUtil.class) {
-                if (okHttpClient == null) {
-                    okHttpClient = new OkHttpClient.Builder()
-                            .connectTimeout(mConnectTimeout, TimeUnit.SECONDS)//设置连接超时
-                            .readTimeout(mReadTimeout, TimeUnit.SECONDS)//设置读超时
-                            .writeTimeout(mWriteTimeout, TimeUnit.SECONDS)//设置写超时
-                            .build();
-                }
-            }
-        }
-        return okHttpClient;
+        return OkHttpClentHolder.okHttpClient;
+    }
+
+    private static class OkHttpClentHolder {
+        private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(mConnectTimeout, TimeUnit.SECONDS)//设置连接超时
+                .readTimeout(mReadTimeout, TimeUnit.SECONDS)//设置读超时
+                .writeTimeout(mWriteTimeout, TimeUnit.SECONDS)//设置写超时
+                .build();
     }
 
     public void get(String methodPath, Map<String, Object> params, final CallBack callBack) {
@@ -140,9 +137,11 @@ public class LjyRetrofitUtil {
                     @Override
                     public void onNext(ResponseBody responseBody) {
                         try {
-                            String info = new String(responseBody.bytes());
+                            String info = new String(responseBody.bytes(),"utf-8");
                             LjyLogUtil.i(info);
                             upLoadCallBack.onSuccess(info);
+                        } catch (UnsupportedEncodingException e){
+                            e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -324,12 +323,12 @@ public class LjyRetrofitUtil {
     }
 
 
-    public class ProgressResponseBody extends ResponseBody {
+    static class ProgressResponseBody extends ResponseBody {
         private final ResponseBody responseBody;
         private final ProgressListener progressListener;
         private BufferedSource bufferedSource;
 
-        public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
+        ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
             this.responseBody = responseBody;
             this.progressListener = progressListener;
         }

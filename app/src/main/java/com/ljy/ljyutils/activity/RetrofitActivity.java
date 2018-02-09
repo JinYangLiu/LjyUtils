@@ -58,6 +58,8 @@ public class RetrofitActivity extends BaseActivity {
                     }
                 });
                 break;
+            default:
+                break;
         }
     }
 

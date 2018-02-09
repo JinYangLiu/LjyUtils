@@ -337,7 +337,7 @@ public class LjyLrcView extends View {
         float y = 0;
         for (int i = 0; i < mLrcEntryList.size(); i++) {
             if (i > 0) {
-                y += (mLrcEntryList.get(i - 1).getHeight() + mLrcEntryList.get(i).getHeight()) / 2 + mDividerHeight;
+                y += (mLrcEntryList.get(i - 1).getHeight() + mLrcEntryList.get(i).getHeight()) / 2f + mDividerHeight;
             }
             if (i == mCurrentLine) {
                 mLrcPaint.setColor(mCurrentTextColor);
@@ -357,7 +357,7 @@ public class LjyLrcView extends View {
      */
     private void drawText(Canvas canvas, StaticLayout staticLayout, float y) {
         canvas.save();
-        canvas.translate(mLrcPadding, y - staticLayout.getHeight() / 2);
+        canvas.translate(mLrcPadding, y - staticLayout.getHeight() / 2f);
         staticLayout.draw(canvas);
         canvas.restore();
     }
@@ -481,7 +481,7 @@ public class LjyLrcView extends View {
             lrcEntry.init(mLrcPaint, (int) getLrcWidth());
         }
 
-        mOffset = getHeight() / 2;
+        mOffset = getHeight() / 2f;
     }
 
     private void reset() {
@@ -571,8 +571,8 @@ public class LjyLrcView extends View {
     }
 
     private float getOffset(int line) {
-        if (mLrcEntryList.get(line).getOffset() == Float.MIN_VALUE) {
-            float offset = getHeight() / 2;
+        if (Math.abs(mLrcEntryList.get(line).getOffset() - Float.MIN_VALUE)<0.001) {
+            float offset = getHeight() / 2f;
             for (int i = 1; i <= line; i++) {
                 offset -= (mLrcEntryList.get(i - 1).getHeight() + mLrcEntryList.get(i).getHeight()) / 2 + mDividerHeight;
             }
@@ -678,7 +678,7 @@ public class LjyLrcView extends View {
         return entryList;
     }
 
-    class LrcEntry implements Comparable<LrcEntry> {
+    static class LrcEntry implements Comparable<LrcEntry> {
         private long time;
         private String text;
         private StaticLayout staticLayout;

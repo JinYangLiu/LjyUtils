@@ -55,6 +55,8 @@ public class DialogDemoActivity extends BaseActivity {
             case R.id.btn_progressShow:
                 showProgressDialog();
                 break;
+            default:
+                break;
 
         }
     }

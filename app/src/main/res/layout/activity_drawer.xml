@@ -14,13 +14,13 @@
             android:id="@+id/btn_main_left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="OpenMenu"
+            android:onClick="openMenu"
             android:text="打开left"/>
         <Button
             android:id="@+id/btn_main_right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="OpenMenu"
+            android:onClick="openMenu"
             android:text="打开right"/>
     </LinearLayout>
 

@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class LjySPUtil {
 
-    private final String SP_NAME = "LJY_SP_NAME";
+    private final static String SP_NAME = "LJY_SP_NAME";
     private SharedPreferences sp;
 
     public LjySPUtil(Context context) {

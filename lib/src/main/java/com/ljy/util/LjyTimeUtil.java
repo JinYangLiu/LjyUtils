@@ -164,9 +164,9 @@ public class LjyTimeUtil {
      * 农历年的天干地支
      */
     public static String getChineseEra(CalendarBean bean) {
-        int year = bean.getYear();
-        int month = bean.getMonth();
-        int day = bean.getDay();
+//        int year = bean.getYear();
+//        int month = bean.getMonth();
+//        int day = bean.getDay();
         final String[] gan = new String[]{"甲", "乙", "丙", "丁", "戊", "己", "庚",
                 "辛", "壬", "癸"};
         final String[] zhi = new String[]{"子", "丑", "寅", "卯", "辰", "巳", "午",
@@ -193,7 +193,7 @@ public class LjyTimeUtil {
 //        String dayZG = gan[gd] + zhi[zd];//得到日的天干地支
 
         //年的天
-        year = getChineseDay(bean)[0] - 1900 + 36;
+        int year = getChineseDay(bean)[0] - 1900 + 36;
         int gy = year % 10;
         //年的地
         int zy = year % 12;

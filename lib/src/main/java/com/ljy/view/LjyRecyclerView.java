@@ -87,21 +87,20 @@ public class LjyRecyclerView extends RecyclerView {
         return mHeaderViewInfos.size();
     }
 
-    public class FixedViewInfo {
+    static class FixedViewInfo {
         public View view;
-        public int viewType;
+        private int viewType;
     }
 
-    public class WrapperRecyclerViewAdapter extends Adapter<ViewHolder> {
+    static class WrapperRecyclerViewAdapter extends Adapter<ViewHolder> {
 
-        public ArrayList<FixedViewInfo> mHeaderViewInfos;
-        public ArrayList<FixedViewInfo> mFooterViewInfos;
-        public Adapter mAdapter;
-        public ArrayList<FixedViewInfo> EMPTY_INFO_LIST = new ArrayList<>();
+        private ArrayList<FixedViewInfo> mHeaderViewInfos;
+        private ArrayList<FixedViewInfo> mFooterViewInfos;
+        private Adapter mAdapter;
+        private ArrayList<FixedViewInfo> EMPTY_INFO_LIST = new ArrayList<>();
         private boolean isStaggered;
-        private boolean isFooter;
 
-        public WrapperRecyclerViewAdapter(ArrayList<FixedViewInfo> headerViewInfos,
+         WrapperRecyclerViewAdapter(ArrayList<FixedViewInfo> headerViewInfos,
                                           ArrayList<FixedViewInfo> footerViewInfos,
                                           Adapter adapter) {
             mAdapter = adapter;
@@ -117,11 +116,11 @@ public class LjyRecyclerView extends RecyclerView {
             }
         }
 
-        public int getHeadersCount() {
+         int getHeadersCount() {
             return mHeaderViewInfos.size();
         }
 
-        public int getFootersCount() {
+         int getFootersCount() {
             return mFooterViewInfos.size();
         }
 
@@ -185,12 +184,10 @@ public class LjyRecyclerView extends RecyclerView {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType >= LjyRecyclerView.BASE_HEADER_VIEW_TYPE && viewType < LjyRecyclerView.BASE_HEADER_VIEW_TYPE + getHeadersCount()) {
                 View view = mHeaderViewInfos.get(viewType - LjyRecyclerView.BASE_HEADER_VIEW_TYPE).view;
-                isFooter = false;
 //            setVisibility(view);
                 return viewHolder(view);
             } else if (viewType >= LjyRecyclerView.BASE_FOOTER_VIEW_TYPE && viewType < LjyRecyclerView.BASE_FOOTER_VIEW_TYPE + getFootersCount()) {
                 View view = mFooterViewInfos.get(viewType - LjyRecyclerView.BASE_FOOTER_VIEW_TYPE).view;
-                isFooter = true;
                 setVisibility(view);
                 return viewHolder(view);
             }

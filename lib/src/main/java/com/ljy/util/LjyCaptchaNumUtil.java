@@ -128,7 +128,7 @@ public class LjyCaptchaNumUtil {
         int color = randomColor();
         paint.setColor(color);
         paint.setFakeBoldText(mRandom.nextBoolean());  //true为粗体，false为非粗体
-        float skewX = mRandom.nextInt(11) / 10;
+        float skewX = mRandom.nextInt(11) / 10f;
         skewX = mRandom.nextBoolean() ? skewX : -skewX;
         paint.setTextSkewX(skewX); //float类型参数，负数表示右斜，整数左斜
 //        paint.setUnderlineText(true); //true为下划线，false为非下划线

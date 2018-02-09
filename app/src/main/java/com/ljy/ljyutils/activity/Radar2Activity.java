@@ -277,6 +277,8 @@ public class Radar2Activity extends BaseActivity implements CompoundButton.OnChe
                     radarView.setTitles(titles);
                 }
                 break;
+            default:
+                break;
         }
     }
 }

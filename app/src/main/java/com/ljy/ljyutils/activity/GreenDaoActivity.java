@@ -55,6 +55,8 @@ public class GreenDaoActivity extends BaseActivity {
             case R.id.btn_queryAll:
                 queryAllPhone();
                 break;
+            default:
+                break;
         }
     }
 

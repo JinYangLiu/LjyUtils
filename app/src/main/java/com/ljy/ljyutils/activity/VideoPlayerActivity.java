@@ -110,6 +110,8 @@ public class VideoPlayerActivity extends BaseActivity {
             case R.id.hidesmall:
                 videoPlayer.hideSmallVideo();
                 break;
+            default:
+                break;
         }
     }
 

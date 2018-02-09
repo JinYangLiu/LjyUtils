@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
                 "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式", "DataBinding的使用",
                 "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
-                "动画的使用","ConstraintLayout的使用","拼图view的使用"};
+                "动画的使用", "ConstraintLayout的使用", "拼图view的使用"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -154,12 +154,12 @@ public class MainActivity extends BaseActivity {
         AppCompatDelegate.setDefaultNightMode(isNight ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
 
-    class MainIntentBean {
+    private static class MainIntentBean {
 
         String textInfo;
         Class intentClass;
 
-        public MainIntentBean(String textInfo, Class intentClass) {
+        MainIntentBean(String textInfo, Class intentClass) {
             this.textInfo = textInfo;
             this.intentClass = intentClass;
         }
@@ -168,7 +168,7 @@ public class MainActivity extends BaseActivity {
             return textInfo;
         }
 
-        public Class getIntentClass() {
+        Class getIntentClass() {
             return intentClass;
         }
 

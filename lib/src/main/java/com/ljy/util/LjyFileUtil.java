@@ -69,32 +69,44 @@ public class LjyFileUtil {
 
     /**
      * file转byte[]
+     *
      * @param file
      * @return
      */
     public static byte[] getBytesFromFile(File file) {
         byte[] buffer = null;
+        FileInputStream fis = null;
+        ByteArrayOutputStream bos = null;
         try {
-            FileInputStream fis = new FileInputStream(file);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+            fis = new FileInputStream(file);
+            bos = new ByteArrayOutputStream(1000);
             byte[] b = new byte[1000];
             int n;
             while ((n = fis.read(b)) != -1) {
                 bos.write(b, 0, n);
             }
-            fis.close();
-            bos.close();
             buffer = bos.toByteArray();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (fis != null)
+                    fis.close();
+                if (bos != null)
+                    bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
         return buffer;
     }
 
     /**
      * InputStream 转 File
+     *
      * @param is
      * @param file
      */
@@ -102,13 +114,15 @@ public class LjyFileUtil {
         FileOutputStream fos = null;
         try {
             byte[] data = new byte[2048];
-            int nbread ;
+            int nbread;
             fos = new FileOutputStream(file);
             while ((nbread = is.read(data)) > -1) {
                 fos.write(data, 0, nbread);
             }
             return true;
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
+            return false;
+        } catch (IOException ex) {
             return false;
         } finally {
             if (fos != null) {

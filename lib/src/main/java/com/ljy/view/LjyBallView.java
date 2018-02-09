@@ -18,7 +18,7 @@ public class LjyBallView extends View {
 
     private final Random mRandom;
 
-    class Ball {
+    static class Ball {
         int radius; // 半径
         float cx;   // 圆心
         float cy;   // 圆心

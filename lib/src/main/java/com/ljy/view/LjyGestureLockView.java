@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Created by Mr.LJY on 2017/12/28.
- *
+ * <p>
  * 九宫格图案锁
  */
 
@@ -30,8 +30,8 @@ public class LjyGestureLockView extends View {
 
     private static final int POINT_SIZE = 1;   //选中点的数量
 
-    private int xNum=3;
-    private int yNum=3;
+    private int xNum = 3;
+    private int yNum = 3;
 
     private Point[][] points = new Point[xNum][yNum];  //声明一个3行3列的点
 
@@ -47,7 +47,7 @@ public class LjyGestureLockView extends View {
 
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG); //画笔
 
-    private Bitmap pointNormal, pointPressed, pointError, linePressed, lineError;  //5个图片资源
+    private Bitmap pointNormal, pointPressed, pointError;
 
     private List<Point> pointList = new ArrayList<Point>(); //存放点的集合
 
@@ -57,7 +57,6 @@ public class LjyGestureLockView extends View {
 
     private boolean movingNoPoint;  //鼠标在移动但不是九宫格的点  --- 绘制还得继续
 
-    private Matrix matrix = new Matrix();   //矩阵
 
     private OnPatterChangeListener listener;   //监听器
 
@@ -73,9 +72,7 @@ public class LjyGestureLockView extends View {
         return isLogin;
     }
 
-    public Context mContext;
-
-    private String LOCK_TIME_START="LOCK_TIME_START";
+    private String LOCK_TIME_START = "LOCK_TIME_START";
     private int lockTimeLen = 3;//锁定时长
 
     public void setIsLogin(boolean isLogin) {
@@ -83,23 +80,22 @@ public class LjyGestureLockView extends View {
     }
 
     public LjyGestureLockView(Context context) {
-        this(context, null,0);
+        this(context, null, 0);
     }
 
     public LjyGestureLockView(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public LjyGestureLockView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.mContext = context;
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LjyGestureLockView);
         //获取对应的属性值
-        this.iconPointCheck = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointCheck,R.drawable.gesture_check);
-        this.iconPointUncheck = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointUncheck,R.drawable.gesture_uncheck);
-        this.iconPointError = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointError,R.drawable.gesture_error);
-        this.iconLinePressed = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconLinePressed,R.drawable.line_pressed);
-        this.iconLineError = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconLineError,R.drawable.line_error);
+        this.iconPointCheck = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointCheck, R.drawable.gesture_check);
+        this.iconPointUncheck = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointUncheck, R.drawable.gesture_uncheck);
+        this.iconPointError = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconPointError, R.drawable.gesture_error);
+        this.iconLinePressed = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconLinePressed, R.drawable.line_pressed);
+        this.iconLineError = typedArray.getResourceId(R.styleable.LjyGestureLockView_iconLineError, R.drawable.line_error);
     }
 
     @Override
@@ -152,31 +148,6 @@ public class LjyGestureLockView extends View {
         }
     }
 
-    /**
-     * 画线
-     *
-     * @param canvas 画布
-     * @param a      第一个点
-     * @param b      第二个点
-     */
-    private void line2Canvas(Canvas canvas, Point a, Point b) {
-        //线的长度
-        float lineLength = (float) Point.distance(a, b);
-        float degrees = Point.getDegrees(a, b);
-        canvas.rotate(degrees, a.x, a.y);
-        if (a.state == Point.STATE_PRESSED) {
-            matrix.setScale(lineLength / linePressed.getWidth(), 1);
-            matrix.postTranslate(a.x - linePressed.getWidth() / 2, a.y - linePressed.getHeight() / 2);
-            canvas.drawBitmap(linePressed, matrix, paint);
-        } else {
-            matrix.setScale(lineLength / lineError.getWidth(), 1);
-            matrix.postTranslate(a.x - lineError.getWidth() / 2, a.y - lineError.getHeight() / 2);
-            canvas.drawBitmap(lineError, matrix, paint);
-        }
-        canvas.rotate(-degrees, a.x, a.y);
-
-    }
-
     private void line2Canvas(Canvas canvas, Point a, Point b, int color) {
         //线的长度
         Paint mPaint = new Paint();
@@ -223,12 +194,10 @@ public class LjyGestureLockView extends View {
         pointNormal = BitmapFactory.decodeResource(getResources(), iconPointUncheck);
         pointPressed = BitmapFactory.decodeResource(getResources(), iconPointCheck);
         pointError = BitmapFactory.decodeResource(getResources(), iconPointError);
-        linePressed = BitmapFactory.decodeResource(getResources(), iconLinePressed);
-        lineError = BitmapFactory.decodeResource(getResources(), iconLineError);
 
-        pointNormal= resetBitmapSize(pointNormal);
-        pointPressed=resetBitmapSize(pointPressed);
-        pointError=resetBitmapSize(pointError);
+        pointNormal = resetBitmapSize(pointNormal);
+        pointPressed = resetBitmapSize(pointPressed);
+        pointError = resetBitmapSize(pointError);
 
         //4.点的坐标
         points[0][0] = new Point(offsetsX + width * 18 / 100, offsetsY + width * 18 / 100);
@@ -264,10 +233,10 @@ public class LjyGestureLockView extends View {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         // 设置想要的大小
-        int newWidth = LjyViewUtil.getScreenWidth(getContext())/(xNum+2);
+        float newWidth = LjyViewUtil.getScreenWidth(getContext()) / (xNum + 2f);
         // 计算缩放比例
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newWidth) / height;
+        float scaleWidth = newWidth / width;
+        float scaleHeight = newWidth / height;
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
@@ -277,7 +246,7 @@ public class LjyGestureLockView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         long currentTime = System.currentTimeMillis();
-        long needTime = 1 * 60 * 1000 - (currentTime - new LjySPUtil(getContext()).get(LOCK_TIME_START,0l));
+        long needTime = 1 * 60 * 1000 - (currentTime - new LjySPUtil(getContext()).get(LOCK_TIME_START, 0l));
         if (needTime > 0 && (needTime / 1000 <= lockTimeLen * 60)) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -285,6 +254,8 @@ public class LjyGestureLockView extends View {
                     if (listener != null) {
                         listener.onPatterStart(true);
                     }
+                    break;
+                default:
                     break;
             }
             return false;
@@ -318,6 +289,8 @@ public class LjyGestureLockView extends View {
                     isFinish = true;
                     isSelect = false;
                     break;
+                default:
+                    break;
             }
             //  如果绘制没有结束并且还在继续画且选中的点还在继续画的时候 ---- 选中重复检查
             if (!isFinish && isSelect && point != null) {
@@ -338,7 +311,7 @@ public class LjyGestureLockView extends View {
                     resetPoint();
                 }
                 //绘制错误
-                else if (pointList.size() < POINT_SIZE && pointList.size() >= 0) {
+                else if (pointList.size() < POINT_SIZE && pointList.size() > 0) {
                     errorPoint();
                     if (listener != null) {
                         listener.onPatterChange(null);
@@ -347,12 +320,13 @@ public class LjyGestureLockView extends View {
                 // 绘制成功
                 else {
                     if (listener != null) {
-                        String passwordStr = "#";
+                        StringBuffer stringBuffer = new StringBuffer();
+                        stringBuffer.append("#");
                         for (int i = 0; i < pointList.size(); i++) {
-                            passwordStr = passwordStr + pointList.get(i).index;
+                            stringBuffer.append(pointList.get(i).index);
                         }
-                        if (!TextUtils.isEmpty(passwordStr)) {
-                            listener.onPatterChange(passwordStr);
+                        if (!TextUtils.isEmpty(stringBuffer.toString())) {
+                            listener.onPatterChange(stringBuffer.toString());
                         }
                     }
                 }
@@ -426,11 +400,11 @@ public class LjyGestureLockView extends View {
      */
     public static class Point {
         //正常
-        public static int STATE_NORMAL = 0;
+        static final int STATE_NORMAL = 0;
         //选中
-        public static int STATE_PRESSED = 1;
+        static final int STATE_PRESSED = 1;
         //错误
-        public static int STATE_ERROR = 2;
+        static final int STATE_ERROR = 2;
 
         public float x, y;
         public int index = 0, state = 0;

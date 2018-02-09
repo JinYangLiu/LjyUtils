@@ -178,6 +178,8 @@ public class GlideUtilActivity extends BaseActivity {
                             outer.iv2.setImageBitmap(outer.bitmap);
                         }
                         break;
+                    default:
+                        break;
                 }
             }
         }

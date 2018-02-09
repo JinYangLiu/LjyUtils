@@ -46,6 +46,6 @@ class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("向右滑动滑块完成拼图", getWidth() / 2, getHeight() / 2 + textPaint.getTextSize() / 2 - 4, textPaint);
+        canvas.drawText("向右滑动滑块完成拼图", getWidth() / 2f, getHeight() / 2f + textPaint.getTextSize() / 2f - 4, textPaint);
     }
 }

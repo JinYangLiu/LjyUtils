@@ -76,7 +76,7 @@ public class MyNormalService extends Service {
     }
 
     //Binder
-    public class MyBinder extends Binder{
+    public static class MyBinder extends Binder{
         public void doSomething(){
             LjyLogUtil.i("doSomething....");
         }
