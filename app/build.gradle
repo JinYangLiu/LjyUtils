@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 //butterKnife使用
-apply plugin: 'com.neenbedankt.android-apt'
+//apply plugin: 'com.neenbedankt.android-apt'
 //使用greenDao
 apply plugin: 'org.greenrobot.greendao'
 
@@ -16,6 +16,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // 开启multidex
         multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
+    }
+
+    //Gradle编译禁用Lint报错
+    lintOptions {
+        abortOnError false
     }
 
     //用来关闭Android Studio的PNG合法性检查的，直接不让它检查
@@ -38,7 +43,7 @@ android {
     buildTypes {
         release {
             buildConfigField("boolean", "isDebug", "false")
-            minifyEnabled true
+            minifyEnabled false
             debuggable false
             shrinkResources false // 是否去除无效的资源文件
             signingConfig signingConfigs.config
@@ -93,10 +98,10 @@ dependencies {
     compile project(':lib')
     //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
-    apt 'com.jakewharton:butterknife-compiler:8.8.1'
+    annotationProcessor  'com.jakewharton:butterknife-compiler:8.8.1'
     //dagger2
     compile 'com.google.dagger:dagger:2.13'
-    apt 'com.google.dagger:dagger-compiler:2.12'
+    annotationProcessor  'com.google.dagger:dagger-compiler:2.12'
     //greenDao
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'org.greenrobot:greendao-generator:3.2.0'
