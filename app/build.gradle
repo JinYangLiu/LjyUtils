@@ -43,9 +43,9 @@ android {
     buildTypes {
         release {
             buildConfigField("boolean", "isDebug", "false")
-            minifyEnabled false
+            minifyEnabled true
             debuggable false
-            shrinkResources false // 是否去除无效的资源文件
+            shrinkResources true // 是否去除无效的资源文件
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
