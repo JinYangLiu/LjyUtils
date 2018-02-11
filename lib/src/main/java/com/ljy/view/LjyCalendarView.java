@@ -183,12 +183,12 @@ public class LjyCalendarView extends RelativeLayout {
         return listAll;
     }
 
-    class WeekGirdViewAdapter extends BaseAdapter {
+    static class WeekGirdViewAdapter extends BaseAdapter {
 
         private LayoutInflater layoutInflater;
-        public String[] mlist;
+        String[] mlist;
 
-        public WeekGirdViewAdapter(Context context, String[] list) {
+        WeekGirdViewAdapter(Context context, String[] list) {
             this.mlist = list;
             layoutInflater = LayoutInflater.from(context);
         }
@@ -223,17 +223,17 @@ public class LjyCalendarView extends RelativeLayout {
     }
 
 
-    public class DaysGirdViewAdapter extends BaseAdapter {
+    static class DaysGirdViewAdapter extends BaseAdapter {
 
         private LayoutInflater layoutInflater;
-        public List<CalendarBean> mlist;
+        List<CalendarBean> mlist;
 
-        public DaysGirdViewAdapter(Context context, List<CalendarBean> list) {
+        DaysGirdViewAdapter(Context context, List<CalendarBean> list) {
             this.mlist = list;
             layoutInflater = LayoutInflater.from(context);
         }
 
-        public void setNewList(List<CalendarBean> list) {
+        void setNewList(List<CalendarBean> list) {
             mlist = list;
             notifyDataSetChanged();
         }

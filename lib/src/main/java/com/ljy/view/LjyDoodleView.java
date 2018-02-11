@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.ljy.util.LjyBitmapUtil;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -205,30 +207,8 @@ public class LjyDoodleView extends SurfaceView implements SurfaceHolder.Callback
         if (!new File(path).exists()) {
             new File(path).getParentFile().mkdir();
         }
-        savePicByPNG(doodleView.getBitmap(), path);
+        LjyBitmapUtil.bitmapToFile(doodleView.getBitmap(),path);
         return path;
-    }
-
-    /**
-     * 将一个 Bitmap 保存在一个指定的路径中
-     *
-     * @param bitmap
-     * @param filePath
-     */
-    public static void savePicByPNG(Bitmap bitmap, String filePath) {
-        FileOutputStream fileOutputStream;
-        try {
-            fileOutputStream = new FileOutputStream(filePath);
-            if (null != fileOutputStream) {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

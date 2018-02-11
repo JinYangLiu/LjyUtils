@@ -70,7 +70,8 @@ public class VideoLiveWallpaper extends WallpaperService {
                         case ACTION_VOICE_SILENCE:
                             mMediaPlayer.setVolume(0, 0);
                             break;
-
+                        default:
+                            break;
                     }
                 }
             }, intentFilter);

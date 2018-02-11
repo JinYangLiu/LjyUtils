@@ -101,7 +101,7 @@ public class LjyPwdInputView extends AppCompatEditText {
         borderPaint.setColor(borderColor);
         borderPaint.setStrokeWidth(defaultSplitLineWidth);
         for (int i = 1; i < passwordLength; i++) {
-            float x = width * i / passwordLength;
+            float x = width * i / (passwordLength+0f);
             canvas.drawLine(x, 0, x, height, borderPaint);
         }
 

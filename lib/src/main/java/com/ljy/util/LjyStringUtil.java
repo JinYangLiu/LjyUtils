@@ -2,6 +2,7 @@ package com.ljy.util;
 
 import android.util.Base64;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
@@ -58,17 +59,16 @@ public class LjyStringUtil {
      * @return
      */
     public static String byte2hex(byte[] b) {
-        String hs = "";
-        String stmp;
+        StringBuffer hs = new StringBuffer();
         for (int n = 0; n < b.length; n++) {
-            stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
+            String stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
             if (stmp.length() == 1) {
-                hs = hs + "0" + stmp;
+                hs.append("0" + stmp);
             } else {
-                hs = hs + stmp;
+                hs.append(stmp);
             }
         }
-        return hs.toUpperCase();
+        return hs.toString().toUpperCase();
     }
 
     /**
@@ -82,7 +82,10 @@ public class LjyStringUtil {
             return null;
         }
         int l = strhex.length();
-        if (l % 2 == 1) {
+//        如果row是负奇数，那么row % 2 == -1，
+//        解决方法：
+//        考虑使用x & 1 == 1或者x % 2 != 0
+        if (l % 2 != 0) {
             return null;
         }
         byte[] b = new byte[l / 2];
@@ -138,14 +141,24 @@ public class LjyStringUtil {
         for (int i = 0; i < tempStr.length; i++) {
             bytes[i] = Long.valueOf(tempStr[i], 2).byteValue();
         }
-        return new String(bytes);
+        try {
+            return new String(bytes,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
      * 字符串转2进制
      */
     public static String stringToBinary(String info) {
-        byte[] strChar = info.getBytes();
+        byte[] strChar = new byte[0];
+        try {
+            strChar = info.getBytes("utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return byteToBinary(strChar);
     }
 

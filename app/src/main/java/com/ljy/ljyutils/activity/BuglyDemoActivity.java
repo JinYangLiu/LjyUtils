@@ -37,6 +37,8 @@ public class BuglyDemoActivity extends BaseActivity {
             case R.id.btnCheckUpgrade://检查更新
                 Beta.checkUpgrade();
                 break;
+            default:
+                break;
         }
     }
 }

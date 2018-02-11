@@ -7,9 +7,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         //这里配置 apt 供butterknife使用
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+       // classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //GreenDao3依赖
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
         // tinkersupport插件(1.0.3以上无须再配置tinker插件）

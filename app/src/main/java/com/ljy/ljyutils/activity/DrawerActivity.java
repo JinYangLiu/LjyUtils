@@ -41,13 +41,15 @@ public class DrawerActivity extends BaseActivity {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
     }
 
-    public void OpenMenu(View view) {
+    public void openMenu(View view) {
         switch (view.getId()) {
             case R.id.btn_main_left:
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
             case R.id.btn_main_right:
                 mDrawerLayout.openDrawer(Gravity.RIGHT);
+                break;
+            default:
                 break;
         }
 

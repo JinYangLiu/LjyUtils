@@ -49,7 +49,7 @@ public class Bezier2 extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        tag=event.getX()<getWidth()/2;
+        tag=event.getX()<getWidth()/2f;
         if (tag){
             control1.x=event.getX();
             control1.y=event.getY();

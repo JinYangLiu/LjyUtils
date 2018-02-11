@@ -14,8 +14,8 @@ public class SwipeCardBean {
     private String name;
     private String url;
     private int cardColor;
-    public static String imgUrl="http://img5.imgtn.bdimg.com/it/u=2629022734,2518818737&fm=26&gp=0.jpg";
-    public static String[] urls = {"http://imgsrc.baidu.com/forum/w%3D580/sign=cd4ee2fafad3572c66e29cd4ba126352/359205ce36d3d539719fbad03287e950342ab0f8.jpg",
+    public final static String imgUrl="http://img5.imgtn.bdimg.com/it/u=2629022734,2518818737&fm=26&gp=0.jpg";
+    private final static String[] urls = {"http://imgsrc.baidu.com/forum/w%3D580/sign=cd4ee2fafad3572c66e29cd4ba126352/359205ce36d3d539719fbad03287e950342ab0f8.jpg",
             "http://img4.imgtn.bdimg.com/it/u=1555471406,472717268&fm=26&gp=0.jpg",
             "http://img2.imgtn.bdimg.com/it/u=2547432359,3031103221&fm=26&gp=0.jpg",
             "http://img4.imgtn.bdimg.com/it/u=3124759563,1050396013&fm=26&gp=0.jpg",

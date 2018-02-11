@@ -106,10 +106,10 @@ public class LjyTagView extends RelativeLayout {
             public boolean onTouch(View v, MotionEvent event) {
 
                 switch (event.getAction()) {
-
                     case MotionEvent.ACTION_DOWN:
                         lastX = firstX = (int) event.getRawX();
                         lastY = firstY = (int) event.getRawY();
+                        break;
                     case MotionEvent.ACTION_MOVE:
                         int x = (int) event.getRawX();
                         int y = (int) event.getRawY();
@@ -149,7 +149,10 @@ public class LjyTagView extends RelativeLayout {
                         }
                         lastX = (int) event.getRawX();
                         lastY = (int) event.getRawY();
+                        break;
                     case MotionEvent.ACTION_UP:
+                        break;
+                    default:
                         break;
 
                 }
@@ -308,7 +311,7 @@ public class LjyTagView extends RelativeLayout {
         public Direction direct = Direction.Left;
         public Type type = Type.Undefined;
 
-        public enum Direction {
+        private enum Direction {
             Left("left"), Right("right");
 
             Direction(String valString) {
@@ -326,7 +329,7 @@ public class LjyTagView extends RelativeLayout {
             }
         }
 
-        public enum Type {
+        private enum Type {
             Undefined("undefined"), Exists("exists"), CustomPoint("custom_point"), OfficalPoint("offical_point");
 
             Type(String typeString) {

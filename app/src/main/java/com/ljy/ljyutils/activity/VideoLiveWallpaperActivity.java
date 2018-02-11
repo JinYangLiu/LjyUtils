@@ -87,6 +87,8 @@ public class VideoLiveWallpaperActivity extends AppCompatActivity {
                 }
                 */
                 break;
+            default:
+                break;
         }
     }
 }

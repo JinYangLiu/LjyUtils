@@ -51,11 +51,11 @@ public class MyIntentService extends IntentService {
         sendBroadcast(intent2);
 
         //实际使用时可以根据不同的任务做不同的处理
-        switch (taskName) {
-            //case ...
-            default:
-                break;
-        }
+//        switch (taskName) {
+//            //case ...
+//            default:
+//                break;
+//        }
     }
 
     @Override

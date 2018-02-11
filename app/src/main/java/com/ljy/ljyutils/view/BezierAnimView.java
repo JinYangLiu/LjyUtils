@@ -86,7 +86,7 @@ public class BezierAnimView extends View {
         canvas.drawCircle(x, y, RADIUS, mPaint);
     }
 
-    class BezierEvaluator implements TypeEvaluator<Point> {
+   private static class BezierEvaluator implements TypeEvaluator<Point> {
         private final Point controlPoint;
 
         public BezierEvaluator(Point controlPoint) {

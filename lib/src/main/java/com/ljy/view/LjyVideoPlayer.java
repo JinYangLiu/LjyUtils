@@ -80,7 +80,6 @@ public class LjyVideoPlayer extends GSYVideoPlayer {
     protected int mDialogProgressHighLightColor = -11;
 
     protected int mDialogProgressNormalColor = -11;
-    private boolean isFullScreenLock=false;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -643,8 +642,6 @@ public class LjyVideoPlayer extends GSYVideoPlayer {
             if (mCurrentState == CURRENT_STATE_PLAYING) {
                 enPlayView.play();
             } else if (mCurrentState == CURRENT_STATE_ERROR) {
-                enPlayView.pause();
-            } else {
                 enPlayView.pause();
             }
         } else if (mStartButton instanceof ImageView) {

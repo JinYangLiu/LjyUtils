@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 
 /**
  * Created by Mr.LJY on 2018/1/9.
- *
+ * <p>
  * 支持GIF的imageView
  */
 
@@ -112,13 +112,13 @@ public class LjyGifImageView extends AppCompatImageView {
                 return;
             }
         }
-        movieDuration = movie.duration() == 0 ? DEFAULT_DURATION : movie.duration();
+        if (movie != null)
+            movieDuration = movie.duration() == 0 ? DEFAULT_DURATION : movie.duration();
         requestLayout();
         if (mOnPlayListener != null) {
             mOnPlayListener.onPlayStart();
         }
     }
-
 
 
     //倒叙播放
@@ -199,7 +199,7 @@ public class LjyGifImageView extends AppCompatImageView {
         if (mOnPlayListener != null && hasStart) {
             BigDecimal mData = new BigDecimal(percent).setScale(2, BigDecimal.ROUND_HALF_UP);
             double f1 = mData.doubleValue();
-            f1 = f1 == 0.99 ? 1.0 : f1;
+            f1 = Math.abs(f1 - 0.99)<0.01 ? 1.0 : f1;
             mOnPlayListener.onPlaying((float) f1);
         }
         return (int) currentTime;

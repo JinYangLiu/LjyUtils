@@ -72,6 +72,8 @@ public class GestureLockActivity extends BaseActivity {
             case R.id.btn_2:
                 mGestureLockView.errorState();
                 break;
+            default:
+                break;
         }
     }
 

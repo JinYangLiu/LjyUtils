@@ -159,11 +159,10 @@ public class LjyViewUtil {
             public boolean onTouch(View v, MotionEvent event) {
 
                 switch (event.getAction()) {
-
                     case MotionEvent.ACTION_DOWN:
-
                         lastX = firstX = (int) event.getRawX();
                         lastY = firstY = (int) event.getRawY();
+                        break;
                     case MotionEvent.ACTION_MOVE:
                         int dx = (int) event.getRawX() - lastX;
                         int dy = (int) event.getRawY() - lastY;
@@ -199,7 +198,10 @@ public class LjyViewUtil {
                         } else {
                             view.setClickable(false);
                         }
+                        break;
                     case MotionEvent.ACTION_UP:
+                        break;
+                    default:
                         break;
 
                 }

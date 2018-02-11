@@ -27,8 +27,6 @@ public class LjyArgueProgressView  extends LinearLayout {
         private TextView text_argue_title_no_view;
         private TextView text_argue_num_yes_view;
         private TextView text_argue_num_no_view;
-        private TextView text_argue_support_yes_view;
-        private TextView text_argue_support_no_view;
         private LinearLayout btn_argue_yes_view;
         private LinearLayout btn_argue_no_view;
         private TextView text_argue_content_no_view;
@@ -48,8 +46,6 @@ public class LjyArgueProgressView  extends LinearLayout {
             text_argue_title_no_view = (TextView) findViewById(R.id.text_argue_title_no);
             text_argue_num_yes_view = (TextView) findViewById(R.id.text_argue_num_yes);
             text_argue_num_no_view = (TextView) findViewById(R.id.text_argue_num_no);
-            text_argue_support_yes_view = (TextView) findViewById(R.id.text_argue_support_yes);
-            text_argue_support_no_view = (TextView) findViewById(R.id.text_argue_support_no);
             text_argue_content_yes_view = (TextView) findViewById(R.id.text_argue_content_yes);
             text_argue_content_no_view = (TextView) findViewById(R.id.text_argue_content_no);
             btn_argue_yes_view = (LinearLayout) findViewById(R.id.btn_argue_yes);

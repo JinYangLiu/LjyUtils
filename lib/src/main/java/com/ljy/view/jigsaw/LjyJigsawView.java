@@ -116,6 +116,7 @@ public class LjyJigsawView extends RelativeLayout implements View.OnClickListene
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            super.handleMessage(msg);
             switch (msg.what) {
                 case TIME_CHANGED:
                     if (isGameSuccess || isGameOver || isPause) {
@@ -145,8 +146,9 @@ public class LjyJigsawView extends RelativeLayout implements View.OnClickListene
                         nextLevel();
                     }
                     break;
+                default:
+                    break;
             }
-            super.handleMessage(msg);
         }
     };
 

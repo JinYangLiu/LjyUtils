@@ -46,6 +46,8 @@ public class BroadcastActivity extends BaseActivity {
                 localBroadcastManager.sendBroadcast(intent2);
                 LjyLogUtil.i("发送了广播");
                 break;
+            default:
+                break;
         }
     }
 

@@ -27,6 +27,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -261,10 +262,10 @@ public class LjyFishView extends RelativeLayout {
 
     }
 
-    public class FishDrawable extends Drawable {
-        public static final float HEAD_RADIUS = 30;
-        public static final float TOTAL_LENGTH = 6.79f * HEAD_RADIUS;
-        protected static final float BODY_LENGHT = HEAD_RADIUS * 3.2f; //第一节身体长度
+    static class FishDrawable extends Drawable {
+        private static final float HEAD_RADIUS = 30;
+        private static final float TOTAL_LENGTH = 6.79f * HEAD_RADIUS;
+        private static final float BODY_LENGHT = HEAD_RADIUS * 3.2f; //第一节身体长度
         private static final String TAG = "Jcs_Fishsss";
         private static final int BODY_ALPHA = 220;
         private static final int OTHER_ALPHA = 160;
@@ -273,12 +274,11 @@ public class LjyFishView extends RelativeLayout {
         private static final int FINS_RIGHT = -1;
         private static final float FINS_LENGTH = HEAD_RADIUS * 1.3f;
         //	private float mainAngle =90;//角度表示的角
-        protected ObjectAnimator finsAnimator;
+        private ObjectAnimator finsAnimator;
         private Paint mPaint;
-        private Context mContext;
         //控制区域
         private int currentValue = 0;//全局控制标志
-        private float mainAngle = new Random().nextFloat() * 360;//角度表示的角
+        private float mainAngle = new SecureRandom().nextFloat() * 360;//角度表示的角
         private float waveFrequence = 1;
         //鱼头点
         private PointF headPoint;
@@ -289,7 +289,6 @@ public class LjyFishView extends RelativeLayout {
         private Path mPath;
 
         public FishDrawable(Context context) {
-            this.mContext = context;
             init();
         }
 

@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,10 +198,11 @@ public class LjySystemUtil {
 
     @NonNull
     private static String getString(InputStream input) {
+        InputStreamReader inputReader = null;
+        BufferedReader bufReader = null;
         try {
-            InputStreamReader inputReader = new InputStreamReader(input, "utf-8");
-
-            BufferedReader bufReader = new BufferedReader(inputReader);
+            inputReader = new InputStreamReader(input, "utf-8");
+            bufReader = new BufferedReader(inputReader);
             String line;
             StringBuffer stringBuffer = new StringBuffer();
             while ((line = bufReader.readLine()) != null) {
@@ -208,9 +210,21 @@ public class LjySystemUtil {
                 stringBuffer.append("\n");
             }
             return stringBuffer.toString();
-        } catch (Exception e) {
-            return "";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (inputReader!=null)
+                    inputReader.close();
+                if (bufReader!=null)
+                    bufReader.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
+        return "";
     }
 
     /**

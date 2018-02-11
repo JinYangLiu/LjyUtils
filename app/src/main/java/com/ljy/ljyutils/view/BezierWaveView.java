@@ -20,7 +20,7 @@ import com.ljy.util.LjyColorUtil;
 public class BezierWaveView extends View {
     private Paint mPaint;
     private Path mPath;
-    private int mWaveLength = 1000;//波浪的长度
+    private float mWaveLength = 1000;//波浪的长度
     private long mDuration = 1000;//动画执行时长
     private int mOffSet;//平移偏移量
     private int mScreenWidth, mScreenHeight;//屏幕宽高
@@ -41,7 +41,7 @@ public class BezierWaveView extends View {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ValueAnimator animator = ValueAnimator.ofInt(0, mWaveLength);
+                ValueAnimator animator = ValueAnimator.ofFloat(0f, mWaveLength);
                 animator.setDuration(mDuration);
                 animator.setRepeatCount(ValueAnimator.INFINITE);//动画无限重复
                 animator.setInterpolator(new LinearInterpolator());
@@ -77,10 +77,10 @@ public class BezierWaveView extends View {
         //移到屏幕最左边
         mPath.moveTo(-mWaveLength + mOffSet, mCenterY);
         for (int i = 0; i < mWaveCount; i++) {
-            Point a = new Point(-mWaveLength * 3 / 4 + i * mWaveLength + mOffSet, mCenterY + maxTop);
-            Point b = new Point(-mWaveLength / 2 + i * mWaveLength + mOffSet, mCenterY);
-            Point c = new Point(-mWaveLength / 4 + i * mWaveLength + mOffSet, mCenterY - maxTop);
-            Point d = new Point(i * mWaveLength + mOffSet, mCenterY);
+            Point a = new Point((int) (-mWaveLength * 3 / 4 + i * mWaveLength + mOffSet), mCenterY + maxTop);
+            Point b = new Point((int) (-mWaveLength / 2 + i * mWaveLength + mOffSet), mCenterY);
+            Point c = new Point((int) (-mWaveLength / 4 + i * mWaveLength + mOffSet), mCenterY - maxTop);
+            Point d = new Point((int) (i * mWaveLength + mOffSet), mCenterY);
             mPath.quadTo(a.x, a.y, b.x, b.y);
             mPath.quadTo(c.x, c.y, d.x, d.y);
 //            mPaint.setStyle(Paint.Style.STROKE);

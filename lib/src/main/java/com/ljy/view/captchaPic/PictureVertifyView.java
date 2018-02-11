@@ -47,9 +47,9 @@ class PictureVertifyView extends AppCompatImageView {
     private int mMode;
 
 
-
-    interface Callback{
+    interface Callback {
         void onSuccess(long time);
+
         void onFailed();
     }
 
@@ -77,9 +77,9 @@ class PictureVertifyView extends AppCompatImageView {
         super.onDraw(canvas);
         if (shadowInfo == null) {
             shadowInfo = mStrategy.getBlockPostionInfo(getWidth(), getHeight(), blockSize);
-            if(mMode==LjyCaptchaPictureView.MODE_BAR){
+            if (mMode == LjyCaptchaPictureView.MODE_BAR) {
                 blockInfo = new PositionInfo(0, shadowInfo.top);
-            }else{
+            } else {
                 blockInfo = mStrategy.getPositionInfoForSwipeBlock(getWidth(), getHeight(), blockSize);
             }
         }
@@ -167,7 +167,7 @@ class PictureVertifyView extends AppCompatImageView {
         this.blockSize = size;
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
         this.verfityBlock = null;
         invalidate();
     }
@@ -175,7 +175,7 @@ class PictureVertifyView extends AppCompatImageView {
     public void setBitmap(Bitmap bitmap) {
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
         this.verfityBlock = null;
         setImageBitmap(bitmap);
     }
@@ -184,7 +184,7 @@ class PictureVertifyView extends AppCompatImageView {
         this.mMode = mode;
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
         this.verfityBlock = null;
         invalidate();
     }
@@ -221,7 +221,7 @@ class PictureVertifyView extends AppCompatImageView {
         }
     }
 
-    private float tempX, tempY, downX, downY;
+    private float tempX, tempY;
 
 
     @Override
@@ -241,8 +241,6 @@ class PictureVertifyView extends AppCompatImageView {
             float y = event.getY();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    downX = x;
-                    downY = y;
                     downByTouch(x, y);
                     break;
                 case MotionEvent.ACTION_UP:
@@ -252,6 +250,8 @@ class PictureVertifyView extends AppCompatImageView {
                     float offsetX = x - tempX;
                     float offsetY = y - tempY;
                     moveByTouch(offsetX, offsetY);
+                    break;
+                default:
                     break;
             }
             tempX = x;

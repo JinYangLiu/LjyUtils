@@ -45,6 +45,10 @@ public class LjyVoteCheckBox extends LinearLayout {
     private List<String> mSelectedBoxContents;
     private LjyVoteRadioGroup.SubmitButtonListener submitListener;
     private int maxNum;
+    private  int VOTE_BTN_SIZE = 60;
+    private  int PADDING_ITEM=40;
+    private  int PADDING_LEFT=33;
+    private  int HEIGHT_PROGRESS=12;
 
     public LjyVoteCheckBox(Context context) {
         this(context, null);
@@ -64,10 +68,10 @@ public class LjyVoteCheckBox extends LinearLayout {
         mTextViews = new ArrayList<>();
         mLinearLayout_son2s = new ArrayList<>();
         mSelectedBoxContents = new ArrayList<>();
-        LjyVoteRadioGroup.VOTE_BTN_SIZE= LjySystemUtil.dp2px(context,16);
-        LjyVoteRadioGroup.PADDING_ITEM= LjySystemUtil.dp2px(context,4);
-        LjyVoteRadioGroup.PADDING_LEFT= LjySystemUtil.dp2px(context,12);
-        LjyVoteRadioGroup.HEIGHT_PROGRESS= LjySystemUtil.dp2px(context,8);
+        VOTE_BTN_SIZE= LjySystemUtil.dp2px(context,16);
+        PADDING_ITEM= LjySystemUtil.dp2px(context,4);
+        PADDING_LEFT= LjySystemUtil.dp2px(context,12);
+        HEIGHT_PROGRESS= LjySystemUtil.dp2px(context,8);
     }
 
     /**
@@ -140,7 +144,7 @@ public class LjyVoteCheckBox extends LinearLayout {
             checkBox.setButtonDrawable(null);
         }
         Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.bbs_check_notselect);
-        drawable.setBounds(0, 0, LjyVoteRadioGroup.VOTE_BTN_SIZE, LjyVoteRadioGroup.VOTE_BTN_SIZE);
+        drawable.setBounds(0, 0, VOTE_BTN_SIZE, VOTE_BTN_SIZE);
         checkBox.setCompoundDrawables(drawable, null, null, null);
         checkBox.setChecked(false);
         mCheckBoxs.add(checkBox);
@@ -159,18 +163,18 @@ public class LjyVoteCheckBox extends LinearLayout {
         textParams.weight = 1.0f;
         LinearLayout linearLayout_son = new LinearLayout(mContext);
         linearLayout_son.setOrientation(LinearLayout.HORIZONTAL);
-        linearLayout_son.setPadding(0,LjyVoteRadioGroup.PADDING_ITEM,0,0);
+        linearLayout_son.setPadding(0,PADDING_ITEM,0,0);
         LayoutParams lyParams = new LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         linearLayout_son.addView(textView, textParams);
-        checkBox.setPadding(LjyVoteRadioGroup.PADDING_LEFT, 0, 0, 0);
+        checkBox.setPadding(PADDING_LEFT, 0, 0, 0);
         linearLayout_son.addView(checkBox, checkBoxParams);
         LinearLayout linearLayout_son2 = new LinearLayout(mContext);
         linearLayout_son2.setOrientation(LinearLayout.HORIZONTAL);
         LayoutParams progressParams = new LayoutParams(
                 LayoutParams.WRAP_CONTENT,
-                LjyVoteRadioGroup.HEIGHT_PROGRESS);
+                HEIGHT_PROGRESS);
         progressParams.gravity = Gravity.CENTER_VERTICAL;
         progressParams.weight = 1.0f;
         ProgressBar progressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyleHorizontal);
@@ -178,7 +182,7 @@ public class LjyVoteCheckBox extends LinearLayout {
         TextView textView_percent = new TextView(mContext);
         textView_percent.setTextSize(14);
         textView_percent.setTextColor(0xff999999);
-        textView_percent.setPadding(LjyVoteRadioGroup.PADDING_LEFT, 0, 0, 0);
+        textView_percent.setPadding(PADDING_LEFT, 0, 0, 0);
         mProgressBars.add(progressBar);
         linearLayout_son2.addView(progressBar, progressParams);
         mTextViews.add(textView_percent);
@@ -223,7 +227,7 @@ public class LjyVoteCheckBox extends LinearLayout {
                 } else {
                     drawable = ContextCompat.getDrawable(mContext, R.drawable.bbs_check_select);
                 }
-                drawable.setBounds(0, 0, LjyVoteRadioGroup.VOTE_BTN_SIZE, LjyVoteRadioGroup.VOTE_BTN_SIZE);
+                drawable.setBounds(0, 0, VOTE_BTN_SIZE, VOTE_BTN_SIZE);
                 checkBox.setCompoundDrawables(drawable, null, null, null);
             }
 

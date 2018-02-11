@@ -15,15 +15,15 @@ import java.util.Map;
  */
 class BasePresenter {
 
-    private final String CODE = "code";
-    private final String MESSAGE = "message";
-    private final String BODY = "body";
+    private final static String codeKey = "code";
+    private final static String messageKey = "message";
+    private final static String bodyKey = "body";
 
-    private final String appId = "2";
-    private final String appSecret = "anxin_bbs!@#";
-    private final String safeCode = "bbs_anxin_android_#@!";
-    private final String axid = "1177080";
-    private final String pwd = "e3ceb5881a0a1fdaad01296d7554868d";
+    private final static String appId = "2";
+    private final static String appSecret = "anxin_bbs!@#";
+    private final static String safeCode = "bbs_anxin_android_#@!";
+    private final static String axid = "1177080";
+    private final static String pwd = "e3ceb5881a0a1fdaad01296d7554868d";
 
     <T> void postData(String methodPath, Map<String, Object> body, final PresenterCallBack<T> postCallBack) {
 
@@ -37,11 +37,11 @@ class BasePresenter {
         LjyRetrofitUtil.getInstance().post(methodPath, params, new LjyRetrofitUtil.CallBack() {
             @Override
             public void onSuccess(Map<String, Object> parserData) {
-                if (parserData != null && "1".equals(parserData.get(CODE)) && parserData.get(BODY) != null) {
-                    postCallBack.onSuccess((T) parserData.get(BODY));
+                if (parserData != null && "1".equals(parserData.get(codeKey)) && parserData.get(bodyKey) != null) {
+                    postCallBack.onSuccess((T) parserData.get(bodyKey));
                 } else {
-                    String info = parserData == null ? "无数据返回" : !TextUtils.isEmpty((String) parserData.get(MESSAGE)) ? (String) parserData.get(MESSAGE) :
-                            "1".equals(parserData.get(CODE)) ? "暂无数据" : "数据错误";
+                    String info = parserData == null ? "无数据返回" : !TextUtils.isEmpty((String) parserData.get(messageKey)) ? (String) parserData.get(messageKey) :
+                            "1".equals(parserData.get(codeKey)) ? "暂无数据" : "数据错误";
                     postCallBack.onFail(info);
                 }
             }
@@ -58,12 +58,12 @@ class BasePresenter {
                 new LjyRetrofitUtil.CallBack() {
                     @Override
                     public void onSuccess(Map<String, Object> parserData) {
-                        if (parserData != null && "1".equals(parserData.get(CODE)) && parserData.get(BODY) != null) {
+                        if (parserData != null && "1".equals(parserData.get(codeKey)) && parserData.get(bodyKey) != null) {
                             if (getCallBack != null)
-                                getCallBack.onSuccess((T) parserData.get(BODY));
+                                getCallBack.onSuccess((T) parserData.get(bodyKey));
                         } else {
-                            String info = parserData == null ? "无数据返回" : !TextUtils.isEmpty((String) parserData.get(MESSAGE)) ? (String) parserData.get(MESSAGE) :
-                                    "1".equals(parserData.get(CODE)) ? "暂无数据" : "数据错误";
+                            String info = parserData == null ? "无数据返回" : !TextUtils.isEmpty((String) parserData.get(messageKey)) ? (String) parserData.get(messageKey) :
+                                    "1".equals(parserData.get(codeKey)) ? "暂无数据" : "数据错误";
                             if (getCallBack != null)
                                 getCallBack.onFail(info);
                         }

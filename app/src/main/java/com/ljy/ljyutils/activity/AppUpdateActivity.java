@@ -29,6 +29,7 @@ import com.ljy.view.LjyMDDialogManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class AppUpdateActivity extends BaseActivity {
     }
 
     private void initView() {
-        String info = String.format("packageName:%s\nappName:%s\nversionName:%s\nversionCode:%d\n",
+        String info = String.format("packageName:%s%nappName:%s%nversionName:%s%nversionCode:%d%n",
                 getPackageName(), LjySystemUtil.getAppName(mContext), LjySystemUtil.getVersionName(mContext), LjySystemUtil.getVersionCode(mContext));
         textInfo.setText(info);
     }
@@ -95,7 +96,12 @@ public class AppUpdateActivity extends BaseActivity {
                 if (mDownloadBean == null)
                     return;
                 byte[] apkHash = LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(mDownloadBean.getSaveFile()));
-                String hash1 = new String(apkHash);
+                String hash1 ;
+                try {
+                    hash1 = new String(apkHash,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                   hash1="";
+                }
                 String hash2 = LjyStringUtil.byte2base64(apkHash);
                 String hash3 = LjyStringUtil.byte2hex(apkHash);
                 textInfo2.setText("apk_hash_md5_hex: " + hash3);
@@ -120,9 +126,9 @@ public class AppUpdateActivity extends BaseActivity {
                 }
                 break;
             case R.id.btn_install:
-                if (LjySystemUtil.getVersionCode(mContext)==999){
-                    LjyToastUtil.toast(mContext,"已经是最新了哦");
-                }else {
+                if (LjySystemUtil.getVersionCode(mContext) == 999) {
+                    LjyToastUtil.toast(mContext, "已经是最新了哦");
+                } else {
                     installApk();
                 }
                 break;
@@ -197,7 +203,7 @@ public class AppUpdateActivity extends BaseActivity {
         }
 
         String fileMd5 = LjyStringUtil.byte2hex(LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
-        LjyLogUtil.i("fileMd5:"+fileMd5);
+        LjyLogUtil.i("fileMd5:" + fileMd5);
         if (!fileMd5.equals("8523F7F2E26F8B43B2A01D92FE1A4D5B")) {
             LjyToastUtil.toast(mContext, "apk的hash值不匹配哦");
             return;
@@ -266,6 +272,8 @@ public class AppUpdateActivity extends BaseActivity {
                             outer.progressBar.setMax((int) bundle.getLong("total"));
                             outer.progressBar.setProgress((int) bundle.getLong("progress"));
                         }
+                        break;
+                    default:
                         break;
                 }
             }
