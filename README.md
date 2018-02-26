@@ -15,7 +15,23 @@ Step 2. Add the dependency
 	dependencies {
 	        compile 'com.github.JinYangLiu:LjyUtils:v1.0.2'
 	}
-	
+### 所用框架
+
+bugly-thinker：热修复\
+walle：多渠道打包\
+DataBinding：mvvm架构的数据绑定\
+GreenDao：数据库orm框架\
+glide：图片加载框架\
+Matisse：知乎开源的图片选择器\
+rxJava+Retrofit+okHttp：网络请求框架\
+GSYVideoPlayer：视频播放\
+zxing：二维码解析\
+butterknife：依赖注入框架，免去findViewById\
+dagger2：依赖注入框架，在mvp架构项目中使用，利于解耦\
+multidex: dex分包\
+lottie: json文件实现动画
+：push： 友盟推送
+
 ### 工具类介绍：（具体使用demo在app模块中都有）
 
 + LjyLogUtil：用于打印log的辅助工具类
@@ -81,7 +97,12 @@ compressQuality(质量压缩),compressSize(尺寸压缩),compressSample(采样�
 compressHuffman（哈夫曼压缩），compressMix（尺寸、质量，哈夫曼混合使用）\
 getRatioSize（计算缩放比），addWatermark（给图片添加水印）
 
-+ LjyRetrofitUtil：网络请求工具类，Retrofit和rxJava的结合，提供get，post请求的处理方法，相关demo使用mvp设计模式加载数据
++ LjyRetrofitUtil：网络请求工具类，Retrofit和rxJava的结合
+
+提供get，post请求的处理方法，相关demo使用mvp设计模式加载数据\
+新增下载文件（支持断点续传），上传表单/文件等
+
++ LjyCaptchaNumUtil: 生成带干扰线的图形验证码
 
 
 ### 自定义View介绍：（具体使用demo在app模块中都有）
@@ -109,6 +130,22 @@ getRatioSize（计算缩放比），addWatermark（给图片添加水印）
 + LjyGifImageView：支持GIF的ImageView
 
 + LjyVideoPlayer：视频播放控件，基于GSYVideoPlayer,支持边播便缓存，全屏，小窗口
+
++ LjyFishView: 一个很好玩的小锦鲤
+
++ LjyLrcView: 歌词解析的view
+
++ LjyCalendarView: 自定义日历
+
++ LjyBallView: 飘动的屏保小球
+
++ LjyZanView: 仿最美有物点赞效果
+
++ SwipeBackLayout: 侧滑退出
+
++ LjySlidingMenu: 侧滑菜单，与DrawerLayout对比
+
++ LjyJigsawView: 拼图游戏view
 
 
 
