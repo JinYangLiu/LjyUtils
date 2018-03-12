@@ -5,4 +5,5 @@
     <color name="thin_red">#ff8888</color>
     <color name="thin_green">#88ff88</color>
     <color name="thin_blue">#8888ff</color>
+    <color name="color_transparent">#5e000000</color>
 </resources>

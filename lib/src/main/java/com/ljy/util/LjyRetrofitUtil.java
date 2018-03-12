@@ -25,6 +25,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -105,8 +107,13 @@ public class LjyRetrofitUtil {
         setCallBack(observable, callBack);
     }
 
-    public void post(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Observable<Map<String, Object>> observable = apiService.post(methodPath, params);
+    public void postBody(String methodPath, Map<String, Object> params, final CallBack callBack) {
+        Observable<Map<String, Object>> observable = apiService.postBody(methodPath, params);
+        setCallBack(observable, callBack);
+    }
+
+    public void postFieldMap(String methodPath, Map<String, String> params, final CallBack callBack) {
+        Observable<Map<String, Object>> observable = apiService.postFieldMap(methodPath, params);
         setCallBack(observable, callBack);
     }
 
@@ -137,10 +144,10 @@ public class LjyRetrofitUtil {
                     @Override
                     public void onNext(ResponseBody responseBody) {
                         try {
-                            String info = new String(responseBody.bytes(),"utf-8");
+                            String info = new String(responseBody.bytes(), "utf-8");
                             LjyLogUtil.i(info);
                             upLoadCallBack.onSuccess(info);
-                        } catch (UnsupportedEncodingException e){
+                        } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -223,10 +230,22 @@ public class LjyRetrofitUtil {
 
         /**
          * post
+         * <p>
+         * # @Body:用于POST请求体，将实例对象根据转换方式转换为对应的json字符串参数， 这个转化方式是GsonConverterFactory定义的。
          */
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         @POST("{methodPath}")
-        Observable<Map<String, Object>> post(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+        Observable<Map<String, Object>> postBody(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+
+        /**
+         * post
+         * <p>
+         * # @FieldMapPost方式传递简单的键值对,
+         * 需要添加@FormUrlEncoded表示表单提交
+         */
+        @FormUrlEncoded
+        @POST("{methodPath}")
+        Observable<Map<String, Object>> postFieldMap(@Path("methodPath") String methodPath,@FieldMap Map<String, String> maps);
 
         /**
          * 断点续传下载接口
@@ -245,6 +264,13 @@ public class LjyRetrofitUtil {
 
         /**
          * 提交表单（可上传文件）
+         *
+         * #@Part，@PartMap：用于POST文件上传 其中@Part MultipartBody.Part代表文件，@Part("key") RequestBody代表参数
+         * 需要添加@Multipart表示支持文件上传的表单，Content-Type: multipart/form-data
+         * 例如:
+         * #@Multipart
+         * #@POST("upload") /
+         * Call<ResponseBody> upload(@Part("description") RequestBody description,@Part MultipartBody.Part file);
          */
         @Multipart
         @POST

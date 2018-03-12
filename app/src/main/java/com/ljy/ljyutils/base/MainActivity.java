@@ -33,6 +33,7 @@ import com.ljy.ljyutils.activity.GreenDaoActivity;
 import com.ljy.ljyutils.activity.JigsawActivity;
 import com.ljy.ljyutils.activity.LottieActivity;
 import com.ljy.ljyutils.activity.MusicActivity;
+import com.ljy.ljyutils.activity.PDFUploadActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.PicUploadActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
@@ -40,6 +41,7 @@ import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
+import com.ljy.ljyutils.activity.SideIndexBarActivity;
 import com.ljy.ljyutils.activity.SlidingMenuActivity;
 import com.ljy.ljyutils.activity.UseUtilsActivity;
 import com.ljy.ljyutils.activity.VideoLiveWallpaperActivity;
@@ -100,7 +102,7 @@ public class MainActivity extends BaseActivity {
                 "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式", "DataBinding的使用",
                 "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
-                "动画的使用", "ConstraintLayout的使用", "拼图view的使用"};
+                "动画的使用", "ConstraintLayout的使用", "拼图view的使用","pdf文件上传","分组ListView+索引条"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -111,7 +113,7 @@ public class MainActivity extends BaseActivity {
                 BallActivity.class, BezierActivity.class, AppUpdateActivity.class, null, BindDataActivity.class,
                 DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class,
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
-                AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class};
+                AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class, SideIndexBarActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);

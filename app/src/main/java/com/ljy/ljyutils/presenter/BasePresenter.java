@@ -34,7 +34,7 @@ class BasePresenter {
         params.put("header", header);
         params.put("body", body);
 
-        LjyRetrofitUtil.getInstance().post(methodPath, params, new LjyRetrofitUtil.CallBack() {
+        LjyRetrofitUtil.getInstance().postBody(methodPath, params, new LjyRetrofitUtil.CallBack() {
             @Override
             public void onSuccess(Map<String, Object> parserData) {
                 if (parserData != null && "1".equals(parserData.get(codeKey)) && parserData.get(bodyKey) != null) {

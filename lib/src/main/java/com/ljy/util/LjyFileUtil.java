@@ -1,5 +1,9 @@
 package com.ljy.util;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
 import com.ljy.bean.DownloadBean;
 
 import java.io.ByteArrayOutputStream;
@@ -10,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.URISyntaxException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -143,6 +148,23 @@ public class LjyFileUtil {
      */
     public static boolean deleteFile(File file) {
         return file != null && (!file.exists() || file.isFile() && file.delete());
+    }
+
+    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {"_data"};
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null) {
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+                cursor.close();
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
     }
 
 }
