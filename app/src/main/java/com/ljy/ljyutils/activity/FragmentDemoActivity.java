@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.ljy.ljyutils.R;
@@ -67,6 +68,16 @@ public class FragmentDemoActivity extends BaseActivity {
             @Override
             public CharSequence getPageTitle(int position) {
                 return fragmentTitleList.get(position);
+            }
+
+            //java.lang.NullPointerException: Attempt to invoke virtual method 'android.os.Handler android.support.v4.app.FragmentHostCallback.getHandler()' on a null object reference
+            @Override
+            public void finishUpdate(ViewGroup container) {
+                try{
+                    super.finishUpdate(container);
+                } catch (NullPointerException nullPointerException){
+                    LjyLogUtil.e("Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+                }
             }
         };
         viewPager.setAdapter(fragmentPagerAdapter);

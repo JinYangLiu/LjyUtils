@@ -228,38 +228,67 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.CalendarActivity"/>
-        <activity android:name=".activity.BallActivity">
+        <activity android:name=".activity.BallActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BezierActivity"/>
-        <activity android:name=".activity.AppUpdateActivity"/>
-        <activity android:name=".activity.BindDataActivity"/>
-        <activity android:name=".activity.DoodleActivity"/>
+        <activity android:name=".activity.BezierActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AppUpdateActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.BindDataActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.DoodleActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PicUploadActivity"
-            android:theme="@android:style/Theme.Wallpaper"/>
-        <activity android:name=".activity.BuglyDemoActivity"/>
-        <activity android:name=".activity.CaptchaActivity"/>
-        <activity android:name=".activity.VideoLiveWallpaperActivity">
-        </activity>
-        <activity android:name=".activity.DrawerActivity">
-        </activity>
-        <activity android:name=".activity.SlidingMenuActivity">
-        </activity>
-        <activity android:name=".activity.DialogDemoActivity">
-        </activity>
-        <activity android:name=".activity.AnimatorActivity">
-        </activity>
-        <activity android:name=".activity.ConstraintLayoutActivity">
-        </activity>
-        <activity android:name=".activity.JigsawActivity">
-        </activity>
-        <activity android:name=".activity.PDFUploadActivity">
-        </activity>
-        <activity android:name=".activity.SideIndexBarActivity">
-        </activity>
+            android:theme="@android:style/Theme.Wallpaper"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.BuglyDemoActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.CaptchaActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.VideoLiveWallpaperActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.DrawerActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.SlidingMenuActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.DialogDemoActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AnimatorActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ConstraintLayoutActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.JigsawActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PDFUploadActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.SideIndexBarActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.WebViewTestActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:screenOrientation="portrait"
+                  android:hardwareAccelerated="true"/>
     </application>
 
 </manifest>

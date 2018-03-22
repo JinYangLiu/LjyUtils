@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ljy.ljyutils.activity.WebViewTestActivity">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_goBack"
+                android:onClick="onWebViewToolBarClick"
+                android:text="后退"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_goForword"
+                android:onClick="onWebViewToolBarClick"
+                android:text="前进"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_clear"
+                android:onClick="onWebViewToolBarClick"
+                android:text="清除缓存"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rootLayout"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:background="@color/thin_green"
+        android:layout_height="match_parent"/>
+
+
+</RelativeLayout>
