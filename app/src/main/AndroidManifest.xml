@@ -308,6 +308,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.XmlParserTestActivity">
         </activity>
+        <activity android:name=".activity.DesignPatternActivity">
+        </activity>
     </application>
 
 </manifest>
