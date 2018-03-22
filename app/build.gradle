@@ -25,7 +25,7 @@ android {
 
     //用来关闭Android Studio的PNG合法性检查的，直接不让它检查
     //（添加这一行的原因是girl.png并不是一个合法的png图片，其本质是个jpeg图片）
-    aaptOptions{
+    aaptOptions {
         cruncherEnabled = false
         useNewCruncher = false
     }
@@ -98,10 +98,10 @@ dependencies {
     compile project(':lib')
     //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor  'com.jakewharton:butterknife-compiler:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //dagger2
     compile 'com.google.dagger:dagger:2.13'
-    annotationProcessor  'com.google.dagger:dagger-compiler:2.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
     //greenDao
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'org.greenrobot:greendao-generator:3.2.0'

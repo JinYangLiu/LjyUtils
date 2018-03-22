@@ -49,6 +49,7 @@ import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
 import com.ljy.ljyutils.activity.WebViewTestActivity;
+import com.ljy.ljyutils.activity.XmlParserTestActivity;
 import com.ljy.ljyutils.service.TimerService;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class MainActivity extends BaseActivity {
                 "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用","pdf文件上传",
-                "分组ListView+索引条", "webView测试"};
+                "分组ListView+索引条", "webView测试","xml解析"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -116,7 +117,7 @@ public class MainActivity extends BaseActivity {
                 DoodleActivity.class, PicUploadActivity.class, BuglyDemoActivity.class, CaptchaActivity.class,
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
-                SideIndexBarActivity.class, WebViewTestActivity.class};
+                SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
