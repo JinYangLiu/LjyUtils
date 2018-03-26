@@ -56,6 +56,27 @@
                 android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnProxyPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="代理模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnTemplateMethodPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="模板方法模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnBuilderPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="建造者模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
     </HorizontalScrollView>

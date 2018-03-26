@@ -1,5 +1,6 @@
 package com.ljy.ljyutils.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -7,6 +8,14 @@ import android.widget.TextView;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyLogUtil;
+
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,10 +74,378 @@ public class DesignPatternActivity extends BaseActivity {
                 //适配器模式
                 methodAdapterPattern();
                 break;
+            case R.id.btnProxyPattern:
+                //代理模式
+                methodProxyPattern();
+                break;
+            case R.id.btnTemplateMethodPattern:
+                //模板方法模式
+                methodTemplateMethodPattern();
+                break;
+            case R.id.btnBuilderPattern:
+                //建造者模式
+                methodBuilderPattern();
+                break;
         }
         mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
     }
+
+    /**
+     * 建造者模式:
+     * 将一个复杂对象的构建与它的表示分离,使得同样的构建过程可以创建不同的表示
+     * 在用户不知道对象的建造过程和细节的情况下就可以直接创建复杂的对象。
+     * <p>
+     * 在Android源码中的使用: AlertDialog.Builder
+     */
+    private void methodBuilderPattern() {
+        HuaWeiBuilder builder = new HuaWeiBuilder();
+        builder.buildOS("Android 7.0");
+        builder.buildRAM(4);
+        builder.buildAICPU(true);
+        MobilePhone huaWeiPhone = builder.build();
+        LjyLogUtil.i(huaWeiPhone.toString());
+
+    }
+
+    //以组装手机为例:
+    abstract class MobilePhone {
+        protected String cpu;
+        protected String ram;
+        protected String os;
+
+        protected MobilePhone() {
+
+        }
+
+        public abstract void setCPU();
+
+        public void setRAM(String ram) {
+            this.ram = ram;
+        }
+
+        public void setOS(String os) {
+            this.os = os;
+        }
+
+        @Override
+        public String toString() {
+            return "MobilePhone{" +
+                    "cpu='" + cpu + '\'' +
+                    ", ram=" + ram +
+                    ", os='" + os + '\'' +
+                    '}';
+        }
+    }
+
+    class HuaWeiPhone extends MobilePhone {
+        protected String aiCpu;
+
+        protected HuaWeiPhone() {
+
+        }
+
+        @Override
+        public void setCPU() {
+            this.cpu = "麒麟970";
+        }
+
+        public void setAiCpu(String aiCpu) {
+            this.aiCpu = aiCpu;
+        }
+
+        @Override
+        public String toString() {
+            return "HuaWeiPhone{" +
+                    "cpu='" + cpu + '\'' +
+                    ", ram=" + ram +
+                    ", os='" + os + '\'' +
+                    ", aiCpu='" + aiCpu + '\'' +
+                    '}';
+        }
+    }
+
+    abstract class PhoneBuilder {
+
+        public abstract void buildRAM(int ram);
+
+        public abstract void buildOS(String os);
+
+        public abstract MobilePhone build();
+    }
+
+    class HuaWeiBuilder extends PhoneBuilder {
+        HuaWeiParam mHuaWeiParam;
+        private HuaWeiPhone huaWeiPhone;
+
+        public HuaWeiBuilder(){
+            mHuaWeiParam=new HuaWeiParam();
+        }
+
+        public void buildAICPU(boolean isSupportAi) {
+            if (isSupportAi)
+                mHuaWeiParam.aiCpu="麒麟AI芯片";
+        }
+
+        @Override
+        public void buildRAM(int ram) {
+            mHuaWeiParam.ram=String.format("AMD-007 %dG", ram);
+        }
+
+        @Override
+        public void buildOS(String os) {
+            mHuaWeiParam.os=os;
+        }
+
+        @Override
+        public MobilePhone build() {
+            huaWeiPhone = new HuaWeiPhone();
+            huaWeiPhone.setCPU();
+            huaWeiPhone.setOS(mHuaWeiParam.os);
+            huaWeiPhone.setRAM(mHuaWeiParam.ram);
+            huaWeiPhone.setAiCpu(mHuaWeiParam.aiCpu);
+            return huaWeiPhone;
+        }
+
+        class HuaWeiParam{
+            String aiCpu;
+            String os;
+            String ram;
+        }
+    }
+
+
+    /**
+     * 模板方法模式:
+     * 基于”继承“
+     * 定义一个模板结构(框架,关键步骤,固定流程)，将具体内容延迟到子类去实现
+     * 解决的问题
+     * 1.提高代码复用性
+     * 将相同部分的代码放在抽象的父类中，而将不同的代码放入不同的子类中
+     * 2.实现了反向控制
+     * 通过一个父类调用其子类的操作，通过对子类的具体实现扩展不同的行为，实现了反向控制 & 符合“开闭原则”
+     * <p>
+     * 在Android源码中的体现:
+     * 1.AsyncTask:doInBackground方法是必须要重写的,其他的方法如果需要也可以重写,但是若不重写也可以
+     * 2.Activity的生命周期函数,固定的几个生命
+     */
+    private void methodTemplateMethodPattern() {
+        MacComputer macComputer = new MacComputer();
+        macComputer.startUp();
+        LjyLogUtil.i("\n");
+        DellComputer dellComputer = new DellComputer();
+        dellComputer.startUp();
+    }
+
+    //在Android源码中的体现:
+    class MyAcync extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            return null;
+        }
+    }
+
+    //以电脑开机过程为例
+    abstract class Computer {
+        //1.开机
+        void powerOn() {
+            LjyLogUtil.i("1.接入30v电源");
+        }
+
+        //2.硬件检查
+        void checkHardware() {
+            LjyLogUtil.i("2 检查硬件");
+        }
+
+        //3.载入操作系统
+        abstract void loadOS();
+
+        //4.登录
+        void login() {
+            LjyLogUtil.i("4.输入用户名密码登录");
+        }
+
+        //开机,固定步骤1,2,3,4;设为final防止被复写篡改
+        public final void startUp() {
+            LjyLogUtil.i(String.format("%s:-------开机start------", this.getClass().getSimpleName()));
+            powerOn();
+            checkHardware();
+            loadOS();
+            login();
+            LjyLogUtil.i(String.format("%s:-------开机end------", this.getClass().getSimpleName()));
+        }
+
+    }
+
+    class MacComputer extends Computer {
+
+        @Override
+        void powerOn() {
+//            super.powerOn();
+            LjyLogUtil.i("1.接入20.2v电源");
+        }
+
+        @Override
+        void checkHardware() {
+            super.checkHardware();
+            LjyLogUtil.i("---> 2.2 检查硬件防火墙");
+        }
+
+        @Override
+        void loadOS() {
+            LjyLogUtil.i("3.载入mac系统");
+        }
+
+        @Override
+        void login() {
+//            super.login();
+            LjyLogUtil.i("4.输入指纹登录");
+        }
+    }
+
+    class DellComputer extends Computer {
+
+        @Override
+        void loadOS() {
+            LjyLogUtil.i("3.载入windows系统");
+        }
+    }
+
+
+    /**
+     * 代理模式:(间接访问目标对象)
+     * (静态代理,动态代理)
+     * 给目标对象提供一个代理对象，并由代理对象控制对目标对象的引用
+     * 解决问题:无法访问或者不想直接访问目标对象时
+     * 优点
+     * 协调调用者和被调用者，降低了系统的耦合度
+     * 代理对象作为客户端和目标对象之间的中介，起到了保护目标对象的作用
+     * 缺点
+     * 由于在客户端和真实主题之间增加了代理对象，因此会造成请求的处理速度变慢；
+     * 实现代理模式需要额外的工作（有些代理模式的实现非常复杂），从而增加了系统实现的复杂度。
+     * <p>
+     * 1.远程代理:为一个对象在不同的地址空间提供局部代表
+     * 隐藏一个对象存在于不同地址空间的事实；
+     * 远程机器可能具有更好的计算性能与处理速度，可以快速响应并处理客户端请求。
+     * 2.虚拟代理：通过使用过一个小的对象代理一个大对象
+     * 目的：减少系统的开销。
+     * 3.保护代理：控制目标对象的访问，给不同用户提供不同的访问权限
+     * 目的：用来控制对真实对象的访问权限
+     * 4.智能引用代理，当需要控制对原始对象的访问时,额外操作包括耗时操作、计算访问次数等等
+     * 目的：在不影响对象类的情况下，在访问对象时进行更多的操作
+     * 5.防火墙代理：保护目标不让恶意用户靠近
+     * 6.Cache代理：为结果提供临时的存储空间，以便其他客户端调用
+     */
+    private void methodProxyPattern() {
+        LjyLogUtil.i("------普通模式-----------");
+        PersonA personA = new PersonA();
+        personA.submit();
+        personA.burden();
+        personA.defend();
+        personA.finish();
+        LjyLogUtil.i("------静态代理模式-----------");
+        Lawyer lawyer = new Lawyer(personA);
+        lawyer.submit();
+        lawyer.burden();
+        lawyer.defend();
+        lawyer.finish();
+        LjyLogUtil.i("------动态代理模式-----------");
+        //用反射机制实现
+        DynamicProxy proxy = new DynamicProxy(personA);
+        ClassLoader loader = personA.getClass().getClassLoader();
+        //动态构造一个代理者律师
+        ILawsuit lvShi = (ILawsuit) Proxy.newProxyInstance(loader, new Class[]{ILawsuit.class}, proxy);
+        lvShi.submit();
+        lvShi.burden();
+        lvShi.defend();
+        lvShi.finish();
+
+    }
+
+    //静态代理:
+    //以打官司为例
+    public interface ILawsuit {
+        void submit();//提交申请
+
+        void burden();//举证
+
+        void defend();//辩护
+
+        void finish();//诉讼完成
+    }
+
+    class PersonA implements ILawsuit {
+
+        @Override
+        public void submit() {
+            LjyLogUtil.i(String.format("%s:老板拖欠工作,申请仲裁呀", this.getClass().getSimpleName()));
+        }
+
+        @Override
+        public void burden() {
+            LjyLogUtil.i(String.format("%s:这是合同和银行流水", this.getClass().getSimpleName()));
+        }
+
+        @Override
+        public void defend() {
+            LjyLogUtil.i(String.format("%s:证据确凿,还我公道", this.getClass().getSimpleName()));
+        }
+
+        @Override
+        public void finish() {
+            LjyLogUtil.i(String.format("%s:诉讼成功,七日内结算", this.getClass().getSimpleName()));
+        }
+    }
+
+    public class Lawyer implements ILawsuit {
+        private ILawsuit mILawsuit;//持有的被代理者的引用
+
+        public Lawyer(ILawsuit lawsuit) {
+            mILawsuit = lawsuit;
+        }
+
+        @Override
+        public void submit() {
+            LjyLogUtil.i(String.format("%s:我是律师,我为%s代言", this.getClass().getSimpleName(), mILawsuit.getClass().getSimpleName()));
+            mILawsuit.submit();
+        }
+
+        @Override
+        public void burden() {
+            LjyLogUtil.i(String.format("%s:我是律师,我为%s代言", this.getClass().getSimpleName(), mILawsuit.getClass().getSimpleName()));
+            mILawsuit.burden();
+        }
+
+        @Override
+        public void defend() {
+            LjyLogUtil.i(String.format("%s:我是律师,我为%s代言", this.getClass().getSimpleName(), mILawsuit.getClass().getSimpleName()));
+            mILawsuit.defend();
+        }
+
+        @Override
+        public void finish() {
+            LjyLogUtil.i(String.format("%s:我是律师,我为%s代言", this.getClass().getSimpleName(), mILawsuit.getClass().getSimpleName()));
+            mILawsuit.finish();
+        }
+    }
+
+    //动态代理
+    class DynamicProxy implements InvocationHandler {
+        private Object obj;//被代理的类引用
+
+        public DynamicProxy(Object obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            //调用被代理类对象的方法
+            Object result = method.invoke(obj, args);
+            return result;
+        }
+    }
+
 
     /**
      * 适配器模式
@@ -76,17 +453,18 @@ public class DesignPatternActivity extends BaseActivity {
      * 适配器模式的形式分为：类的适配器模式(继承) & 对象的适配器模式(代理)
      * 解决的问题
      * 原本由于接口不兼容而不能一起工作的那些类可以在一起工作
-     *
+     * <p>
+     * android源码中的使用:如 listView的Adapter
      */
     private void methodAdapterPattern() {
         //1.类的适配器模式
-        Phone phone=new Phone();
+        Phone phone = new Phone();
         phone.setVoltAdapter(new Volt220To5Adapter());
         //2.对象的适配器模式
         phone.setVoltAdapter(new Volt5Adapter(new Volt220()) {
             @Override
             public int getVolt() {
-                return getVoltage()/44+1;
+                return getVoltage() / 44 + 1;
             }
         });
     }
@@ -94,15 +472,16 @@ public class DesignPatternActivity extends BaseActivity {
     //场景:手机充电需要5V输入,而家用电输出22V,那么充电器就是一个适配器
 
     class Phone {
-        public void setVoltAdapter(VoltAdapter adapter){
-            LjyLogUtil.i(String.format("手机充电:%sV",adapter.getVolt()));
+        public void setVoltAdapter(VoltAdapter adapter) {
+            LjyLogUtil.i(String.format("手机充电:%sV", adapter.getVolt()));
         }
     }
 
-    abstract class Volt{
+    abstract class Volt {
         public abstract int getVoltage();
     }
-    class Volt220 extends Volt{
+
+    class Volt220 extends Volt {
         public int getVoltage() {
             return 220;
         }
@@ -113,30 +492,30 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //1.类的适配器模式:
-    class Volt220To5Adapter extends Volt220 implements VoltAdapter{
+    class Volt220To5Adapter extends Volt220 implements VoltAdapter {
 
         @Override
         public int getVolt() {
-            int temp=getVoltage()/44;
+            int temp = getVoltage() / 44;
             return temp;
         }
     }
 
     //2.对象的适配器模式
-    abstract class Volt5Adapter implements VoltAdapter{
+    abstract class Volt5Adapter implements VoltAdapter {
 
         private final Volt volt;
 
-        public Volt5Adapter(Volt volt){
-            this.volt=volt;
+        public Volt5Adapter(Volt volt) {
+            this.volt = volt;
         }
 
-        public int getVoltage(){
+        public int getVoltage() {
             return volt.getVoltage();
         }
 
         @Override
-        abstract public int getVolt() ;
+        abstract public int getVolt();
     }
 
     /**
@@ -293,7 +672,34 @@ public class DesignPatternActivity extends BaseActivity {
         AnimalFactoryB factoryB = new AnimalFactoryB();
         factoryB.newMonky().show();
         factoryB.newDunky().show();
+
+        //下面的方法更抽象,但是应该属于工厂方法模式或者简单工厂模式,
+        // 因为它需要知道要创建的具体实现类,耦合度高
+        AnimFactory animFactory = new AnimFactory();
+        animFactory.getAnimal(MonkyA.class).show();
+        animFactory.getAnimal(MonkyB.class).show();
+        animFactory.getAnimal(MonkyC.class).show();
+        animFactory.getAnimal(DunkyA.class).show();
+        animFactory.getAnimal(DunkyB.class).show();
+        animFactory.getAnimal(DunkyC.class).show();
     }
+
+    class AnimFactory {
+        public <T extends Animal> T getAnimal(Class<T> c) {
+            T animal = null;
+            try {
+                animal = (T) Class.forName(c.getName()).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return animal;
+        }
+    }
+
 
     abstract class Animal {
         public abstract void show();
@@ -310,9 +716,9 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     abstract class AnimalFactory {
-        public abstract Animal newMonky();
+        public abstract Monky newMonky();
 
-        public abstract Animal newDunky();
+        public abstract Dunky newDunky();
     }
 
     class MonkyA extends Monky {
@@ -334,12 +740,12 @@ public class DesignPatternActivity extends BaseActivity {
     class AnimalFactoryA extends AnimalFactory {
 
         @Override
-        public Animal newMonky() {
+        public Monky newMonky() {
             return new MonkyA();
         }
 
         @Override
-        public Animal newDunky() {
+        public Dunky newDunky() {
             return new DunkyA();
         }
     }
@@ -363,12 +769,12 @@ public class DesignPatternActivity extends BaseActivity {
     class AnimalFactoryB extends AnimalFactory {
 
         @Override
-        public Animal newMonky() {
+        public Monky newMonky() {
             return new MonkyB();
         }
 
         @Override
-        public Animal newDunky() {
+        public Dunky newDunky() {
             return new DunkyB();
         }
     }
@@ -393,12 +799,12 @@ public class DesignPatternActivity extends BaseActivity {
     class AnimalFactoryC extends AnimalFactory {
 
         @Override
-        public Animal newMonky() {
+        public Monky newMonky() {
             return new MonkyC();
         }
 
         @Override
-        public Animal newDunky() {
+        public Dunky newDunky() {
             return new DunkyC();
         }
     }
@@ -526,15 +932,29 @@ public class DesignPatternActivity extends BaseActivity {
     /**
      * 单例模式
      * 实现1个类只有1个实例化对象 & 提供一个全局访问点
+     * <p>
+     * android源码中的体现:
+     * LayoutInflater.from(context)
+     * context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
+     * Calendar.getInstance()
      */
     private void methodSingleton() {
         Dog dog1 = Dog.getInstance();
         Dog dog2 = Dog.getInstance();
         String info = "dog1.hashCode:" + dog1.hashCode() + "\ndog2.hashCode:" + dog2.hashCode();
-        mTextViewShow.setText(info);
         LjyLogUtil.i(info);
+        dog1.doSomething();
+        A a = A.getInstance();
+        a.doSomething();
+        B b = B.getInstance();
+        b.doSomething();
+        C c = C.getInstance();
+        c.doSomething();
+        D d = D.INSTANCE;
+        d.doSomething();
     }
 
+    //通过静态内部类实现
     public static class Dog {
 
         private Dog() {
@@ -547,6 +967,103 @@ public class DesignPatternActivity extends BaseActivity {
 
         private static class DogHolder {
             private static Dog dogInstance = new Dog();
+        }
+
+        public void doSomething() {
+            LjyLogUtil.i(String.format("%s: do sth....", this.getClass().getName()));
+        }
+    }
+
+    //饿汉式
+    public static class A {
+        private static A a = new A();
+
+        private A() {
+        }
+
+        public static A getInstance() {
+            return a;
+        }
+
+        public void doSomething() {
+            LjyLogUtil.i(String.format("%s: do sth....", this.getClass().getName()));
+        }
+    }
+
+    //懒汉式
+    public static class B {
+        private static B b;
+
+        private B() {
+        }
+
+        public static synchronized B getInstance() {
+            if (b == null) {
+                b = new B();
+            }
+            return b;
+        }
+
+        public void doSomething() {
+            LjyLogUtil.i(String.format("%s: do sth....", this.getClass().getName()));
+        }
+    }
+
+    //DCL ( Double Check Lock)
+    public static class C implements Serializable {
+        private static C c;
+
+        private C() {
+        }
+
+        public static C getInstance() {
+            if (c == null) {
+                synchronized ((C.class)) {
+                    if (c == null) {
+                        c = new C();
+                    }
+                }
+            }
+            return c;
+        }
+
+        public void doSomething() {
+            LjyLogUtil.i(String.format("%s: do sth....", this.getClass().getName()));
+        }
+
+        private Object readResolve() throws ObjectStreamException {
+            return c;
+        }
+
+    }
+
+    //枚举单例,写法简单,线程安全,并且保证任何情况都是单例,
+    // 上面的其他实现方法单例在反序列化(提供了一个特别的钩子函数)时会创建新的单例,
+    // 解决方法是如C中实现readResolve方法返回单例对象
+    public enum D {
+        INSTANCE;
+
+        public void doSomething() {
+            LjyLogUtil.i(String.format("%s: do sth....", this.getClass().getName()));
+        }
+    }
+
+    //使用容器实现单例(可以管理多种类型的单例)
+    public static class SingletonManager {
+
+        private static Map<String, Object> instanceMap = new HashMap<>();
+
+        private SingletonManager() {
+        }
+
+        public static void registerInstance(String key, Object instance) {
+            if (!instanceMap.containsKey(key)) {
+                instanceMap.put(key, instance);
+            }
+        }
+
+        public static Object getInstance(String key) {
+            return instanceMap.get(key);
         }
     }
 
