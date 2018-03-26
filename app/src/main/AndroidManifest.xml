@@ -310,6 +310,8 @@
         </activity>
         <activity android:name=".activity.DesignPatternActivity">
         </activity>
+        <activity android:name=".activity.CustomViewActivity">
+        </activity>
     </application>
 
 </manifest>
