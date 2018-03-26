@@ -86,9 +86,113 @@ public class DesignPatternActivity extends BaseActivity {
                 //建造者模式
                 methodBuilderPattern();
                 break;
+            case R.id.btnFacadePattern:
+                //外观模式
+                methodFacadePattern();
+                break;
         }
         mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    /**
+     * 外观模式:
+     * (由外观类去保存各个子系统的引用，实现由一个统一的外观类去包装多个子系统类，
+     * 然而客户端只需要引用这个外观类，然后由外观类来调用各个子系统中的方法。)
+     * 通过创建一个统一的类，用来包装子系统中一个或多个复杂的类，
+     * 客户端可以通过调用外观类的方法来调用内部子系统中所有方法
+     * 优点:
+     * 降低了客户类与子系统类的耦合度，实现了子系统与客户之间的松耦合关系
+     * 对客户屏蔽了子系统组件，从而简化了接口，减少了客户处理的对象数目并使子系统的使用更加简单。
+     * 降低原有系统的复杂度和系统中的编译依赖性，并简化了系统在不同平台之间的移植过程
+     * 缺点:
+     * 在不引入抽象外观类的情况下，增加新的子系统可能需要修改外观类或客户端的源代码，违背了“开闭原则”
+     * 不能很好地限制客户使用子系统类，如果对客户访问子系统类做太多的限制则减少了可变性和灵活性。
+     * android源码中的使用:
+     * context,他封装了很多操作,如startActivity,sendBroadcast,bindServiced等,
+     * context的子类中实现这些方法:
+     * Context-->ContextWrapper--->ContextThemeWrapper--->Activity
+     */
+    private void methodFacadePattern() {
+        SmartControl smartControl=new SmartControl();
+        smartControl.allOn();
+        smartControl.allOff();
+
+        startActivity(null);
+        mContext.sendBroadcast(null);
+        mContext.bindService(null,null,0);
+    }
+
+    //以智能家居,统一管理家电为例
+    public class Light{
+        public void on(){
+            LjyLogUtil.i("开灯...");
+        }
+
+        public void off(){
+            LjyLogUtil.i("关灯...");
+        }
+    }
+
+    public class Televison{
+        public void on(){
+            LjyLogUtil.i("开电视...");
+        }
+
+        public void off(){
+            LjyLogUtil.i("关电视...");
+        }
+    }
+
+    public class Aircondition{
+        public void on(){
+            LjyLogUtil.i("开空调...");
+        }
+
+        public void off(){
+            LjyLogUtil.i("关空调...");
+        }
+    }
+
+    public class SmartControl{
+        private Light mLight=new Light();
+        private Televison mTelevison=new Televison();
+        private Aircondition mAircondition=new Aircondition();
+        public void allOn(){
+            lightOn();
+            tvOn();
+            airOn();
+        }
+
+        public void allOff(){
+            lightOff();
+            tvOff();
+            airOff();
+        }
+
+        public void lightOn(){
+            mLight.on();
+        }
+
+        public void lightOff(){
+            mLight.off();
+        }
+
+        public void tvOn(){
+            mTelevison.on();
+        }
+
+        public void tvOff(){
+            mTelevison.off();
+        }
+
+        public void airOn(){
+            mAircondition.on();
+        }
+
+        public void airOff(){
+            mAircondition.off();
+        }
     }
 
     /**
@@ -178,23 +282,23 @@ public class DesignPatternActivity extends BaseActivity {
         HuaWeiParam mHuaWeiParam;
         private HuaWeiPhone huaWeiPhone;
 
-        public HuaWeiBuilder(){
-            mHuaWeiParam=new HuaWeiParam();
+        public HuaWeiBuilder() {
+            mHuaWeiParam = new HuaWeiParam();
         }
 
         public void buildAICPU(boolean isSupportAi) {
             if (isSupportAi)
-                mHuaWeiParam.aiCpu="麒麟AI芯片";
+                mHuaWeiParam.aiCpu = "麒麟AI芯片";
         }
 
         @Override
         public void buildRAM(int ram) {
-            mHuaWeiParam.ram=String.format("AMD-007 %dG", ram);
+            mHuaWeiParam.ram = String.format("AMD-007 %dG", ram);
         }
 
         @Override
         public void buildOS(String os) {
-            mHuaWeiParam.os=os;
+            mHuaWeiParam.os = os;
         }
 
         @Override
@@ -207,7 +311,7 @@ public class DesignPatternActivity extends BaseActivity {
             return huaWeiPhone;
         }
 
-        class HuaWeiParam{
+        class HuaWeiParam {
             String aiCpu;
             String os;
             String ram;
