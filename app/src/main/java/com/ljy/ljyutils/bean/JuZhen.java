@@ -9,7 +9,47 @@ package com.ljy.ljyutils.bean;
 public class JuZhen {
     public static void main(String args[]) {
         int[][] result = new int[100][100];
-        int[][] arr = {
+
+        int[][] arr={
+                {0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
+                {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
+                {1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1},
+                {1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1},
+                {1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1},
+                {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1},
+                {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                {1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1},
+                {1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        };
+        int len = arr[0].length;
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                result[i][j] = i==j?1:arr[i][j];
+            }
+        }
+        for (int k = 0; k < len; k++)
+            for (int i = 0; i < len; i++)
+                for (int j = 0; j < len; j++)
+                    result[i][j] |= (result[i][k] & result[k][j]);
+
+        System.out.println("--->");
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                System.out.print( result[i][j]+"\t");
+            }
+            System.out.print("\n");
+        }
+    }
+}
+
+
+/*
+*
+* int[][] arr1 = {
                 {0, 1, 0, 0, 0, 1, 0, 1},
                 {0, 0, 0, 1, 0, 0, 0, 1},
                 {0, 0, 0, 0, 1, 1, 0, 1},
@@ -43,23 +83,5 @@ public class JuZhen {
                 {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
                 {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-        int len = arr[0].length;
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                result[i][j] = i==j?1:arr[i][j];
-            }
-        }
-        for (int k = 0; k < len; k++)
-            for (int i = 0; i < len; i++)
-                for (int j = 0; j < len; j++)
-                    result[i][j] |= (result[i][k] & result[k][j]);
-
-        System.out.println("--->");
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                System.out.print( result[i][j]+"\t");
-            }
-            System.out.print("\n");
-        }
-    }
-}
+*
+* */
