@@ -28,6 +28,7 @@ import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
@@ -227,6 +228,16 @@ public class LjyRetrofitUtil {
          */
         @GET("{methodPath}")
         Observable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
+
+        /**
+         * method：网络请求的方法（区分大小写）
+         * path：网络请求地址路径
+         * hasBody：是否有请求体
+         */
+        @HTTP(method = "GET", path = "{methodPath}", hasBody = false)
+        Observable<ResponseBody> get2(@Path("methodPath") String methodPath);
+        // {id} 表示是一个变量
+        // method 的值 retrofit 不会做处理，所以要自行保证准确
 
         /**
          * post
