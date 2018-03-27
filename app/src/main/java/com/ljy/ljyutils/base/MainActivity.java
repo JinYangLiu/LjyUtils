@@ -42,6 +42,7 @@ import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
+import com.ljy.ljyutils.activity.RxjavaTestActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
 import com.ljy.ljyutils.activity.SideIndexBarActivity;
 import com.ljy.ljyutils.activity.SlidingMenuActivity;
@@ -108,7 +109,7 @@ public class MainActivity extends BaseActivity {
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用","pdf文件上传",
                 "分组ListView+索引条", "webView测试","xml解析",
-                "设计模式","自定义View"};
+                "设计模式","自定义View","RxJava test"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -121,7 +122,7 @@ public class MainActivity extends BaseActivity {
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
-                DesignPatternActivity.class, CustomViewActivity.class};
+                DesignPatternActivity.class, CustomViewActivity.class, RxjavaTestActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
