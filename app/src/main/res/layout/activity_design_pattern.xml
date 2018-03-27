@@ -85,11 +85,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <Button
+                android:id="@+id/btnProtoPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="原型模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnStatePattern"
+                android:onClick="onDesignBtnClick"
+                android:text="状态模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnIteratorPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="责任链模式"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
     </HorizontalScrollView>
-    <TextView
-        android:id="@+id/textViewShow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/textViewShow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
 
 </LinearLayout>

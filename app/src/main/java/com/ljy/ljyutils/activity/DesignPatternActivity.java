@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,9 +91,594 @@ public class DesignPatternActivity extends BaseActivity {
                 //外观模式
                 methodFacadePattern();
                 break;
+            case R.id.btnProtoPattern:
+                //原型模式
+                methodProtoPattern();
+                break;
+            case R.id.btnStatePattern:
+                //状态模式
+                methodStatePattern();
+                break;
+            case R.id.btnIteratorPattern:
+                //责任链模式
+                methodIteratorPattern();
+                break;
         }
         mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    /**
+     * 责任链模式:
+     * 行为型设计模式之一,使编程更有灵活性
+     * 将一个请求从链式的首端发出,沿着链的路径依次传递给每个节点对象,直到有对象处理这个请求为止
+     * 使多个对象都有机会处理请求,从而避免了请求发送者与接收者之间的耦合关系
+     * 优点:
+     * 请求者与处理者关系解耦,提高代码灵活性
+     * 缺点:
+     * 对链中请求处理者的遍历,如果处理者太多,那么必定会影响性能,尤其是在一些递归调用中
+     * android源码中的使用:
+     * 触摸事件从ViewTree分发传递
+     */
+    private void methodIteratorPattern() {
+        /*
+        //构造处理对象
+        AbsHandler handler1 = new Handler1();
+        AbsHandler handler2 = new Handler2();
+        AbsHandler handler3 = new Handler3();
+        //设置节点
+        handler1.nextHandler = handler2;
+        handler2.nextHandler = handler3;
+        //构造请求对象
+        AbsRequest request1 = new Request1("001");
+        AbsRequest request2 = new Request2("002");
+        AbsRequest request3 = new Request3("003");
+        //总是从链式的首段发起请求
+        handler1.handleRequest(request1);
+        handler1.handleRequest(request2);
+        handler1.handleRequest(request3);
+         */
+
+        //申请报销费用为例
+        //1.构建领导对象
+        GroupLeader groupLeader=new GroupLeader();
+        Director director=new Director();
+        Manager manager=new Manager();
+        Boss boss=new Boss();
+        //2.设置上一级领导
+        groupLeader.nextLeader=director;
+        director.nextLeader=manager;
+        manager.nextLeader=boss;
+        //3.发起报账申请,从最低级开始
+        LjyLogUtil.i("---------审批范围-----------\n组长<=1000,主管<=5000,经理<=10000,老板>10000\n----------------");
+        int num1=800;
+        LjyLogUtil.i("-----------小智申请报销"+num1+"元-----------");
+        groupLeader.handleRequest(num1);
+        int num2=6800;
+        LjyLogUtil.i("-----------小米申请报销"+num2+"元-----------");
+        groupLeader.handleRequest(num2);
+        int num3=18000;
+        LjyLogUtil.i("-----------小明申请报销"+num3+"元-----------");
+        groupLeader.handleRequest(num3);
+
+
+    }
+    //test---1:以申请报销费用为例
+    abstract class Leader{
+        protected Leader nextLeader;//上一级领导处理者
+
+        /**
+         * 处理报账请求
+         * @param money 能批复的报账额度
+         */
+        public final void handleRequest(int money){
+            if (money<=limit()){
+                handle(money);
+            }else {
+                if (nextLeader!=null){
+                    nextLeader.handleRequest(money);
+                }
+            }
+        }
+
+        /**
+         * 自身能批复的额度权限
+         * @return 额度
+         */
+        public abstract int limit();
+
+        /**
+         * 处理报账行为
+         * @param money 具体金额
+         */
+        public abstract void handle(int money);
+    }
+
+    //组长
+    class GroupLeader extends Leader{
+
+        @Override
+        public int limit() {
+            return 1000;
+        }
+
+        @Override
+        public void handle(int money) {
+            LjyLogUtil.i("组长批准报销"+money+"元");
+        }
+    }
+
+    //主管
+    class Director extends Leader{
+
+        @Override
+        public int limit() {
+            return 5000;
+        }
+
+        @Override
+        public void handle(int money) {
+            LjyLogUtil.i("主管批准报销"+money+"元");
+        }
+    }
+
+    //经理
+    class Manager extends Leader{
+
+        @Override
+        public int limit() {
+            return 10000;
+        }
+
+        @Override
+        public void handle(int money) {
+            LjyLogUtil.i("经理批准报销"+money+"元");
+        }
+    }
+
+    //主管
+    class Boss extends Leader{
+
+        @Override
+        public int limit() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public void handle(int money) {
+            LjyLogUtil.i("老板批准报销"+money+"元");
+        }
+    }
+
+    //test----2
+    abstract class AbsHandler {
+        protected AbsHandler nextHandler;//下一节点上的处理者对象
+
+        /**
+         * 处理请求
+         *
+         * @param request 请求对象
+         */
+        public final void handleRequest(AbsRequest request) {
+            if (getHandleLevel() == request.getRequestLevel()) {
+                //处理级别一致则由该处理对象处理
+                handle(request);
+            } else {
+                //否则转发给下一级节点
+                if (nextHandler != null) {
+                    nextHandler.handleRequest(request);
+                } else {
+                    LjyLogUtil.i("所有处理者都不能处理该请求");
+                }
+            }
+        }
+
+        /**
+         * 获取处理者对象的处理级别
+         *
+         * @return 处理级别
+         */
+        protected abstract int getHandleLevel();
+
+        protected abstract void handle(AbsRequest request);
+    }
+
+    abstract class AbsRequest {
+        private Object obj;//处理对象
+
+        public AbsRequest(Object obj) {
+            this.obj = obj;
+        }
+
+        /**
+         * 获取处理的内容对象
+         */
+        public Object getContent() {
+            return obj;
+        }
+
+        /**
+         * 获取请求级别
+         */
+        abstract int getRequestLevel();
+    }
+
+    class Request1 extends AbsRequest {
+
+        public Request1(Object obj) {
+            super(obj);
+        }
+
+        @Override
+        int getRequestLevel() {
+            return 1;
+        }
+    }
+
+    class Request2 extends AbsRequest {
+
+        public Request2(Object obj) {
+            super(obj);
+        }
+
+        @Override
+        int getRequestLevel() {
+            return 2;
+        }
+    }
+
+    class Request3 extends AbsRequest {
+
+        public Request3(Object obj) {
+            super(obj);
+        }
+
+        @Override
+        int getRequestLevel() {
+            return 3;
+        }
+    }
+
+    class Handler1 extends AbsHandler {
+
+        @Override
+        protected int getHandleLevel() {
+            return 1;
+        }
+
+        @Override
+        protected void handle(AbsRequest request) {
+            LjyLogUtil.i(String.format("处理者:%s__请求对象:%s__request.getContent:%s",
+                    this.getClass().getSimpleName(), request.getClass().getSimpleName(), request.getContent().toString()));
+        }
+    }
+
+    class Handler2 extends AbsHandler {
+
+        @Override
+        protected int getHandleLevel() {
+            return 2;
+        }
+
+        @Override
+        protected void handle(AbsRequest request) {
+            LjyLogUtil.i(String.format("处理者:%s__请求对象:%s__request.getContent:%s",
+                    this.getClass().getSimpleName(), request.getClass().getSimpleName(), request.getContent().toString()));
+        }
+    }
+
+    class Handler3 extends AbsHandler {
+
+        @Override
+        protected int getHandleLevel() {
+            return 3;
+        }
+
+        @Override
+        protected void handle(AbsRequest request) {
+            LjyLogUtil.i(String.format("处理者:%s__请求对象:%s__request.getContent:%s",
+                    this.getClass().getSimpleName(), request.getClass().getSimpleName(), request.getContent().toString()));
+        }
+    }
+
+
+    /**
+     * 状态模式:
+     * 不同状态决定不同行为,与策略模式结构几乎一样,但目的和本质不同
+     * 当一个对象的内在状态改变时,其行为也随之改变
+     * 优点:
+     * 将繁琐的状态判断转换成结构清晰的状态类族,
+     * 在避免代码膨胀的同时也保证了可扩展性和可维护性
+     * 缺点:
+     * 会增加系统类和对象的个数
+     * android源码中的使用:
+     * WifiSettings中wifi的不同状态
+     */
+    private void methodStatePattern() {
+        //普通写法
+        LjyLogUtil.i("普通写法:");
+        TvControler tvControler = new TvControler();
+        tvControler.powerOnOFF();
+        tvControler.nextChannel();
+        tvControler.prevChannel();
+        tvControler.turnUp();
+        tvControler.turnDown();
+        tvControler.powerOnOFF();
+        tvControler.nextChannel();
+        tvControler.prevChannel();
+        tvControler.turnUp();
+        tvControler.turnDown();
+        //状态模式写法
+        LjyLogUtil.i("状态模式:");
+        TvControler2 tvControler2 = new TvControler2();
+        tvControler2.powerOn();
+        tvControler2.nextChannel();
+        tvControler2.prevChannel();
+        tvControler2.turnUp();
+        tvControler2.turnDown();
+        tvControler2.powerOff();
+        tvControler2.nextChannel();
+        tvControler2.prevChannel();
+        tvControler2.turnUp();
+        tvControler2.turnDown();
+    }
+
+    //以电视遥控器为例
+    //1.普通写法
+    class TvControler {
+        //开机状态
+        private final static int POWER_ON = 1;
+        //关机状态
+        private final static int POWER_OFF = 2;
+        //记录状态,默认为关
+        private int mState = POWER_OFF;
+
+        public void powerOnOFF() {
+            if (mState == POWER_OFF) {
+                mState = POWER_ON;
+                LjyLogUtil.i("开机啦~~");
+            } else {
+                mState = POWER_OFF;
+                LjyLogUtil.i("关机啦~~");
+            }
+        }
+
+        public void nextChannel() {
+            if (mState == POWER_ON) {
+                LjyLogUtil.i("下一频道");
+            } else {
+                LjyLogUtil.i("还没有开机哦");
+            }
+        }
+
+        public void prevChannel() {
+            if (mState == POWER_ON) {
+                LjyLogUtil.i("上一频道");
+            } else {
+                LjyLogUtil.i("还没有开机哦");
+            }
+        }
+
+        public void turnUp() {
+            if (mState == POWER_ON) {
+                LjyLogUtil.i("调高音量");
+            } else {
+                LjyLogUtil.i("还没有开机哦");
+            }
+        }
+
+        public void turnDown() {
+            if (mState == POWER_ON) {
+                LjyLogUtil.i("降低音量");
+            } else {
+                LjyLogUtil.i("还没有开机哦");
+            }
+        }
+    }
+
+    //2.状态模式写法
+    //虽然看起来更复杂了,但是如果再增加一种状态时,确是比上面的要方便
+
+    interface TvState {
+        void nextChannel();
+
+        void prevChannel();
+
+        void turnUp();
+
+        void turnDown();
+    }
+
+    /**
+     * 开机机状态
+     */
+    class PowerOnState implements TvState {
+
+        @Override
+        public void nextChannel() {
+            LjyLogUtil.i("下一频道");
+        }
+
+        @Override
+        public void prevChannel() {
+            LjyLogUtil.i("上一频道");
+        }
+
+        @Override
+        public void turnUp() {
+            LjyLogUtil.i("调高音量");
+        }
+
+        @Override
+        public void turnDown() {
+            LjyLogUtil.i("降低音量");
+        }
+    }
+
+    /**
+     * 关机机状态
+     */
+    class PowerOffState implements TvState {
+
+        @Override
+        public void nextChannel() {
+            LjyLogUtil.i("还没有开机哦");
+        }
+
+        @Override
+        public void prevChannel() {
+            LjyLogUtil.i("还没有开机哦");
+        }
+
+        @Override
+        public void turnUp() {
+            LjyLogUtil.i("还没有开机哦");
+        }
+
+        @Override
+        public void turnDown() {
+            LjyLogUtil.i("还没有开机哦");
+        }
+    }
+
+    class TvControler2 {
+        //记录状态,默认为关
+        private TvState mTvState;
+
+        public void setTvState(TvState tvState) {
+            mTvState = tvState;
+        }
+
+        public void powerOn() {
+            setTvState(new PowerOnState());
+            LjyLogUtil.i("开机啦~~");
+        }
+
+        public void powerOff() {
+            setTvState(new PowerOffState());
+            LjyLogUtil.i("关机啦~~");
+        }
+
+        public void nextChannel() {
+            mTvState.nextChannel();
+        }
+
+        public void prevChannel() {
+            mTvState.prevChannel();
+        }
+
+        public void turnUp() {
+            mTvState.turnUp();
+        }
+
+        public void turnDown() {
+            mTvState.turnDown();
+        }
+    }
+
+
+    /**
+     * 原型模式
+     * (样板,克隆,可定制)
+     * 用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象
+     * 适用于:
+     * 1.类初始化需要消耗非常多的资源
+     * 2.创建复杂或构造耗时
+     * 3.保护性拷贝:一个对象提供给其他对象访问,且各个调用者可能都会修改其值,
+     * 可以使用原型模式拷贝多个对象供其使用,可以使用Cloneable接口
+     * 优点:
+     * 对内存中的二进制流的拷贝,比new性能好,尤其是循环体内产生大量对象时
+     * 缺点:
+     * 其优点也是缺点,直接在内存中拷贝,不执行构造函数,少了约束
+     * Android源码中的使用:
+     * clone方法,如下面例子中的clone,以及arrayList的clone方法,Intent.clone()等
+     */
+    private void methodProtoPattern() {
+        //构建文档对象
+        WordDocument document = new WordDocument();
+        //编辑文档
+        document.setText("这是一篇文章啊");
+        document.addImages("img001");
+        document.addImages("img002");
+        document.addImages("img003");
+        //show
+        LjyLogUtil.i("document:");
+        document.showDocument();
+        //拷贝
+        WordDocument document2 = document.clone();
+        //show2
+        LjyLogUtil.i("clone document_2:");
+        document2.showDocument();
+        //编辑2
+        document2.setText("修改了文字啊");
+        //浅拷贝与深拷贝的区别,详勘clone方法
+        document2.addImages("image_004");
+//        document2.setImages(new ArrayList<String>());
+        //show
+        LjyLogUtil.i("document:");
+        document.showDocument();
+        //show2
+        LjyLogUtil.i("clone document_2:");
+        document2.showDocument();
+
+    }
+
+    //以文档的编辑还原为例
+    class WordDocument implements Cloneable {
+        //文本
+        private String text;
+        //图片列表
+        private ArrayList<String> images = new ArrayList<>();
+
+        public WordDocument() {
+            LjyLogUtil.i("WordDocument的构造函数");
+        }
+
+        @Override
+        protected WordDocument clone() {
+            WordDocument doc = null;
+            try {
+                doc = (WordDocument) super.clone();
+                doc.text = this.text;
+                //浅拷贝:
+//                doc.images = this.images;
+                //深拷贝
+                doc.images = (ArrayList<String>) this.images.clone();
+            } catch (CloneNotSupportedException e) {
+                LjyLogUtil.e(e.getLocalizedMessage());
+            }
+            return doc;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public ArrayList<String> getImages() {
+            return images;
+        }
+
+        public void setImages(ArrayList<String> images) {
+            this.images = images;
+        }
+
+        public void addImages(String img) {
+            this.images.add(img);
+        }
+
+        public void showDocument() {
+            LjyLogUtil.i("---------word content start-----------");
+            LjyLogUtil.i("text:" + text);
+            LjyLogUtil.i("images:");
+            for (String imgName : images) {
+                LjyLogUtil.i(imgName);
+            }
+            LjyLogUtil.i("---------word content end-----------");
+        }
     }
 
     /**
@@ -114,83 +700,93 @@ public class DesignPatternActivity extends BaseActivity {
      * Context-->ContextWrapper--->ContextThemeWrapper--->Activity
      */
     private void methodFacadePattern() {
-        SmartControl smartControl=new SmartControl();
+        SmartControl smartControl = new SmartControl();
         smartControl.allOn();
         smartControl.allOff();
 
         startActivity(null);
         mContext.sendBroadcast(null);
-        mContext.bindService(null,null,0);
+        mContext.bindService(null, null, 0);
     }
 
     //以智能家居,统一管理家电为例
-    public class Light{
-        public void on(){
+    public class Light {
+        public void on() {
             LjyLogUtil.i("开灯...");
         }
 
-        public void off(){
+        public void off() {
             LjyLogUtil.i("关灯...");
         }
     }
 
-    public class Televison{
-        public void on(){
+    public class Televison {
+        public void on() {
             LjyLogUtil.i("开电视...");
         }
 
-        public void off(){
+        public void off() {
             LjyLogUtil.i("关电视...");
         }
     }
 
-    public class Aircondition{
-        public void on(){
+    public class Aircondition {
+        public void on() {
             LjyLogUtil.i("开空调...");
         }
 
-        public void off(){
+        public void off() {
             LjyLogUtil.i("关空调...");
         }
     }
 
-    public class SmartControl{
-        private Light mLight=new Light();
-        private Televison mTelevison=new Televison();
-        private Aircondition mAircondition=new Aircondition();
-        public void allOn(){
+    /**
+     * 智能遥控器
+     */
+    public class SmartControl {
+        private Light mLight = new Light();
+        private Televison mTelevison = new Televison();
+        private Aircondition mAircondition = new Aircondition();
+
+        /**
+         * 开所有电器
+         */
+        public void allOn() {
             lightOn();
             tvOn();
             airOn();
         }
 
-        public void allOff(){
+        /**
+         * 关所有电器
+         */
+        public void allOff() {
             lightOff();
             tvOff();
             airOff();
         }
 
-        public void lightOn(){
+        public void lightOn() {
             mLight.on();
         }
 
-        public void lightOff(){
+        public void lightOff() {
             mLight.off();
         }
 
-        public void tvOn(){
+        public void tvOn() {
             mTelevison.on();
         }
 
-        public void tvOff(){
+        public void tvOff() {
             mTelevison.off();
         }
 
-        public void airOn(){
+        public void airOn() {
             mAircondition.on();
         }
 
-        public void airOff(){
+        public void airOff() {
             mAircondition.off();
         }
     }
@@ -779,20 +1375,21 @@ public class DesignPatternActivity extends BaseActivity {
 
         //下面的方法更抽象,但是应该属于工厂方法模式或者简单工厂模式,
         // 因为它需要知道要创建的具体实现类,耦合度高
-        AnimFactory animFactory = new AnimFactory();
-        animFactory.getAnimal(MonkyA.class).show();
-        animFactory.getAnimal(MonkyB.class).show();
-        animFactory.getAnimal(MonkyC.class).show();
-        animFactory.getAnimal(DunkyA.class).show();
-        animFactory.getAnimal(DunkyB.class).show();
-        animFactory.getAnimal(DunkyC.class).show();
+//        AnimFactory animFactory = new AnimFactory();
+//        animFactory.getAnimal(MonkyA.class).show();
+//        animFactory.getAnimal(MonkyB.class).show();
+//        animFactory.getAnimal(MonkyC.class).show();
+//        animFactory.getAnimal(DunkyA.class).show();
+//        animFactory.getAnimal(DunkyB.class).show();
+//        animFactory.getAnimal(DunkyC.class).show();
     }
 
-    class AnimFactory {
-        public <T extends Animal> T getAnimal(Class<T> c) {
-            T animal = null;
+   public class AnimFactory {
+        public <T extends Animal> T  getAnimal(Class<T> c) {
+            Animal animal = null;
             try {
-                animal = (T) Class.forName(c.getName()).newInstance();
+                animal = (Animal) Class.forName(c.getName()).newInstance();
+                //java.lang.InstantiationException: java.lang.Class<com.ljy.ljyutils.activity.DesignPatternActivity$MonkyA> has no zero argument constructor
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -800,12 +1397,13 @@ public class DesignPatternActivity extends BaseActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            return animal;
+            LjyLogUtil.i("animal:"+animal);
+            return (T) animal;
         }
     }
 
 
-    abstract class Animal {
+     abstract class Animal {
         public abstract void show();
     }
 
