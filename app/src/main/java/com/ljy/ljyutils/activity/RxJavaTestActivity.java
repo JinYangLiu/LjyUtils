@@ -352,6 +352,8 @@ public class RxJavaTestActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSubscription.request(2);
+                //模拟按钮点击,只能触发onClick事件,但是UI上并没有显示到
+                btnFangDou.performClick();
             }
         });
         //异步订阅情况
@@ -379,7 +381,7 @@ public class RxJavaTestActivity extends BaseActivity {
                     @Override
                     public void onSubscribe(Subscription s) {
                         LjyLogUtil.i("onSubscribe");
-                        mTextViewShow.append("onSubscribe");
+                        mTextViewShow.append("onSubscribe"+"\n");
                         //// 保存Subscription对象，等待点击按钮时（调用request(2)）观察者再接收事件
                         mSubscription = s;
                     }
@@ -387,7 +389,7 @@ public class RxJavaTestActivity extends BaseActivity {
                     @Override
                     public void onNext(Integer integer) {
                         LjyLogUtil.i("onNext:接收到了事件" + integer);
-                        mTextViewShow.append("onNext:接收到了事件" + integer);
+                        mTextViewShow.append("onNext:接收到了事件" + integer+"\n");
                     }
 
                     @Override
@@ -398,7 +400,7 @@ public class RxJavaTestActivity extends BaseActivity {
                     @Override
                     public void onComplete() {
                         LjyLogUtil.i("onComplete");
-                        mTextViewShow.append("onComplete");
+                        mTextViewShow.append("onComplete"+"\n");
                     }
                 });
     }
@@ -752,6 +754,8 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testSteadyShot() {
         mTextViewShow.append("两秒内只能一次:\n");
         btnFangDou.setVisibility(View.VISIBLE);
+
+
         RxView.clicks(btnFangDou)
                 .throttleFirst(2, TimeUnit.SECONDS)////两秒内只能发送第一次事件
                 .subscribe(new Observer<Object>() {
@@ -774,11 +778,12 @@ public class RxJavaTestActivity extends BaseActivity {
 
                     @Override
                     public void onNext(Object o) {
-                        LjyLogUtil.i("onNext:发送了网络请求");
-                        mTextViewShow.append("onNext:发送了网络请求\n");
+                        LjyLogUtil.i("btnFangDou---> onNext:发送了网络请求");
+                        mTextViewShow.append("btnFangDou---> onNext:发送了网络请求\n");
 
                     }
                 });
+
 
     }
 
