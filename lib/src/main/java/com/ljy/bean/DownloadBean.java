@@ -2,9 +2,10 @@ package com.ljy.bean;
 
 import com.ljy.util.LjyRetrofitUtil;
 
+import org.reactivestreams.Subscriber;
+
 import java.io.File;
 
-import rx.Subscriber;
 
 /**
  * Created by Mr.LJY on 2018/1/23.

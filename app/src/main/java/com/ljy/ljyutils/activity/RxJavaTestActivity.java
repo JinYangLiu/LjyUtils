@@ -8,39 +8,50 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.jakewharton.rxbinding.view.RxView;
-import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyToastUtil;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.Notification;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.BiConsumer;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Function3;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import rx.Notification;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Action2;
-import rx.functions.Func0;
-import rx.functions.Func1;
-import rx.functions.Func2;
-import rx.functions.Func3;
-import rx.schedulers.Schedulers;
 
 /**
  * RxJava: 基于事件流的链式调用
@@ -298,6 +309,7 @@ public class RxJavaTestActivity extends BaseActivity {
                 //对于异步订阅关系，存在 被观察者发送事件速度 与观察者接收事件速度 不匹配的情况
                 //问题: 被观察者 发送事件速度太快，而观察者 来不及接收所有事件，从而导致观察者
                 // 无法及时响应 / 处理所有发送过来事件的问题，最终导致缓存区溢出、事件丢失 & OOM
+                //Flowable与Observable在功能上的区别主要是 多了背压的功能
                 testBackPressure();
                 break;
             default:
@@ -312,10 +324,10 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testBackPressure() {
         //出现发送 & 接收事件严重不匹配的问题
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
-                        for (int i = 0; ; i++) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
+                        for (int i = 0; i < 100; i++) {
                             try {
                                 LjyLogUtil.i("发送了事件:" + i);
 //                                LjyToastUtil.toast(mContext,"发送了事件:" + i );
@@ -331,25 +343,85 @@ public class RxJavaTestActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("onCompleted");
-//                        mTextViewShow.append("onCompleted\n");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("onError:" + e.getMessage());
-//                        mTextViewShow.append("onError:" + e.getMessage() + "\n");
+                        mTextViewShow.append("onError:" + e.getMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("onComplete");
+                        mTextViewShow.append("onComplete\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
                     public void onNext(Integer num) {
                         //接收事件5s/个
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(2000);
                             LjyLogUtil.i("onNext接收到了事件:" + num);
-//                            mTextViewShow.append("onNext接收到了事件:" + num + "\n");
+                            mTextViewShow.append("onNext接收到了事件:" + num + "\n");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+        //背压Flowable
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
+                        for (int i = 0; i < 100; i++) {
+                            try {
+                                LjyLogUtil.i("Flowable发送了事件:" + i);
+//                                LjyToastUtil.toast(mContext,"发送了事件:" + i );
+                                Thread.sleep(100);
+                                // 发送事件速度：10ms / 个
+                                emitter.onNext(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("Flowable onError:" + e.getMessage());
+                        mTextViewShow.append("Flowable onError:" + e.getMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("Flowable onComplete");
+                        mTextViewShow.append("Flowable onComplete\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        // 作用：决定观察者能够接收多少个事件
+                        // 如设置了s.request(3)，这就说明观察者能够接收3个事件（多出的事件存放在缓存区）
+                        // 官方默认推荐使用Long.MAX_VALUE，即s.request(Long.MAX_VALUE);
+                        s.request(3);
+                        LjyLogUtil.i("Flowable onSubscribe");
+                        mTextViewShow.append("Flowable onSubscribe\n");
+                    }
+
+                    @Override
+                    public void onNext(Integer num) {
+                        //接收事件5s/个
+                        try {
+                            Thread.sleep(2000);
+                            LjyLogUtil.i("Flowable onNext接收到了事件:" + num);
+                            mTextViewShow.append("Flowable onNext接收到了事件:" + num + "\n");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -362,23 +434,29 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testDefaultIfEmpty() {
         Observable
-                .create(new Observable.OnSubscribe<String>() {
+                .create(new ObservableOnSubscribe<String>() {
                     @Override
-                    public void call(Subscriber<? super String> subscriber) {
+                    public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
                         //不发送任何有效事件onNext、仅发送了 Complete
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .defaultIfEmpty("我是默认值哦")
                 .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("对Complete事件作出响应");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("对Complete事件作出响应");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -389,12 +467,20 @@ public class RxJavaTestActivity extends BaseActivity {
     }
 
     private void testAmb() {
-        Observable.amb(
-                Observable.just(1, 2, 3).delay(1, TimeUnit.SECONDS),
-                Observable.just(4, 5, 6))
-                .subscribe(new Action1<Integer>() {
+        // 设置2个需要发送的Observable & 放入到集合中
+        List<ObservableSource<Integer>> list = new ArrayList<>();
+        // 第1个Observable延迟1秒发射数据
+        list.add(Observable.just(1, 2, 3).delay(1, TimeUnit.SECONDS));
+        // 第2个Observable正常发送数据
+        list.add(Observable.just(4, 5, 6));
+
+        // 一共需要发送2个Observable的数据
+        // 但由于使用了amb（）,所以仅发送先发送数据的Observable
+        // 即第二个（因为第1个延时了）
+        Observable.amb(list)
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) throws Exception {
                         LjyLogUtil.i("发送数据是:" + integer);
                         mTextViewShow.append("发送数据是:" + integer + "\n");
                     }
@@ -403,17 +489,18 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testIsEmpty() {
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
-//                        subscriber.onNext(1);
-                        subscriber.onCompleted();
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
+                        subscriber.onNext(1);
+                        subscriber.onComplete();
                     }
+
                 })
                 .isEmpty()
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) throws Exception {
                         LjyLogUtil.i("发送数据是否为空:" + aBoolean);
                     }
                 });
@@ -422,9 +509,9 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testContains() {
         Observable.just(1, 2, 3, 4, 5)
                 .contains(3)
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) throws Exception {
                         LjyLogUtil.i("1,2,3,4,5 是否包含3: " + aBoolean);
                     }
                 });
@@ -435,9 +522,9 @@ public class RxJavaTestActivity extends BaseActivity {
                 .sequenceEqual(
                         Observable.just(1, 2, 3),
                         Observable.just(1, 2, 3))
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) throws Exception {
                         LjyLogUtil.i("1,2,3 与 1,2,3 是否相同:" + aBoolean);
                     }
                 });
@@ -451,16 +538,22 @@ public class RxJavaTestActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("onCompleted");
-                        mTextViewShow.append("onCompleted\n");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("onError:" + e.getLocalizedMessage());
                         mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("onComplete");
+                        mTextViewShow.append("onComplete\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -475,17 +568,17 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testTakeUntil() {
         LjyLogUtil.i("1, 2, 3, 4, 5, 6, 7:");
         Observable.just(1, 2, 3, 4, 5, 6, 7)
-                .takeUntil(new Func1<Integer, Boolean>() {
+                .takeUntil(new Predicate<Integer>() {
                     @Override
-                    public Boolean call(Integer integer) {
+                    public boolean test(Integer integer) throws Exception {
                         // 当发送的数据满足==5时，就停止发送Observable的数据
                         //(满足条件就不要后面的了)
                         return integer == 5;
                     }
                 })
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) throws Exception {
                         LjyLogUtil.i("发送了数据:" + integer);
                     }
                 });
@@ -497,16 +590,22 @@ public class RxJavaTestActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("onCompleted");
-                        mTextViewShow.append("onCompleted\n");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("onError:" + e.getLocalizedMessage());
                         mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("onCompleted");
+                        mTextViewShow.append("onCompleted\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -521,17 +620,17 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testSkipWhile() {
         LjyLogUtil.i("1, 2, 3, 4, 5, 6, 7:");
         Observable.just(1, 2, 3, 4, 5, 6, 7)
-                .skipWhile(new Func1<Integer, Boolean>() {
+                .skipWhile(new Predicate<Integer>() {
                     @Override
-                    public Boolean call(Integer integer) {
+                    public boolean test(Integer integer) throws Exception {
                         // 直到判断条件不成立 = false = 发射的数据≥5，才开始发送数据
                         //(就是当满足条件时过滤掉事件)
                         return integer < 5;
                     }
                 })
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) throws Exception {
                         LjyLogUtil.i("发送了数据:" + integer);
                     }
                 });
@@ -540,16 +639,16 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testTakeWhile() {
         LjyLogUtil.i("1, 2, 3, 4, 5, 6, 7:");
         Observable.just(1, 2, 3, 4, 5, 6, 7)
-                .takeWhile(new Func1<Integer, Boolean>() {
+                .takeWhile(new Predicate<Integer>() {
                     // 当发送的数据满足<5时，才发送Observable的数据
                     @Override
-                    public Boolean call(Integer integer) {
+                    public boolean test(Integer integer) throws Exception {
                         return integer < 5;
                     }
                 })
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) throws Exception {
                         LjyLogUtil.i("发送了数据:" + integer);
                     }
                 });
@@ -557,16 +656,16 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testAll() {
         Observable.just(1, 2, 3, 4, 5, 6, 7)
-                .all(new Func1<Integer, Boolean>() {
-                    // 该函数用于判断Observable发送的数据是否都满足integer<5
+                .all(new Predicate<Integer>() {
                     @Override
-                    public Boolean call(Integer integer) {
+                    public boolean test(Integer integer) throws Exception {
+                        // 该函数用于判断Observable发送的数据是否都满足integer<5
                         return integer < 5;
                     }
                 })
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) throws Exception {
                         LjyLogUtil.i("1,2,3,4,5,6,7是否都小于5:" + aBoolean);
                     }
                 });
@@ -577,13 +676,7 @@ public class RxJavaTestActivity extends BaseActivity {
         btnFangDou.setVisibility(View.VISIBLE);
         RxView.clicks(btnFangDou)
                 .throttleFirst(2, TimeUnit.SECONDS)////两秒内只能发送第一次事件
-                .subscribe(new Observer<Void>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("onCompleted");
-                        mTextViewShow.append("onCompleted\n");
-                    }
-
+                .subscribe(new Observer<Object>() {
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("onError:" + e.getLocalizedMessage());
@@ -591,7 +684,18 @@ public class RxJavaTestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Void aVoid) {
+                    public void onComplete() {
+                        LjyLogUtil.i("onCompleted");
+                        mTextViewShow.append("onCompleted\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
                         LjyLogUtil.i("onNext:发送了网络请求");
                         mTextViewShow.append("onNext:发送了网络请求\n");
 
@@ -609,12 +713,17 @@ public class RxJavaTestActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CharSequence>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -630,37 +739,37 @@ public class RxJavaTestActivity extends BaseActivity {
         //firstElement
         Observable
                 .just(1, 2, 3, 4, 5)
-                .first()
-                .subscribe(new Action1<Integer>() {
+                .firstElement()
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) throws Exception {
                         LjyLogUtil.i("获取到的第一个事件是： " + integer);
                     }
                 });
         Observable
                 .just(1, 2, 3, 4, 5)
-                .last()
-                .subscribe(new Action1<Integer>() {
+                .lastElement()
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("获取到的最后1个事件是： " + integer);
                     }
                 });
         Observable
                 .just(1, 2, 3, 4, 5)
                 .elementAt(3)
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("elementAt获取到的事件是： " + integer);
                     }
                 });
         Observable
                 .just(1, 2, 3, 4, 5)
-                .elementAtOrDefault(9, 100)
-                .subscribe(new Action1<Integer>() {
+                .elementAt(9, 100)
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("elementAtOrDefault获取到的事件是： " + integer);
                     }
                 });
@@ -669,9 +778,9 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testThrottle() {
         //在某段时间内，只发送该段时间内第1次事件
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         for (int i = 1; i <= 20; i++) {
                             subscriber.onNext(i);
                             try {
@@ -680,19 +789,25 @@ public class RxJavaTestActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(new Observer<Integer>() {
+
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("throttleFirst_onCompleted");
                         mTextViewShow.append("throttleFirst_onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -706,9 +821,9 @@ public class RxJavaTestActivity extends BaseActivity {
         mTextViewShow.append("-----------------------------\n");
         //在某段时间内，只发送该段时间内最后1次事件
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         for (int i = 1; i <= 20; i++) {
                             subscriber.onNext(i);
                             try {
@@ -717,19 +832,24 @@ public class RxJavaTestActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .throttleLast(1, TimeUnit.SECONDS)
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("throttleLast_onCompleted");
                         mTextViewShow.append("throttleLast_onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -744,9 +864,9 @@ public class RxJavaTestActivity extends BaseActivity {
         LjyLogUtil.i("-----------------------------");
         mTextViewShow.append("-----------------------------\n");
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         for (int i = 1; i <= 20; i++) {
                             subscriber.onNext(i);
                             try {
@@ -755,19 +875,24 @@ public class RxJavaTestActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .throttleWithTimeout(1, TimeUnit.SECONDS)
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("throttleWithTimeout_onCompleted");
                         mTextViewShow.append("throttleWithTimeout_onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -780,9 +905,9 @@ public class RxJavaTestActivity extends BaseActivity {
         LjyLogUtil.i("-----------------------------");
         mTextViewShow.append("-----------------------------\n");
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         for (int i = 1; i <= 20; i++) {
                             subscriber.onNext(i);
                             try {
@@ -791,19 +916,24 @@ public class RxJavaTestActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .debounce(1, TimeUnit.SECONDS)
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("debounce_onCompleted");
                         mTextViewShow.append("debounce_onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -822,13 +952,18 @@ public class RxJavaTestActivity extends BaseActivity {
                 .take(2)
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("对Complete事件作出响应");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -842,14 +977,20 @@ public class RxJavaTestActivity extends BaseActivity {
                 .just(1, 2, 3, 4, 5)
                 .takeLast(2)
                 .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("对Complete事件作出响应");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("对Complete事件作出响应");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -866,9 +1007,9 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable
                 .just(1, 2, 3, 1, 2, 4, 1, 2, 5)
                 .distinct()
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("1_获取到的事件元素是： " + integer);
                     }
                 });
@@ -877,9 +1018,9 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable
                 .just(1, 2, 2, 2, 3, 3, 3, 4, 5)
                 .distinctUntilChanged()
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("2_获取到的事件元素是： " + integer);
                     }
                 });
@@ -890,21 +1031,21 @@ public class RxJavaTestActivity extends BaseActivity {
         //使用1：根据顺序跳过数据项
         LjyLogUtil.i("根据顺序跳过数据项:");
         Observable
-                .from(arr)
+                .fromArray(arr)
                 .skip(3)// 跳过正序的前n项
                 .skipLast(2)// 跳过正序的后n项
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("1_获取到的整型事件元素是： " + integer);
                     }
                 });
         //使用2：根据时间跳过数据项
         LjyLogUtil.i("根据顺序跳过数据项:");
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         for (int i = 1; i <= 10; i++) {
                             subscriber.onNext(i);
                             try {
@@ -913,7 +1054,7 @@ public class RxJavaTestActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                        subscriber.onCompleted();
+                        subscriber.onComplete();
                     }
                 })
                 .skip(3, TimeUnit.SECONDS)//跳过第ns发送的数据
@@ -921,14 +1062,20 @@ public class RxJavaTestActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
+
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("2_onCompleted");
                         mTextViewShow.append("2_onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -945,9 +1092,9 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable
                 .just(1, "abc", 4, "hello world", 9)
                 .ofType(String.class)
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void accept(String s) {
                         LjyLogUtil.i("获取到的字符串事件元素是: " + s);
                     }
                 });
@@ -956,9 +1103,9 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testFilter() {
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         subscriber.onNext(1);
                         subscriber.onNext(2);
                         subscriber.onNext(3);
@@ -966,21 +1113,26 @@ public class RxJavaTestActivity extends BaseActivity {
                         subscriber.onNext(5);
                     }
                 })
-                .filter(new Func1<Integer, Boolean>() {
+                .filter(new Predicate<Integer>() {
                     @Override
-                    public Boolean call(Integer integer) {
+                    public boolean test(Integer integer) throws Exception {
                         return integer > 2 && integer < 5;//过滤条件
                     }
                 })
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("对Complete事件作出响应");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1002,7 +1154,7 @@ public class RxJavaTestActivity extends BaseActivity {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://fy.iciba.com/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         //2.创建网络请求接口的实例
         final GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
@@ -1016,12 +1168,12 @@ public class RxJavaTestActivity extends BaseActivity {
         observable1
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
+                .retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                     @Override
-                    public Observable<?> call(Observable<? extends Throwable> observable) {
-                        return observable.flatMap(new Func1<Throwable, Observable<?>>() {
+                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
+                        return throwableObservable.flatMap(new Function<Throwable, ObservableSource<?>>() {
                             @Override
-                            public Observable<?> call(Throwable throwable) {
+                            public ObservableSource<?> apply(Throwable throwable) throws Exception {
                                 //输出异常信息
                                 LjyLogUtil.i(throwable.getMessage());
                                 mTextViewShow.append(throwable.getMessage() + "\n");
@@ -1060,15 +1212,20 @@ public class RxJavaTestActivity extends BaseActivity {
                 })
                 .subscribe(new Observer<Translation1>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("onError:" + e.getLocalizedMessage());
+                        mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("onCompleted");
                         mTextViewShow.append("onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LjyLogUtil.i("onError:" + e.getLocalizedMessage());
-                        mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1090,7 +1247,7 @@ public class RxJavaTestActivity extends BaseActivity {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://fy.iciba.com/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         //2.创建网络请求接口的实例
         final GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
@@ -1103,12 +1260,12 @@ public class RxJavaTestActivity extends BaseActivity {
         mTextViewShow.append("轮询翻译 ##" + word + "## :\n");
         observable1
 //                .repeat(5)
-                .repeatWhen(new Func1<Observable<? extends Void>, Observable<?>>() {
+                .repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
                     @Override
-                    public Observable<?> call(Observable<? extends Void> observable) {
-                        return observable.flatMap(new Func1<Void, Observable<?>>() {
+                    public ObservableSource<?> apply(Observable<Object> objectObservable) throws Exception {
+                        return objectObservable.flatMap(new Function<Object, ObservableSource<?>>() {
                             @Override
-                            public Observable<?> call(Void aVoid) {
+                            public ObservableSource<?> apply(Object o) throws Exception {
                                 // 加入判断条件：当轮询次数 = 5次后，就停止轮询
                                 if (++temp > 5) {
                                     return Observable.error(new Throwable("轮询结束"));
@@ -1123,15 +1280,20 @@ public class RxJavaTestActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Translation1>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("onError:" + e.getLocalizedMessage());
+                        mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("onCompleted");
                         mTextViewShow.append("onCompleted" + "\n");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LjyLogUtil.i("onError:" + e.getLocalizedMessage());
-                        mTextViewShow.append("onError:" + e.getLocalizedMessage() + "\n");
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1146,73 +1308,85 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testDo() {
         Observable
-                .create(new Observable.OnSubscribe<Integer>() {
+                .create(new ObservableOnSubscribe<Integer>() {
                     @Override
-                    public void call(Subscriber<? super Integer> subscriber) {
+                    public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                         subscriber.onNext(1);
                         subscriber.onNext(2);
                         subscriber.onNext(3);
                         subscriber.onError(new Throwable("发生了错误哦~~"));
                     }
                 })
-                .doOnEach(new Action1<Notification<? super Integer>>() {
+                .doOnEach(new Consumer<Notification<Integer>>() {
                     //1.当Observable每发送1次数据事件就会调用1次
                     @Override
-                    public void call(Notification<? super Integer> notification) {
-                        LjyLogUtil.i("doOnEach:" + notification.getValue());
+                    public void accept(Notification<Integer> integerNotification) throws Exception {
+                        LjyLogUtil.i("doOnEach:" + integerNotification.getValue());
                     }
                 })
-                .doOnNext(new Action1<Integer>() {
+                .doOnNext(new Consumer<Integer>() {
                     //2.执行Next事件前调用
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("doOnNext:" + integer);
                     }
                 })
-                .doOnCompleted(new Action0() {
+                .doAfterNext(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        LjyLogUtil.i("doAfterNext:" + integer);
+
+                    }
+                })
+                .doOnComplete(new Action() {
                     //3.Observable正常发送事件完毕后调用
                     @Override
-                    public void call() {
+                    public void run() {
                         LjyLogUtil.i("doOnCompleted");
                     }
                 })
-                .doOnError(new Action1<Throwable>() {
+                .doOnError(new Consumer<Throwable>() {
                     //4.Observable发送错误事件时调用
                     @Override
-                    public void call(Throwable throwable) {
+                    public void accept(Throwable throwable) {
                         LjyLogUtil.i("doOnError:" + throwable.getLocalizedMessage());
                     }
                 })
-                .doOnSubscribe(new Action0() {
-                    //5.观察者订阅时调用
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(Disposable disposable) throws Exception {
+                        //5.观察者订阅时调用
                         LjyLogUtil.i("doOnSubscribe");
                     }
                 })
-                .doAfterTerminate(new Action0() {
+                .doAfterTerminate(new Action() {
                     //6.Observable发送事件完毕后调用，无论正常发送完毕/异常终止
                     @Override
-                    public void call() {
+                    public void run() {
                         LjyLogUtil.i("doAfterTerminate");
                     }
                 })
-                .finallyDo(new Action0() {
+                .doFinally(new Action() {
                     //最后执行
                     @Override
-                    public void call() {
+                    public void run() {
                         LjyLogUtil.i("finallyDo");
                     }
                 })
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("对Complete事件作出响应");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        LjyLogUtil.i("对Error事件作出响应:" + e.getLocalizedMessage());
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1230,9 +1404,9 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable<CharSequence> ageObservable = RxTextView.textChanges(ageTextView).skip(1);
         Observable<CharSequence> jobObservable = RxTextView.textChanges(jobTextView).skip(1);
         Observable
-                .combineLatest(nameObservable, ageObservable, jobObservable, new Func3<CharSequence, CharSequence, CharSequence, Boolean>() {
+                .combineLatest(nameObservable, ageObservable, jobObservable, new Function3<CharSequence, CharSequence, CharSequence, Boolean>() {
                     @Override
-                    public Boolean call(CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3) {
+                    public Boolean apply(CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3) throws Exception {
                         //规定表单信息输入不能为空
                         //1.name
 //                boolean isNameValid=!TextUtils.isEmpty(nameTextView.getText());
@@ -1246,9 +1420,9 @@ public class RxJavaTestActivity extends BaseActivity {
                         return isNameValid && isAgeValid && isJobValid;
                     }
                 })
-                .subscribe(new Action1<Boolean>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) {
                         LjyLogUtil.i("提交按钮是否可点击: " + aBoolean);
                         btnSubmit.setEnabled(aBoolean);
                     }
@@ -1268,26 +1442,26 @@ public class RxJavaTestActivity extends BaseActivity {
         final String memoryCache = getMemoryCache();
         final String diskCache = getDiskCache();
         //设置第1个Observable：检查内存缓存是否有该数据的缓存
-        Observable<String> memoryObservable = Observable.create(new Observable.OnSubscribe<String>() {
+        Observable<String> memoryObservable = Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
                 //先判断内存中有无数据
                 if (memoryCache != null) {
                     subscriber.onNext(memoryCache);
                 } else {
                     // 若无该数据，则直接发送结束事件
-                    subscriber.onCompleted();
+                    subscriber.onComplete();
                 }
             }
         });
         //设置第2个Observable：检查磁盘缓存是否有该数据的缓存
-        Observable<String> diskObservable = Observable.create(new Observable.OnSubscribe<String>() {
+        Observable<String> diskObservable = Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
                 if (diskCache != null) {
                     subscriber.onNext(diskCache);
                 } else {
-                    subscriber.onCompleted();
+                    subscriber.onComplete();
                 }
             }
         });
@@ -1295,10 +1469,10 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable<String> networkObservable = Observable.just("从网络中获取的数据");
         //通过concat() 和 firstElement()操作符实现缓存功能
         Observable.concat(memoryObservable, diskObservable, networkObservable)
-                .first()
-                .subscribe(new Action1<String>() {
+                .firstElement()
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void accept(String s) {
                         LjyLogUtil.i("最终获取的数据来源 =  " + s);
                     }
                 });
@@ -1318,10 +1492,10 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testCount() {
         Observable.just(1, 2, 3, 4)
                 .count()
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Long>() {
                     @Override
-                    public void call(Integer integer) {
-                        LjyLogUtil.i("发送的事件数量 =  " + integer);
+                    public void accept(Long l) {
+                        LjyLogUtil.i("发送的事件数量 =  " + l);
                     }
                 });
     }
@@ -1329,15 +1503,21 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testStartWith() {
         Observable.just(4, 5, 6)
                 .startWith(0)
-                .startWith(1, 2)
+                .startWithArray(1, 2)
                 .subscribe(new Observer<Integer>() {
+
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -1350,20 +1530,20 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testCollect() {
         Observable.just(1, 2, 3, 4, 5, 6)
-                .collect(new Func0<ArrayList<String>>() {
+                .collect(new Callable<ArrayList<String>>() {
                     @Override
                     public ArrayList<String> call() {
                         return new ArrayList<>();
                     }
-                }, new Action2<ArrayList<String>, Integer>() {
+                }, new BiConsumer<ArrayList<String>, Integer>() {
                     @Override
-                    public void call(ArrayList<String> list, Integer integer) {
+                    public void accept(ArrayList<String> list, Integer integer) {
                         list.add("数据00" + integer);
                     }
                 })
-                .subscribe(new Action1<ArrayList<String>>() {
+                .subscribe(new Consumer<ArrayList<String>>() {
                     @Override
-                    public void call(ArrayList<String> list) {
+                    public void accept(ArrayList<String> list) {
                         LjyLogUtil.i("得到的数据是： " + list.toString());
                     }
                 });
@@ -1389,15 +1569,15 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testReduce() {
         LjyLogUtil.i("1,2,3,4:");
         Observable.just(1, 2, 3, 4)
-                .reduce(new Func2<Integer, Integer, Integer>() {
+                .reduce(new BiFunction<Integer, Integer, Integer>() {
                     @Override
-                    public Integer call(Integer integer, Integer integer2) {
+                    public Integer apply(Integer integer, Integer integer2) {
                         return integer * integer2;
                     }
                 })
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void call(Integer integer) {
+                    public void accept(Integer integer) {
                         LjyLogUtil.i("结果:" + integer);
                     }
                 });
@@ -1405,9 +1585,9 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testZip() {
         //创建第一个被观察者
-        Observable<Integer> observable1 = Observable.create(new Observable.OnSubscribe<Integer>() {
+        Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                 try {
                     Thread.sleep(1000);
                     subscriber.onNext(1);
@@ -1419,14 +1599,14 @@ public class RxJavaTestActivity extends BaseActivity {
                     subscriber.onNext(4);
                 } catch (InterruptedException e) {
                 }
-                subscriber.onCompleted();
+                subscriber.onComplete();
 
             }
         }).subscribeOn(Schedulers.io());//设置被观察者1在工作线程1中工作
         //创建第二个被观察者
-        Observable<String> observable2 = Observable.create(new Observable.OnSubscribe<String>() {
+        Observable<String> observable2 = Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
                 try {
                     Thread.sleep(500);
                     subscriber.onNext("A");
@@ -1438,31 +1618,36 @@ public class RxJavaTestActivity extends BaseActivity {
                     subscriber.onNext("D");
                 } catch (InterruptedException e) {
                 }
-                subscriber.onCompleted();
+                subscriber.onComplete();
             }
         }).subscribeOn(Schedulers.newThread());//设置被观察者2在工作线程2中工作
         //假设不作线程控制，则该两个被观察者会在同一个线程中工作，即发送事件存在先后顺序，而不是同时发送
         Observable
 //                .combineLatestDelayError(observable1, observable2, new Func2<Integer, String, String>() {
 //                .combineLatest(observable1, observable2, new Func2<Integer, String, String>() {
-                .zip(observable1, observable2, new Func2<Integer, String, String>() {
+                .zip(observable1, observable2, new BiFunction<Integer, String, String>() {
                     @Override
-                    public String call(Integer integer, String s) {
+                    public String apply(Integer integer, String s) {
                         return integer + "__" + s;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
+
                     @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("onCompleted");
-                        mTextViewShow.append("onCompleted\n");
+                    public void onError(Throwable e) {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onComplete() {
+                        LjyLogUtil.i("onCompleted");
+                        mTextViewShow.append("onCompleted\n");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -1479,11 +1664,8 @@ public class RxJavaTestActivity extends BaseActivity {
         Observable
 //                .merge(Observable.interval(0, 3, TimeUnit.SECONDS),
 //                        Observable.interval(2, 3, TimeUnit.SECONDS))
-                .merge(Observable.just(1, 2, 3),
-                        Observable.just(4, 5, 6),
-                        Observable.just(7, 8, 9).delay(2000, TimeUnit.MILLISECONDS),
-                        Observable.just(10, 11, 12),
-                        Observable.just(13, 14, 15))
+                .merge(Observable.intervalRange(0, 3, 1, 1, TimeUnit.SECONDS), // 从0开始发送、共发送3个数据、第1次事件延迟发送时间 = 1s、间隔时间 = 1s
+                        Observable.intervalRange(2, 3, 1, 1, TimeUnit.SECONDS)) // 从2开始发送、共发送3个数据、第1次事件延迟发送时间 = 1s、间隔时间 = 1s
 //                .mergeDelayError(Observable.create(new Observable.OnSubscribe<Integer>() {
 //                            @Override
 //                            public void call(Subscriber<? super Integer> subscriber) {
@@ -1501,11 +1683,7 @@ public class RxJavaTestActivity extends BaseActivity {
 //                        Observable.just(13, 14, 15))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("对Complete事件作出响应");
-                    }
+                .subscribe(new Observer<Long>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -1513,7 +1691,17 @@ public class RxJavaTestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Integer integer) {
+                    public void onComplete() {
+                        LjyLogUtil.i("对Complete事件作出响应");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Long integer) {
                         LjyLogUtil.i("merge接收到了事件:" + integer);
                         mTextViewShow.append("merge接收到了事件:" + integer + "\n");
                     }
@@ -1522,12 +1710,10 @@ public class RxJavaTestActivity extends BaseActivity {
 
     private void testConcat() {
         LjyLogUtil.i("testConcat--->");
-        Observable
-                .concat(Observable.just(1, 2, 3),
-                        Observable.just(4, 5, 6),
-                        Observable.just(7, 8, 9).delay(2000, TimeUnit.MILLISECONDS),
-                        Observable.just(10, 11, 12),
-                        Observable.just(13, 14, 15))
+        Observable.concat(Observable.just(1, 2, 3),
+                Observable.just(4, 5, 6).delay(2, TimeUnit.SECONDS),
+                Observable.just(7, 8, 9),
+                Observable.just(10, 11, 12))
 //                .concatDelayError(Observable.create(new Observable.OnSubscribe<Integer>() {
 //                            @Override
 //                            public void call(Subscriber<? super Integer> subscriber) {
@@ -1546,14 +1732,20 @@ public class RxJavaTestActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("对Complete事件作出响应");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("对Error事件作出响应");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("对Complete事件作出响应");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1570,19 +1762,19 @@ public class RxJavaTestActivity extends BaseActivity {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://fy.iciba.com/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         //2.创建网络请求接口的实例
         final GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
         //3.observable封装
-        //创建第一个请求:中译英|
+        //创建第一个请求:中译英
         LjyLogUtil.i("中译英:还要");
         Observable<Translation1> observable1 = request.getEnglish("还要");
         observable1.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Action1<Translation1>() {
+                .doOnNext(new Consumer<Translation1>() {
                     @Override
-                    public void call(Translation1 translation1) {
+                    public void accept(Translation1 translation1) {
                         LjyLogUtil.i("第1次网络请求成功");
                         // 对第1次网络请求返回的结果进行操作 = 显示翻译结果
                         LjyLogUtil.i(translation1.toString());
@@ -1590,9 +1782,9 @@ public class RxJavaTestActivity extends BaseActivity {
                     }
                 })
                 .observeOn(Schedulers.io())
-                .flatMap(new Func1<Translation1, Observable<Translation2>>() {
+                .flatMap(new Function<Translation1, Observable<Translation2>>() {
                     @Override
-                    public Observable<Translation2> call(Translation1 translation1) {
+                    public Observable<Translation2> apply(Translation1 translation1) throws Exception {
                         //将网络请求1转换成网络请求2，即发送网络请求2
                         //创建第一个请求:英译中
                         LjyLogUtil.i("将第一个翻译的结果反译:");
@@ -1600,17 +1792,23 @@ public class RxJavaTestActivity extends BaseActivity {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Translation2>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                .subscribe(new Observer<Translation2>() {
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("登录失败:" + e.getLocalizedMessage());
                         mTextViewShow.append(LjyLogUtil.getAllLogMsg());
                         LjyLogUtil.setAppendLogMsg(false);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1772,14 +1970,20 @@ public class RxJavaTestActivity extends BaseActivity {
 //                .buffer(3, 1)//设置缓存区大小 & 步长
                 .buffer(2, 2)
                 .subscribe(new Observer<List<Integer>>() {
-                    @Override
-                    public void onCompleted() {
-                        LjyLogUtil.i("对Complete事件作出响应");
-                    }
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("对Error事件作出响应");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("对Complete事件作出响应");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1793,31 +1997,31 @@ public class RxJavaTestActivity extends BaseActivity {
     }
 
     private void testConcatMap() {
-        Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+        Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                 subscriber.onNext(1);
                 subscriber.onNext(2);
                 subscriber.onNext(3);
             }
         });
         observable
-                .concatMap(new Func1<Integer, Observable<String>>() {
+                .concatMap(new Function<Integer, Observable<String>>() {
                     @Override
-                    public Observable<String> call(Integer integer) {
+                    public Observable<String> apply(Integer integer) throws Exception {
                         final List<String> list = new ArrayList<>();
                         for (int i = 0; i < 3; i++) {
                             list.add("concatMap:我是事件" + integer + "拆分后的子事件_" + i);
                         }
-                        return Observable.from(list).delay(800, TimeUnit.MILLISECONDS);
+                        return Observable.fromIterable(list).delay(800, TimeUnit.MILLISECONDS);
                     }
                 })
                 //subscribeOn()改变调用它之前代码的线程,observeOn()改变调用它之后代码的线程
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void accept(String s) {
                         LjyLogUtil.i(s);
                         mTextViewShow.append(s + "\n");
                     }
@@ -1825,31 +2029,31 @@ public class RxJavaTestActivity extends BaseActivity {
     }
 
     private void testFlatMap() {
-        Observable<Integer> observable = Observable.create(new Observable.OnSubscribe<Integer>() {
+        Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
                 subscriber.onNext(1);
                 subscriber.onNext(2);
                 subscriber.onNext(3);
             }
         });
         observable
-                .flatMap(new Func1<Integer, Observable<String>>() {
+                .flatMap(new Function<Integer, Observable<String>>() {
                     @Override
-                    public Observable<String> call(Integer integer) {
+                    public Observable<String> apply(Integer integer) {
                         final List<String> list = new ArrayList<>();
                         for (int i = 0; i < 3; i++) {
                             list.add("flatMap:我是事件" + integer + "拆分后的子事件_" + i);
                         }
-                        return Observable.from(list).delay(800, TimeUnit.MILLISECONDS);
+                        return Observable.fromIterable(list).delay(800, TimeUnit.MILLISECONDS);
                     }
                 })
                 //subscribeOn()改变调用它之前代码的线程,observeOn()改变调用它之后代码的线程
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void accept(String s) {
                         LjyLogUtil.i(s);
                         mTextViewShow.append(s + "\n");
                     }
@@ -1857,25 +2061,25 @@ public class RxJavaTestActivity extends BaseActivity {
     }
 
     private void testMap() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
 
-            // 1. 被观察者发送事件 = 参数为整型 = 1、2、3
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void subscribe(ObservableEmitter<Integer> subscriber) throws Exception {
+                // 1. 被观察者发送事件 = 参数为整型 = 1、2、3
                 subscriber.onNext(1);
                 subscriber.onNext(2);
                 subscriber.onNext(3);
             }
-        }).map(new Func1<Integer, String>() {
+        }).map(new Function<Integer, String>() {
             //使用Map变换操作符中的Function函数对被观察者发送的事件进行统一变换：整型变换成字符串类型
             @Override
-            public String call(Integer integer) {
+            public String apply(Integer integer) {
                 return "map:将事件" + integer + "的参数从 整型" + integer + " 变换成 字符串类型" + integer;
             }
-        }).subscribe(new Action1<String>() {
+        }).subscribe(new Consumer<String>() {
             //3. 观察者接收事件时，是接收到变换后的事件 = 字符串类型
             @Override
-            public void call(String s) {
+            public void accept(String s) {
                 LjyLogUtil.i(s);
                 mTextViewShow.append(s + "\n");
             }
@@ -1886,33 +2090,40 @@ public class RxJavaTestActivity extends BaseActivity {
     private void testSimple() {
         //创建被观察者:
         //方式1:完整创建
-        Observable<String> observable1 = Observable.create(new Observable.OnSubscribe<String>() {
+        Observable<String> observable1 = Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
-                // 注：建议发送事件前检查观察者的isUnsubscribed状态，以便在没有观察者时，让Observable停止发射数据
-                if (!subscriber.isUnsubscribed()) {
-                    //定义需要发送的事件,通知观察者
-                    subscriber.onNext("observable1_1");
-                    subscriber.onNext("observable1_2");
-                    subscriber.onNext("observable1_3");
-                }
-                subscriber.onCompleted();
+            public void subscribe(ObservableEmitter<String> subscriber) throws Exception {
+//                 注：建议发送事件前检查观察者的isUnsubscribed状态，以便在没有观察者时，让Observable停止发射数据
+//                if (!subscriber.isUnsubscribed()) {
+                //定义需要发送的事件,通知观察者
+                subscriber.onNext("observable1_1");
+                subscriber.onNext("observable1_2");
+                subscriber.onNext("observable1_3");
+//                }
+                subscriber.onComplete();
             }
         });
         //方式2:快速创建, 直接将传入的参数依次发送出来
         Observable observable2 = Observable.just("observable2_1", "observable2_2", "observable2_3");
         //方式3:将传入的数组/Iterable 拆分成具体对象后，依次发送出来
         String[] nums = {"observable3_1", "observable3_2", "observable3_3"};
-        Observable observable3 = Observable.from(nums);
+        Observable observable3 = Observable.fromArray(nums);
         //方式4:延迟指定事件,延迟指定时间后，发送1个数值0（Long类型）
         Observable.timer(3, TimeUnit.SECONDS).subscribe(new Observer<Long>() {
+
+
             @Override
-            public void onCompleted() {
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
                 LjyLogUtil.i("观察者Observer Observable.timer onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onSubscribe(Disposable d) {
 
             }
 
@@ -1927,9 +2138,9 @@ public class RxJavaTestActivity extends BaseActivity {
         // 参数2 = 间隔时间数字；
         // 参数3 = 时间单位；
         Observable.interval(3, 1, TimeUnit.SECONDS)
-                .doOnNext(new Action1<Long>() {
+                .doOnNext(new Consumer<Long>() {
                     @Override
-                    public void call(Long aLong) {
+                    public void accept(Long aLong) {
                         LjyLogUtil.i("doOnNext: 第 " + aLong + " 次轮询");
                         //此中可做网络请求等操作
 
@@ -1937,12 +2148,17 @@ public class RxJavaTestActivity extends BaseActivity {
                 })
                 .subscribe(new Observer<Long>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
                         LjyLogUtil.i("观察者Observer Observable.interval onCompleted");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -1957,13 +2173,19 @@ public class RxJavaTestActivity extends BaseActivity {
         // 参数2 = 事件数量；
         // 注：若设置为负数，则会抛出异常
         Observable.range(3, 10).subscribe(new Observer<Integer>() {
+
             @Override
-            public void onCompleted() {
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
                 LjyLogUtil.i("观察者Observer Observable.range onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onSubscribe(Disposable d) {
 
             }
 
@@ -1977,30 +2199,41 @@ public class RxJavaTestActivity extends BaseActivity {
         //方式1: Observer接口
         Observer<String> observer = new Observer<String>() {
             @Override
-            public void onNext(String s) {
-                LjyLogUtil.i("观察者Observer onNext:" + s);
+            public void onSubscribe(Disposable d) {
+
             }
 
             @Override
-            public void onCompleted() {
-                LjyLogUtil.i("观察者Observer onCompleted");
+            public void onNext(String s) {
+                LjyLogUtil.i("观察者Observer onNext:" + s);
             }
 
             @Override
             public void onError(Throwable e) {
                 LjyLogUtil.i("观察者Observer onError");
             }
+
+            @Override
+            public void onComplete() {
+                LjyLogUtil.i("观察者Observer onCompleted");
+            }
         };
         //方式2: Subscriber抽象类
         Subscriber<String> subscriber = new Subscriber<String>() {
-            @Override
-            public void onCompleted() {
-                LjyLogUtil.i("观察者Subscriber onCompleted");
-            }
 
             @Override
             public void onError(Throwable e) {
                 LjyLogUtil.i("观察者Subscriber onError");
+            }
+
+            @Override
+            public void onComplete() {
+                LjyLogUtil.i("观察者Subscriber onCompleted");
+            }
+
+            @Override
+            public void onSubscribe(Subscription s) {
+
             }
 
             @Override
@@ -2014,9 +2247,9 @@ public class RxJavaTestActivity extends BaseActivity {
         observable1.subscribe(observer);
         observable2.subscribe(observer);
         observable3.subscribe(observer);
-        observable1.subscribe(subscriber);
-        observable2.subscribe(subscriber);
-        observable3.subscribe(subscriber);
+//        observable1.subscribe(subscriber);
+//        observable2.subscribe(subscriber);
+//        observable3.subscribe(subscriber);
     }
 
 

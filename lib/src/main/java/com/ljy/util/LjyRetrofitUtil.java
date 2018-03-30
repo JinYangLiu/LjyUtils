@@ -1,6 +1,10 @@
 package com.ljy.util;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.ljy.bean.DownloadBean;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -8,6 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -21,7 +29,6 @@ import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.Body;
@@ -39,12 +46,6 @@ import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Mr.LJY on 2018/1/11.
@@ -81,7 +82,7 @@ public class LjyRetrofitUtil {
                         .client(getOkHttpClient())//配置okhttp
                         .addConverterFactory(GsonConverterFactory.create())//支持gson
                         .addConverterFactory(SimpleXmlConverterFactory.create())//支持xml
-                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//增加返回值为Oservable<T>的支持,RxJava
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//增加返回值为Oservable<T>的支持,RxJava
                         .build();
             }
             apiService = retrofit.create(ApiService.class);
@@ -104,17 +105,17 @@ public class LjyRetrofitUtil {
     }
 
     public void get(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Observable<Map<String, Object>> observable = apiService.get(methodPath, params);
+        Flowable<Map<String, Object>> observable = apiService.get(methodPath, params);
         setCallBack(observable, callBack);
     }
 
     public void postBody(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Observable<Map<String, Object>> observable = apiService.postBody(methodPath, params);
+        Flowable<Map<String, Object>> observable = apiService.postBody(methodPath, params);
         setCallBack(observable, callBack);
     }
 
     public void postFieldMap(String methodPath, Map<String, String> params, final CallBack callBack) {
-        Observable<Map<String, Object>> observable = apiService.postFieldMap(methodPath, params);
+        Flowable<Map<String, Object>> observable = apiService.postFieldMap(methodPath, params);
         setCallBack(observable, callBack);
     }
 
@@ -128,18 +129,23 @@ public class LjyRetrofitUtil {
                     MediaType.parse("multipart/form-data"), entry.getValue());
             partMap.put(entry.getKey(), body);
         }
-        Observable<ResponseBody> observable = apiService.upload(url, partMap);
+        Flowable<ResponseBody> observable = apiService.upload(url, partMap);
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
                 .subscribe(new Subscriber<ResponseBody>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
+                        upLoadCallBack.onFail(e.toString());
+                    }
+
+                    @Override
+                    public void onComplete() {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        upLoadCallBack.onFail(e.toString());
+                    public void onSubscribe(Subscription s) {
+
                     }
 
                     @Override
@@ -167,22 +173,30 @@ public class LjyRetrofitUtil {
         long currentLen = 0;
         if (bean.getProgress() > 0)
             currentLen = bean.getProgress();
-        Observable<Boolean> observable = apiService.download("bytes=" + currentLen + "-", bean.getLoadUrll())
+        Flowable<Boolean> observable = apiService.download("bytes=" + currentLen + "-", bean.getLoadUrll())
                 .subscribeOn(Schedulers.io())
-                .map(new Func1<ResponseBody, Boolean>() {
+                .map(new Function<ResponseBody, Boolean>() {
                     @Override
-                    public Boolean call(ResponseBody responseBody) {
+                    public Boolean apply(ResponseBody responseBody) throws Exception {
                         return LjyFileUtil.writeResponseBodyToDisk(responseBody, bean);
                     }
                 });
+
         Subscriber<Boolean> mDownLoadSubscriber = new Subscriber<Boolean>() {
-            @Override
-            public void onCompleted() {
-            }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onCompleted(false);
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSubscribe(Subscription s) {
+
             }
 
             @Override
@@ -215,7 +229,7 @@ public class LjyRetrofitUtil {
                 .baseUrl(mBaseUrl)
                 .client(client)//配置okhttp
                 .addConverterFactory(GsonConverterFactory.create())//支持gson
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//增加返回值为Oservable<T>的支持,RxJava
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//增加返回值为Oservable<T>的支持,RxJava
                 .build();
         return retrofit.create(ApiService.class);
     }
@@ -227,7 +241,7 @@ public class LjyRetrofitUtil {
          * get
          */
         @GET("{methodPath}")
-        Observable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
+        Flowable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
 
         /**
          * method：网络请求的方法（区分大小写）
@@ -235,7 +249,7 @@ public class LjyRetrofitUtil {
          * hasBody：是否有请求体
          */
         @HTTP(method = "GET", path = "{methodPath}", hasBody = false)
-        Observable<ResponseBody> get2(@Path("methodPath") String methodPath);
+        Flowable<ResponseBody> get2(@Path("methodPath") String methodPath);
         // {id} 表示是一个变量
         // method 的值 retrofit 不会做处理，所以要自行保证准确
 
@@ -246,7 +260,7 @@ public class LjyRetrofitUtil {
          */
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         @POST("{methodPath}")
-        Observable<Map<String, Object>> postBody(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+        Flowable<Map<String, Object>> postBody(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
 
         /**
          * post
@@ -256,21 +270,21 @@ public class LjyRetrofitUtil {
          */
         @FormUrlEncoded
         @POST("{methodPath}")
-        Observable<Map<String, Object>> postFieldMap(@Path("methodPath") String methodPath,@FieldMap Map<String, String> maps);
+        Flowable<Map<String, Object>> postFieldMap(@Path("methodPath") String methodPath,@FieldMap Map<String, String> maps);
 
         /**
          * 断点续传下载接口
          */
         @Streaming/*大文件需要加入这个判断，防止下载过程中写入到内存中*/
         @GET
-        Observable<ResponseBody> download(@Header("RANGE") String start, @Url String url);
+        Flowable<ResponseBody> download(@Header("RANGE") String start, @Url String url);
 
         /**
          * 上传文件
          */
         @Multipart
         @POST
-        Observable<ResponseBody> uploadFile(@Url() String url, @PartMap() Map<String, RequestBody> partMap,
+        Flowable<ResponseBody> uploadFile(@Url() String url, @PartMap() Map<String, RequestBody> partMap,
                                             @Part("file") MultipartBody.Part file);
 
         /**
@@ -285,17 +299,22 @@ public class LjyRetrofitUtil {
          */
         @Multipart
         @POST
-        Observable<ResponseBody> upload(@Url() String url, @PartMap() Map<String, RequestBody> partMap);
+        Flowable<ResponseBody> upload(@Url() String url, @PartMap() Map<String, RequestBody> partMap);
 
     }
 
     /**
      * 设置回调
      */
-    private void setCallBack(final Observable<Map<String, Object>> observable, final CallBack callBack) {
+    private void setCallBack(final Flowable<Map<String, Object>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
-                .subscribe(new Observer<Map<String, Object>>() {//订阅
+                .subscribe(new Subscriber<Map<String,Object>>() {//订阅
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+
+                    }
 
                     @Override
                     public void onNext(Map<String, Object> parserData) {//调用接口成功，返回数据
@@ -310,11 +329,9 @@ public class LjyRetrofitUtil {
                     }
 
                     @Override
-                    public void onCompleted() {//所以事件完成,若onError被调用了则不会再走这个方法
+                    public void onComplete() {
 
                     }
-
-
                 });
     }
 

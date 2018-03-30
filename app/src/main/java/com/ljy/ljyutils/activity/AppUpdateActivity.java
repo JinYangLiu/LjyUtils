@@ -27,6 +27,8 @@ import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyMDDialogManager;
 
+import org.reactivestreams.Subscriber;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,7 +38,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
 
 public class AppUpdateActivity extends BaseActivity {
 
@@ -110,8 +111,8 @@ public class AppUpdateActivity extends BaseActivity {
                 LjyLogUtil.i("hash3:" + hash3);
                 break;
             case R.id.btn_pause:
-                if (subscriber != null && !subscriber.isUnsubscribed())
-                    subscriber.unsubscribe();
+//                if (subscriber != null && !subscriber.isUnsubscribed())
+//                    subscriber.unsubscribe();
                 break;
             case R.id.btn_deleteApk:
                 for (DownloadBean downloadBean : beans) {
@@ -151,7 +152,7 @@ public class AppUpdateActivity extends BaseActivity {
     private void updateApp() {
         if (mDownloadBean.isDone())
             return;
-        if (subscriber != null && subscriber == mDownloadBean.getSubscriber() && !subscriber.isUnsubscribed())
+        if (subscriber != null && subscriber == mDownloadBean.getSubscriber() )//&& !subscriber.isUnsubscribed())
             return;
         if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 

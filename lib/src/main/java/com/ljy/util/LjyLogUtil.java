@@ -212,5 +212,7 @@ public class LjyLogUtil {
 
     public static void setAppendLogMsg(boolean isAppendLogMsg) {
         LjyLogUtil.isAppendLogMsg = isAppendLogMsg;
+        logMsg.setLength(0);
+        logMsg=new StringBuffer();
     }
 }
