@@ -200,9 +200,14 @@
                 android:text="defaultIfEmpty 的使用"
                 style="@style/btnStyle"/>
             <Button
+                android:id="@+id/btnFlowableObservable"
+                android:onClick="onRxJavaBtnClick"
+                android:text="Observable和Flowable(同步)"
+                style="@style/btnStyle"/>
+            <Button
                 android:id="@+id/btnBackPressure"
                 android:onClick="onRxJavaBtnClick"
-                android:text="被压策略"
+                android:text="背压策略"
                 style="@style/btnStyle"/>
 
 
@@ -217,6 +222,12 @@
                 android:id="@+id/btnFangDou"
                 android:visibility="gone"
                 android:text="防抖按钮:点我啊~"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
+            <Button
+                android:id="@+id/btnBeiYa"
+                android:visibility="gone"
+                android:text="点击接收事件"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"/>
             <TextView

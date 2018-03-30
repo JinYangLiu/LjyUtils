@@ -82,6 +82,9 @@ public class RxJavaTestActivity extends BaseActivity {
     @BindView(R.id.btnFangDou)
     Button btnFangDou;
 
+    @BindView(R.id.btnBeiYa)
+    Button btnBeiYa;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -303,14 +306,34 @@ public class RxJavaTestActivity extends BaseActivity {
                 testDefaultIfEmpty();
                 isShowText = true;
                 break;
+            case R.id.btnFlowableObservable:
+                //Flowable与Observable在功能上的区别主要是 多了背压的功能
+                //Flowable使用Subscriber ,Subscriber.onSubscribe中需要设置s.request(Long.MAX_VALUE);
+                //Observable使用Observer,Observer.isDisposed判断是否已经取消订阅,Observer.dispose取消订阅
+                //都有同步异步两种订阅关系:(订阅前设置了下面的两行就是异步了,不设置默认是同步的)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+
+                testFlowableObservable();
+                break;
             case R.id.btnBackPressure:
                 //背压策略
                 //观察者 & 被观察者 之间存在2种订阅关系：同步 & 异步
+                //同步:观察者与被观察者在同一个线程,
+                //被观察者每发送一个事件,必须等到观察者接收处理后,才能继续发送下一个事件
+                //
+                //异步:观察者与被观察者在不同线程,
+                //被观察者不需要等待观察者接收处理,而是不断发送,直到发送所有事件,
+                // 但事件都是放到缓存区(128),等待观察者从缓冲区取出事件来处理
+                //由于异步的缓存区大小有限（128）
                 //对于异步订阅关系，存在 被观察者发送事件速度 与观察者接收事件速度 不匹配的情况
                 //问题: 被观察者 发送事件速度太快，而观察者 来不及接收所有事件，从而导致观察者
                 // 无法及时响应 / 处理所有发送过来事件的问题，最终导致缓存区溢出、事件丢失 & OOM
-                //Flowable与Observable在功能上的区别主要是 多了背压的功能
+                //"观察者可接收事件数量 = " + emitter.requested()
+                //同步情况时为 Subscriber.onSubscribe中设置s.request()的数量,推荐设置Long.MAX_VALUE
+                //异步时,为128,因为其缓存区为128,在需要时用mSubscription.request(n);取得消息
                 testBackPressure();
+                isShowText = true;
                 break;
             default:
                 break;
@@ -321,8 +344,67 @@ public class RxJavaTestActivity extends BaseActivity {
         LjyLogUtil.setAppendLogMsg(false);
     }
 
+    private Subscription mSubscription;//用于保存Subscription对象
+
     private void testBackPressure() {
-        //出现发送 & 接收事件严重不匹配的问题
+        btnBeiYa.setVisibility(View.VISIBLE);
+        btnBeiYa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSubscription.request(2);
+            }
+        });
+        //异步订阅情况
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(FlowableEmitter<Integer> e) throws Exception {
+                        for (int i = 1; i <= 8; i++) {
+                            LjyLogUtil.i("观察者可接收事件数量 = " + e.requested());
+                            LjyLogUtil.i("发送了事件:" + i);
+                            e.onNext(i);
+                        }
+                        e.onComplete();
+                    }
+                }, BackpressureStrategy.ERROR)//背压模式参数,当缓存区大小存满、被观察者仍然继续发送下1个事件时，该如何处理的策略方式
+                //BackpressureStrategy.ERROR, 直接抛出异常MissingBackpressureException
+                //BackpressureStrategy.MISSING,友好提示：缓存区满了
+                //BackpressureStrategy.BUFFER,将缓存区大小设置成无限大 ,但要注意内存情况，防止出现OOM
+                //BackpressureStrategy.DROP,超过缓存区大小（128）的事件丢弃
+                //BackpressureStrategy.LATEST,只保存最新（最后）事件，超过缓存区大小（128）的事件丢弃
+
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        LjyLogUtil.i("onSubscribe");
+                        mTextViewShow.append("onSubscribe");
+                        //// 保存Subscription对象，等待点击按钮时（调用request(2)）观察者再接收事件
+                        mSubscription = s;
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        LjyLogUtil.i("onNext:接收到了事件" + integer);
+                        mTextViewShow.append("onNext:接收到了事件" + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        LjyLogUtil.i("onError:" + t.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LjyLogUtil.i("onComplete");
+                        mTextViewShow.append("onComplete");
+                    }
+                });
+    }
+
+    private void testFlowableObservable() {
+        //Observable
         Observable
                 .create(new ObservableOnSubscribe<Integer>() {
                     @Override
@@ -340,20 +422,18 @@ public class RxJavaTestActivity extends BaseActivity {
                         }
                     }
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
 
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("onError:" + e.getMessage());
-                        mTextViewShow.append("onError:" + e.getMessage() + "\n");
                     }
 
                     @Override
                     public void onComplete() {
                         LjyLogUtil.i("onComplete");
-                        mTextViewShow.append("onComplete\n");
                     }
 
                     @Override
@@ -367,20 +447,20 @@ public class RxJavaTestActivity extends BaseActivity {
                         try {
                             Thread.sleep(2000);
                             LjyLogUtil.i("onNext接收到了事件:" + num);
-                            mTextViewShow.append("onNext接收到了事件:" + num + "\n");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
                     }
                 });
-        //背压Flowable
+        //Flowable
         Flowable
                 .create(new FlowableOnSubscribe<Integer>() {
                     @Override
                     public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
                         for (int i = 0; i < 100; i++) {
                             try {
+                                LjyLogUtil.i("观察者可接收事件数量 = " + emitter.requested());
                                 LjyLogUtil.i("Flowable发送了事件:" + i);
 //                                LjyToastUtil.toast(mContext,"发送了事件:" + i );
                                 Thread.sleep(100);
@@ -392,27 +472,26 @@ public class RxJavaTestActivity extends BaseActivity {
                         }
                     }
                 }, BackpressureStrategy.ERROR)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onError(Throwable e) {
                         LjyLogUtil.i("Flowable onError:" + e.getMessage());
-                        mTextViewShow.append("Flowable onError:" + e.getMessage() + "\n");
                     }
 
                     @Override
                     public void onComplete() {
                         LjyLogUtil.i("Flowable onComplete");
-                        mTextViewShow.append("Flowable onComplete\n");
                     }
 
                     @Override
                     public void onSubscribe(Subscription s) {
                         // 作用：决定观察者能够接收多少个事件
-                        // 如设置了s.request(3)，这就说明观察者能够接收3个事件（多出的事件存放在缓存区）
+                        // 如设置了s.request()，这就说明观察者能够接收n个事件（多出的事件存放在缓存区）
                         // 官方默认推荐使用Long.MAX_VALUE，即s.request(Long.MAX_VALUE);
-                        s.request(3);
+                        s.request(Long.MAX_VALUE);
                         LjyLogUtil.i("Flowable onSubscribe");
-                        mTextViewShow.append("Flowable onSubscribe\n");
                     }
 
                     @Override
@@ -421,7 +500,6 @@ public class RxJavaTestActivity extends BaseActivity {
                         try {
                             Thread.sleep(2000);
                             LjyLogUtil.i("Flowable onNext接收到了事件:" + num);
-                            mTextViewShow.append("Flowable onNext接收到了事件:" + num + "\n");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
