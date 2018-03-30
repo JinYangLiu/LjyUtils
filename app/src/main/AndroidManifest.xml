@@ -312,7 +312,7 @@
         </activity>
         <activity android:name=".activity.CustomViewActivity">
         </activity>
-        <activity android:name=".activity.RxjavaTestActivity">
+        <activity android:name=".activity.RxJavaTestActivity">
         </activity>
     </application>
 

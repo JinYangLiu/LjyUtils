@@ -42,7 +42,7 @@ import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
-import com.ljy.ljyutils.activity.RxjavaTestActivity;
+import com.ljy.ljyutils.activity.RxJavaTestActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
 import com.ljy.ljyutils.activity.SideIndexBarActivity;
 import com.ljy.ljyutils.activity.SlidingMenuActivity;
@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity {
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
-                DesignPatternActivity.class, CustomViewActivity.class, RxjavaTestActivity.class};
+                DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
