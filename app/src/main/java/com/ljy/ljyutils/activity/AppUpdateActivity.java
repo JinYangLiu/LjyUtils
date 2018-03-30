@@ -27,8 +27,6 @@ import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyMDDialogManager;
 
-import org.reactivestreams.Subscriber;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -38,6 +36,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 
 public class AppUpdateActivity extends BaseActivity {
 
@@ -57,7 +56,7 @@ public class AppUpdateActivity extends BaseActivity {
     String updateAppPathQQ = "http://app.mail.qq.com/cgi-bin/mailapp?latest=y&from=2&downloadclick=";
     String updateAppPathWeChat = "http://dldir1.qq.com/weixin/android/weixin661android1220_1.apk";
     private boolean isDone = false;
-    private Subscriber subscriber;
+    private Disposable mDisposable;
     private DownloadBean mDownloadBean;
     private List<DownloadBean> beans = new ArrayList<>();
 
@@ -111,8 +110,8 @@ public class AppUpdateActivity extends BaseActivity {
                 LjyLogUtil.i("hash3:" + hash3);
                 break;
             case R.id.btn_pause:
-//                if (subscriber != null && !subscriber.isUnsubscribed())
-//                    subscriber.unsubscribe();
+                if (mDisposable != null && !mDisposable.isDisposed())
+                    mDisposable.dispose();
                 break;
             case R.id.btn_deleteApk:
                 for (DownloadBean downloadBean : beans) {
@@ -152,11 +151,11 @@ public class AppUpdateActivity extends BaseActivity {
     private void updateApp() {
         if (mDownloadBean.isDone())
             return;
-        if (subscriber != null && subscriber == mDownloadBean.getSubscriber() )//&& !subscriber.isUnsubscribed())
+        if (mDisposable != null && mDisposable == mDownloadBean.getDisposable() && !mDisposable.isDisposed())
             return;
         if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
-            subscriber = LjyRetrofitUtil.getInstance().download(mDownloadBean, new LjyRetrofitUtil.ProgressListener() {
+            mDisposable = LjyRetrofitUtil.getInstance().download(mDownloadBean, new LjyRetrofitUtil.ProgressListener() {
                 @Override
                 public void onProgress(long progress, long total, boolean done) {
                     String info = "文件名:" + mDownloadBean.getSaveFile().getName() + ",\n源文件len:" + mDownloadBean.getTotal() + ",\n已下载len:" + mDownloadBean.getProgress() + ",\nprogress:" + progress + ",\ntotal:" + total + ",\ndone:" + done;

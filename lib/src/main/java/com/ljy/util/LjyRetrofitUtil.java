@@ -3,17 +3,16 @@ package com.ljy.util;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.ljy.bean.DownloadBean;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
@@ -105,17 +104,17 @@ public class LjyRetrofitUtil {
     }
 
     public void get(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Flowable<Map<String, Object>> observable = apiService.get(methodPath, params);
+        Observable<Map<String, Object>> observable = apiService.get(methodPath, params);
         setCallBack(observable, callBack);
     }
 
     public void postBody(String methodPath, Map<String, Object> params, final CallBack callBack) {
-        Flowable<Map<String, Object>> observable = apiService.postBody(methodPath, params);
+        Observable<Map<String, Object>> observable = apiService.postBody(methodPath, params);
         setCallBack(observable, callBack);
     }
 
     public void postFieldMap(String methodPath, Map<String, String> params, final CallBack callBack) {
-        Flowable<Map<String, Object>> observable = apiService.postFieldMap(methodPath, params);
+        Observable<Map<String, Object>> observable = apiService.postFieldMap(methodPath, params);
         setCallBack(observable, callBack);
     }
 
@@ -129,10 +128,10 @@ public class LjyRetrofitUtil {
                     MediaType.parse("multipart/form-data"), entry.getValue());
             partMap.put(entry.getKey(), body);
         }
-        Flowable<ResponseBody> observable = apiService.upload(url, partMap);
+        Observable<ResponseBody> observable = apiService.upload(url, partMap);
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
-                .subscribe(new Subscriber<ResponseBody>() {
+                .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onError(Throwable e) {
                         upLoadCallBack.onFail(e.toString());
@@ -144,7 +143,7 @@ public class LjyRetrofitUtil {
                     }
 
                     @Override
-                    public void onSubscribe(Subscription s) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -163,8 +162,8 @@ public class LjyRetrofitUtil {
                 });
     }
 
-
-    public Subscriber download(final DownloadBean bean, final ProgressListener progressListener, final DownloadCallBack callBack) {
+    Disposable mDisposable;
+    public Disposable download(final DownloadBean bean, final ProgressListener progressListener, final DownloadCallBack callBack) {
         ApiService apiService = bean.getApiService();
         if (apiService == null) {
             apiService = getApiServiceProgress(progressListener);
@@ -173,7 +172,7 @@ public class LjyRetrofitUtil {
         long currentLen = 0;
         if (bean.getProgress() > 0)
             currentLen = bean.getProgress();
-        Flowable<Boolean> observable = apiService.download("bytes=" + currentLen + "-", bean.getLoadUrll())
+        Observable<Boolean> observable = apiService.download("bytes=" + currentLen + "-", bean.getLoadUrll())
                 .subscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, Boolean>() {
                     @Override
@@ -182,7 +181,7 @@ public class LjyRetrofitUtil {
                     }
                 });
 
-        Subscriber<Boolean> mDownLoadSubscriber = new Subscriber<Boolean>() {
+        Observer<Boolean> mDownLoadSubscriber = new Observer<Boolean>() {
 
             @Override
             public void onError(Throwable e) {
@@ -195,8 +194,8 @@ public class LjyRetrofitUtil {
             }
 
             @Override
-            public void onSubscribe(Subscription s) {
-
+            public void onSubscribe(Disposable d) {
+                mDisposable=d;
             }
 
             @Override
@@ -206,8 +205,8 @@ public class LjyRetrofitUtil {
         };
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mDownLoadSubscriber);
-        bean.setSubscriber(mDownLoadSubscriber);
-        return mDownLoadSubscriber;
+        bean.setDisposable(mDisposable);
+        return mDisposable;
     }
 
     private ApiService getApiServiceProgress(final ProgressListener progressListener) {
@@ -241,7 +240,7 @@ public class LjyRetrofitUtil {
          * get
          */
         @GET("{methodPath}")
-        Flowable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
+        Observable<Map<String, Object>> get(@Path("methodPath") String methodPath, @QueryMap Map<String, Object> options);
 
         /**
          * method：网络请求的方法（区分大小写）
@@ -249,7 +248,7 @@ public class LjyRetrofitUtil {
          * hasBody：是否有请求体
          */
         @HTTP(method = "GET", path = "{methodPath}", hasBody = false)
-        Flowable<ResponseBody> get2(@Path("methodPath") String methodPath);
+        Observable<ResponseBody> get2(@Path("methodPath") String methodPath);
         // {id} 表示是一个变量
         // method 的值 retrofit 不会做处理，所以要自行保证准确
 
@@ -260,7 +259,7 @@ public class LjyRetrofitUtil {
          */
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         @POST("{methodPath}")
-        Flowable<Map<String, Object>> postBody(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
+        Observable<Map<String, Object>> postBody(@Path("methodPath") String methodPath, @Body Map<String, Object> route);
 
         /**
          * post
@@ -270,21 +269,21 @@ public class LjyRetrofitUtil {
          */
         @FormUrlEncoded
         @POST("{methodPath}")
-        Flowable<Map<String, Object>> postFieldMap(@Path("methodPath") String methodPath,@FieldMap Map<String, String> maps);
+        Observable<Map<String, Object>> postFieldMap(@Path("methodPath") String methodPath,@FieldMap Map<String, String> maps);
 
         /**
          * 断点续传下载接口
          */
         @Streaming/*大文件需要加入这个判断，防止下载过程中写入到内存中*/
         @GET
-        Flowable<ResponseBody> download(@Header("RANGE") String start, @Url String url);
+        Observable<ResponseBody> download(@Header("RANGE") String start, @Url String url);
 
         /**
          * 上传文件
          */
         @Multipart
         @POST
-        Flowable<ResponseBody> uploadFile(@Url() String url, @PartMap() Map<String, RequestBody> partMap,
+        Observable<ResponseBody> uploadFile(@Url() String url, @PartMap() Map<String, RequestBody> partMap,
                                             @Part("file") MultipartBody.Part file);
 
         /**
@@ -299,20 +298,20 @@ public class LjyRetrofitUtil {
          */
         @Multipart
         @POST
-        Flowable<ResponseBody> upload(@Url() String url, @PartMap() Map<String, RequestBody> partMap);
+        Observable<ResponseBody> upload(@Url() String url, @PartMap() Map<String, RequestBody> partMap);
 
     }
 
     /**
      * 设置回调
      */
-    private void setCallBack(final Flowable<Map<String, Object>> observable, final CallBack callBack) {
+    private void setCallBack(final Observable<Map<String, Object>> observable, final CallBack callBack) {
         observable.subscribeOn(Schedulers.io())//请求数据的事件发生在io线程
                 .observeOn(AndroidSchedulers.mainThread())//请求完成后在主线程更显UI
-                .subscribe(new Subscriber<Map<String,Object>>() {//订阅
+                .subscribe(new Observer<Map<String,Object>>() {//订阅
 
                     @Override
-                    public void onSubscribe(Subscription s) {
+                    public void onSubscribe(Disposable d) {
 
                     }
 

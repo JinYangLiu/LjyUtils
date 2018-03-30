@@ -2,9 +2,9 @@ package com.ljy.bean;
 
 import com.ljy.util.LjyRetrofitUtil;
 
-import org.reactivestreams.Subscriber;
-
 import java.io.File;
+
+import io.reactivex.disposables.Disposable;
 
 
 /**
@@ -18,19 +18,19 @@ public class DownloadBean {
     private long total=0;
     private boolean done;
     private LjyRetrofitUtil.ApiService mApiService;
-    private Subscriber subscriber;
+    private Disposable mDisposable;
 
     public DownloadBean(String loadUrll, File fileName) {
         this.loadUrll = loadUrll;
         this.saveFile = fileName;
     }
 
-    public Subscriber getSubscriber() {
-        return subscriber;
+    public Disposable getDisposable() {
+        return mDisposable;
     }
 
-    public void setSubscriber(Subscriber subscriber) {
-        this.subscriber = subscriber;
+    public void setDisposable(Disposable disposable) {
+        this.mDisposable = disposable;
     }
 
     public LjyRetrofitUtil.ApiService getApiService() {
