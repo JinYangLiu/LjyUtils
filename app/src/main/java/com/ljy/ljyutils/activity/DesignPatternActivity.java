@@ -17,6 +17,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,9 @@ import butterknife.ButterKnife;
  * 建立单一接口,尽量细化接口,提高内聚,减少对外交互
  * 6.迪米特法则 (最少知识原则)
  * 高内聚低耦合,尽量减少与其他实体间发生相互作用
+ *
+ * 几乎所有设计模式的通病:类的膨胀,大量衍生类的创建
+ * 好处:更弱的耦合性,更灵活的控制性,更好的扩展性
  */
 public class DesignPatternActivity extends BaseActivity {
 
@@ -103,9 +107,343 @@ public class DesignPatternActivity extends BaseActivity {
                 //责任链模式
                 methodIteratorPattern();
                 break;
+            case R.id.btnInterpreterPattern:
+                //解释器模式
+                methodInterpreterPattern();
+                break;
+            case R.id.btnICommandPattern:
+                //命令模式
+                methodICommandPattern();
+                break;
+                case R.id.btnObserverPattern:
+                //观察者模式
+                methodObserverPattern();
+                break;
         }
         mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    /**
+     * 观察者模式:
+     *
+     */
+    private void methodObserverPattern() {
+    }
+
+    /**
+     * 命令模式:
+     * 让程序通畅执行,行为型设计模式
+     * 定义:
+     * 将一个请求封装成一个对象,从而让用户使用不同的请求把客户端参数化;
+     * 对请求排队或者记录请求日志,以及支持可撤销的操作
+     * 是回调机制的一个面向对象的替代品
+     * 将行为调用者与实现者解耦
+     */
+    private void methodICommandPattern() {
+        //以CS游戏,贪吃蛇游戏为例
+        //开闭原则
+        GameMachine btn = new GameMachine();
+        CS cs = new CS();
+        btn.initWithGame(cs);
+        //执行命令
+        btn.toLeft();
+        btn.toRight();
+        btn.toTop();
+        btn.toLeft();
+        btn.toBottom();
+        btn.toRight();
+        Snake snake = new Snake();
+        btn.initWithGame(snake);
+        //执行命令
+        btn.toLeft();
+        btn.toRight();
+        btn.toTop();
+        btn.toLeft();
+        btn.toBottom();
+        btn.toRight();
+
+
+    }
+
+    abstract class Game {
+        abstract void toLeft();
+
+        abstract void toRight();
+
+        abstract void toTop();
+
+        abstract void toBottom();
+    }
+
+    //接收者角色,CS游戏
+    class CS extends Game {
+        //游戏方法的具体实现
+        @Override
+        void toLeft() {
+            LjyLogUtil.i("cs 向左走");
+        }
+
+        @Override
+        void toRight() {
+            LjyLogUtil.i("cs 向右走");
+        }
+
+        @Override
+        void toTop() {
+            LjyLogUtil.i("cs 跳起");
+        }
+
+        @Override
+        void toBottom() {
+            LjyLogUtil.i("cs 蹲下");
+        }
+    }
+
+    //接收者角色,CS游戏
+    class Snake extends Game {
+        //游戏方法的具体实现
+        @Override
+        void toLeft() {
+            LjyLogUtil.i("Snake 向左");
+        }
+
+        @Override
+        void toRight() {
+            LjyLogUtil.i("Snake 向右");
+        }
+
+        @Override
+        void toTop() {
+            LjyLogUtil.i("Snake 向上");
+        }
+
+        @Override
+        void toBottom() {
+            LjyLogUtil.i("Snake 向下");
+        }
+    }
+
+    //命令者抽象,定义执行方法
+    public interface Command {
+        void execute();
+    }
+
+    public static class LeftCommand implements Command {
+        //游戏对象的引用
+        private Game machine;
+
+        public LeftCommand(Game machine) {
+            this.machine = machine;
+        }
+
+        @Override
+        public void execute() {
+            machine.toLeft();
+        }
+    }
+
+    public static class RightCommand implements Command {
+        //游戏对象的引用
+        private Game machine;
+
+        public RightCommand(Game machine) {
+            this.machine = machine;
+        }
+
+        @Override
+        public void execute() {
+            machine.toRight();
+        }
+    }
+
+    public static class TopCommand implements Command {
+        //游戏对象的引用
+        private Game machine;
+
+        public TopCommand(Game machine) {
+            this.machine = machine;
+        }
+
+        @Override
+        public void execute() {
+            machine.toTop();
+        }
+    }
+
+    public static class BottomCommand implements Command {
+        //游戏对象的引用
+        private Game machine;
+
+        public BottomCommand(Game machine) {
+            this.machine = machine;
+        }
+
+        @Override
+        public void execute() {
+            machine.toBottom();
+        }
+    }
+
+
+    //请求者类,命令由游戏机发起
+    static class GameMachine {
+        private LeftCommand mLeftCommand;
+        private RightCommand mRightCommand;
+        private TopCommand mTopCommand;
+        private BottomCommand mBottomCommand;
+
+        public void initWithGame(Game game) {
+            setLeftCommand(new LeftCommand(game));
+            setRightCommand(new RightCommand(game));
+            setTopCommand(new TopCommand(game));
+            setBottomCommand(new BottomCommand(game));
+        }
+
+        public void setLeftCommand(LeftCommand leftCommand) {
+            mLeftCommand = leftCommand;
+        }
+
+        public void setRightCommand(RightCommand rightCommand) {
+            mRightCommand = rightCommand;
+        }
+
+        public void setTopCommand(TopCommand topCommand) {
+            mTopCommand = topCommand;
+        }
+
+        public void setBottomCommand(BottomCommand bottomCommand) {
+            mBottomCommand = bottomCommand;
+        }
+
+        public void toLeft() {
+            mLeftCommand.execute();
+        }
+
+        public void toRight() {
+            mRightCommand.execute();
+        }
+
+        public void toTop() {
+            mTopCommand.execute();
+        }
+
+        public void toBottom() {
+            mBottomCommand.execute();
+        }
+    }
+
+    /**
+     * 解释器模式 (化繁为简的翻译机)
+     * 本质:将复杂的问题简单化,模块化,分离实现,解释执行
+     * 使用场景:
+     * 1.如果某个简单的语言需要解释执行而且可以将该语言中的语句表示为一个抽象的语法树时
+     * 2.某些特性的领域出现不断重复的问题时,可以将该领域的问题转化为语法规则下的语句,
+     * 然后构建解释器来解释该语句,例如英文的大小写转换
+     * 优点:
+     * 灵活的扩展性,扩展延伸时只需增加新的解释器
+     * 缺点:
+     * 生成的大量类可能造成后期维护困难;对于复杂的文法构建其抽象语法树会异常繁琐
+     * Android源码中的应用:
+     * AndroidManifest.xml这个配置文件的解释(PackageParser),xml解析
+     */
+    private void methodInterpreterPattern() {
+        //以对算术表达式的解释为例
+        String expression = "123 + 10 + 100 + 100 + 3000 - 1000 - 111";
+        Calculator calculator = new Calculator(expression);
+        String info = expression + " 的计算结果是: " + calculator.calculate();
+        LjyLogUtil.i(info);
+    }
+
+    //解释器抽象基类
+    abstract class ArithmeticExpression {
+        public abstract int interpret();
+    }
+
+    //数字解释器
+    class NumExpression extends ArithmeticExpression {
+        private int num;
+
+        public NumExpression(int num) {
+            this.num = num;
+        }
+
+        @Override
+        public int interpret() {
+            return num;
+        }
+    }
+
+    //运算符号抽象解释器
+    abstract class OperatorExpression extends ArithmeticExpression {
+        //声明两个变量存储运算符号两边的数字解释器
+        protected ArithmeticExpression exp1, exp2;
+
+        public OperatorExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+            this.exp1 = exp1;
+            this.exp2 = exp2;
+        }
+    }
+
+    //加法运算解释器
+    class AdditionExpression extends OperatorExpression {
+
+        public AdditionExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+            super(exp1, exp2);
+        }
+
+        @Override
+        public int interpret() {
+            return exp1.interpret() + exp2.interpret();
+        }
+    }
+
+    //减法解释器
+    class SubtractionExpression extends OperatorExpression {
+        public SubtractionExpression(ArithmeticExpression exp1, ArithmeticExpression exp2) {
+            super(exp1, exp2);
+        }
+
+        @Override
+        public int interpret() {
+            return exp1.interpret() - exp2.interpret();
+        }
+    }
+
+
+    //处理与解释相关的业务
+    class Calculator {
+        //声明一个stack栈存储并操作相关的解释器
+        private Stack<ArithmeticExpression> mExpStack = new Stack<>();
+
+        public Calculator(String expression) {
+            //存储运算符两边的数字解释器
+            ArithmeticExpression exp1, exp2;
+            //空格分隔表达式字符串
+            String[] elements = expression.split(" ");
+            for (int i = 0; i < elements.length; i++) {
+                switch (elements[i].charAt(0)) {
+                    case '+'://如果是加号
+                        exp1 = mExpStack.pop();//将栈中的解释器弹出作为运算符号左边的解释器
+                        exp2 = new NumExpression(Integer.valueOf(elements[++i]));
+                        mExpStack.push(new AdditionExpression(exp1, exp2));
+                        break;
+                    case '-':
+                        exp1 = mExpStack.pop();
+                        exp2 = new NumExpression(Integer.valueOf(elements[++i]));
+                        mExpStack.push(new SubtractionExpression(exp1, exp2));
+                        break;
+                    default:
+                        mExpStack.push(new NumExpression(Integer.valueOf(elements[i])));
+                        break;
+                }
+            }
+        }
+
+        //计算结果
+        public int calculate() {
+            return mExpStack.pop().interpret();
+        }
     }
 
     /**
@@ -141,41 +479,43 @@ public class DesignPatternActivity extends BaseActivity {
 
         //申请报销费用为例
         //1.构建领导对象
-        GroupLeader groupLeader=new GroupLeader();
-        Director director=new Director();
-        Manager manager=new Manager();
-        Boss boss=new Boss();
+        GroupLeader groupLeader = new GroupLeader();
+        Director director = new Director();
+        Manager manager = new Manager();
+        Boss boss = new Boss();
         //2.设置上一级领导
-        groupLeader.nextLeader=director;
-        director.nextLeader=manager;
-        manager.nextLeader=boss;
+        groupLeader.nextLeader = director;
+        director.nextLeader = manager;
+        manager.nextLeader = boss;
         //3.发起报账申请,从最低级开始
         LjyLogUtil.i("---------审批范围-----------\n组长<=1000,主管<=5000,经理<=10000,老板>10000\n----------------");
-        int num1=800;
-        LjyLogUtil.i("-----------小智申请报销"+num1+"元-----------");
+        int num1 = 800;
+        LjyLogUtil.i("-----------小智申请报销" + num1 + "元-----------");
         groupLeader.handleRequest(num1);
-        int num2=6800;
-        LjyLogUtil.i("-----------小米申请报销"+num2+"元-----------");
+        int num2 = 6800;
+        LjyLogUtil.i("-----------小米申请报销" + num2 + "元-----------");
         groupLeader.handleRequest(num2);
-        int num3=18000;
-        LjyLogUtil.i("-----------小明申请报销"+num3+"元-----------");
+        int num3 = 18000;
+        LjyLogUtil.i("-----------小明申请报销" + num3 + "元-----------");
         groupLeader.handleRequest(num3);
 
 
     }
+
     //test---1:以申请报销费用为例
-    abstract class Leader{
+    abstract class Leader {
         protected Leader nextLeader;//上一级领导处理者
 
         /**
          * 处理报账请求
+         *
          * @param money 能批复的报账额度
          */
-        public final void handleRequest(int money){
-            if (money<=limit()){
+        public final void handleRequest(int money) {
+            if (money <= limit()) {
                 handle(money);
-            }else {
-                if (nextLeader!=null){
+            } else {
+                if (nextLeader != null) {
                     nextLeader.handleRequest(money);
                 }
             }
@@ -183,19 +523,21 @@ public class DesignPatternActivity extends BaseActivity {
 
         /**
          * 自身能批复的额度权限
+         *
          * @return 额度
          */
         public abstract int limit();
 
         /**
          * 处理报账行为
+         *
          * @param money 具体金额
          */
         public abstract void handle(int money);
     }
 
     //组长
-    class GroupLeader extends Leader{
+    class GroupLeader extends Leader {
 
         @Override
         public int limit() {
@@ -204,12 +546,12 @@ public class DesignPatternActivity extends BaseActivity {
 
         @Override
         public void handle(int money) {
-            LjyLogUtil.i("组长批准报销"+money+"元");
+            LjyLogUtil.i("组长批准报销" + money + "元");
         }
     }
 
     //主管
-    class Director extends Leader{
+    class Director extends Leader {
 
         @Override
         public int limit() {
@@ -218,12 +560,12 @@ public class DesignPatternActivity extends BaseActivity {
 
         @Override
         public void handle(int money) {
-            LjyLogUtil.i("主管批准报销"+money+"元");
+            LjyLogUtil.i("主管批准报销" + money + "元");
         }
     }
 
     //经理
-    class Manager extends Leader{
+    class Manager extends Leader {
 
         @Override
         public int limit() {
@@ -232,12 +574,12 @@ public class DesignPatternActivity extends BaseActivity {
 
         @Override
         public void handle(int money) {
-            LjyLogUtil.i("经理批准报销"+money+"元");
+            LjyLogUtil.i("经理批准报销" + money + "元");
         }
     }
 
     //主管
-    class Boss extends Leader{
+    class Boss extends Leader {
 
         @Override
         public int limit() {
@@ -246,7 +588,7 @@ public class DesignPatternActivity extends BaseActivity {
 
         @Override
         public void handle(int money) {
-            LjyLogUtil.i("老板批准报销"+money+"元");
+            LjyLogUtil.i("老板批准报销" + money + "元");
         }
     }
 
@@ -578,7 +920,7 @@ public class DesignPatternActivity extends BaseActivity {
 
 
     /**
-     * 原型模式
+     * 原型模式(使程序运行更高效)
      * (样板,克隆,可定制)
      * 用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象
      * 适用于:
@@ -792,7 +1134,7 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     /**
-     * 建造者模式:
+     * 建造者模式:(自由扩展你的项目)
      * 将一个复杂对象的构建与它的表示分离,使得同样的构建过程可以创建不同的表示
      * 在用户不知道对象的建造过程和细节的情况下就可以直接创建复杂的对象。
      * <p>
@@ -1384,8 +1726,8 @@ public class DesignPatternActivity extends BaseActivity {
 //        animFactory.getAnimal(DunkyC.class).show();
     }
 
-   public class AnimFactory {
-        public <T extends Animal> T  getAnimal(Class<T> c) {
+    public class AnimFactory {
+        public <T extends Animal> T getAnimal(Class<T> c) {
             Animal animal = null;
             try {
                 animal = (Animal) Class.forName(c.getName()).newInstance();
@@ -1397,13 +1739,13 @@ public class DesignPatternActivity extends BaseActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            LjyLogUtil.i("animal:"+animal);
+            LjyLogUtil.i("animal:" + animal);
             return (T) animal;
         }
     }
 
 
-     abstract class Animal {
+    abstract class Animal {
         public abstract void show();
     }
 

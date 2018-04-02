@@ -18,95 +18,83 @@
                 android:id="@+id/btnSingleton"
                 android:onClick="onDesignBtnClick"
                 android:text="单例模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnSimpleFactoryPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="简单工厂模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnFactoryMethod"
                 android:onClick="onDesignBtnClick"
                 android:text="工厂方法模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnAbstractFactoryPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="抽象工厂模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnStrategyPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="策略模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnAdapterPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="适配器模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnProxyPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="代理模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnTemplateMethodPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="模板方法模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnBuilderPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="建造者模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnFacadePattern"
                 android:onClick="onDesignBtnClick"
                 android:text="外观模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
 
             <Button
                 android:id="@+id/btnProtoPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="原型模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnStatePattern"
                 android:onClick="onDesignBtnClick"
                 android:text="状态模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/btnStyle"/>
             <Button
                 android:id="@+id/btnIteratorPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="责任链模式"
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnInterpreterPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="解释器模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnICommandPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="命令模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnObserverPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="观察者模式"
+                style="@style/btnStyle"/>
         </LinearLayout>
     </HorizontalScrollView>
     <ScrollView android:layout_width="match_parent"
