@@ -95,6 +95,11 @@
                 android:onClick="onDesignBtnClick"
                 android:text="观察者模式"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnMemoPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="备忘录模式"
+                style="@style/btnStyle"/>
         </LinearLayout>
     </HorizontalScrollView>
     <ScrollView android:layout_width="match_parent"

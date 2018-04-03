@@ -17,6 +17,8 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Stack;
 
 import butterknife.BindView;
@@ -36,7 +38,7 @@ import butterknife.ButterKnife;
  * 建立单一接口,尽量细化接口,提高内聚,减少对外交互
  * 6.迪米特法则 (最少知识原则)
  * 高内聚低耦合,尽量减少与其他实体间发生相互作用
- *
+ * <p>
  * 几乎所有设计模式的通病:类的膨胀,大量衍生类的创建
  * 好处:更弱的耦合性,更灵活的控制性,更好的扩展性
  */
@@ -115,21 +117,205 @@ public class DesignPatternActivity extends BaseActivity {
                 //命令模式
                 methodICommandPattern();
                 break;
-                case R.id.btnObserverPattern:
+            case R.id.btnObserverPattern:
                 //观察者模式
                 methodObserverPattern();
+                break;
+            case R.id.btnMemoPattern:
+                //备忘录模式
+                methodMemoPattern();
                 break;
         }
         mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    /**
+     * 备忘录模式: 编程中的后悔药
+     * 定义:在不破坏封闭的前提下,捕获一个对象的内部状态,并在该对象之外保存这个状态,
+     * 这样以后就可以将该对象恢复到原先保存的状态
+     * 优点:
+     * 提供可以恢复状态的机制
+     * 实现了信息的封装,不用关心保存状态的细节
+     * 缺点:
+     * 消耗资源(如果类的成员变量过多,每次保存都会消耗一定的内存)
+     *
+     * android源码中的使用:
+     * Activity的onSaveInstanceState,onRestoreInstanceState
+     * (非主动退出或跳转到其他activity时触发onSaveInstanceState)
+     */
+    private void methodMemoPattern() {
+        //以游戏存档为例,屏蔽了外界对CallOfDuty对象的直接访问
+        //1.创建
+        CallOfDuty game=new CallOfDuty();
+        //2.玩
+        game.play();
+        //3.存档
+        Caretaker caretaker=new Caretaker();
+        caretaker.saveMemoto(game.createMemoto());
+        //4.退出
+        game.quit();
+        //5.恢复游戏
+        CallOfDuty newGame=new CallOfDuty();
+        LjyLogUtil.i("newGame,恢复存档前属性:\n"+newGame.toString());
+        newGame.restore(caretaker.getMemoto());
+        LjyLogUtil.i("newGame,恢复存档后游戏属性:\n"+newGame.toString());
+    }
+
+    //使命召唤游戏
+    class CallOfDuty {
+        private int mCurrentLevel = 1;//当前等级/关卡
+        private int mLifeBar = 100;//血量
+        private String mGun = "汉阳造";//武器
+
+        //玩
+        public void play() {
+            LjyLogUtil.i("使命召唤:");
+            mLifeBar -= 10;
+            mCurrentLevel++;
+            mGun="沙漠之鹰+Ak47";
+            LjyLogUtil.i("晋级到第" + mCurrentLevel + "关,当前血量:" + mLifeBar+",当前武器:"+mGun);
+        }
+
+        //退出
+        public void quit() {
+            LjyLogUtil.i("-----quit-------");
+            LjyLogUtil.i("退出前的游戏属性:\n" + this.toString());
+            LjyLogUtil.i("-----已退出------");
+        }
+
+        //创建备忘录
+        public Memoto createMemoto(){
+            Memoto memoto=new Memoto();
+            memoto.mCurrentLevel=mCurrentLevel;
+            memoto.mLifeBar=mLifeBar;
+            memoto.mGun=mGun;
+            return memoto;
+        }
+
+        //恢复游戏
+        public void restore(Memoto memoto){
+            this.mCurrentLevel=memoto.mCurrentLevel;
+            this.mLifeBar=memoto.mLifeBar;
+            this.mGun=memoto.mGun;
+        }
+
+        @Override
+        public String toString() {
+            return "CallOfDuty{" +
+                    "mCurrentLevel=" + mCurrentLevel +
+                    ", mLifeBar=" + mLifeBar +
+                    ", mGun='" + mGun + '\'' +
+                    '}';
+        }
+    }
+
+    //备忘录类
+    class Memoto {
+        private int mCurrentLevel;
+        private int mLifeBar;
+        private String mGun;
+
+        @Override
+        public String toString() {
+            return "Memoto{" +
+                    "mCurrentLevel=" + mCurrentLevel +
+                    ", mLifeBar=" + mLifeBar +
+                    ", mGun='" + mGun + '\'' +
+                    '}';
+        }
+    }
+
+    //Caretaker,负责管理Memoto
+    class Caretaker{
+        Memoto mMemoto;
+        //存档
+        public void saveMemoto(Memoto memoto){
+            this.mMemoto=memoto;
+        }
+        //读档
+        public Memoto getMemoto(){
+            return mMemoto;
+        }
+    }
+
+
     /**
      * 观察者模式:
-     *
+     * 定义对象间一种一对多的依赖关系,使得每当一个对象改变状态,
+     * 则所有依赖于它的对象都会得到通知并被自动更新
+     * 常用:GUI系统,订阅发布系统
+     * 使用场景:关联行为,事件多级触发,跨系统的消息交换(消息队列,事件总线)
+     * 优点:解耦,减小依赖性,灵活,可扩展
+     * 缺点:开发和运行效率,一对多调试比较复杂,而且java中的消息通知是默认顺序执行的,
+     * 一个观察者卡顿,会影响整体的执行效率,这种情况下,一般要考虑异步方式
+     * <p>
+     * Observer,Observable是JDK中内置类型,可见观察者模式的重要性
+     * <p>
+     * android源码中的使用:
+     * 1.ListView Adapter的notifyDataSetChanged,
+     * setAdapter时中会创建一个数据集的观察者AdapterDataSetObserver
+     * 而BaseAdapter中有一个被观察者DataSetObservable,Adapter的notifyDataSetChanged中就是调用了
+     * DataSetObservable的notifyChanged方法,notifyChanged中则是遍历了所有观察者(mObservers),
+     * 并调用他们的onChanged方法
+     * 2.BroadcastReceiver广播的注册订阅发送,也是典型的观察者模式
+     * 3.EventBus,RxJava等
      */
     private void methodObserverPattern() {
+        //以极客头条订阅为例
+        //1.创建被观察者
+        GeekNews geekNews = new GeekNews();
+        //2.创建观察者
+        Coder coder1 = new Coder("马画藤");
+        Coder coder2 = new Coder("云马");
+        Coder coder3 = new Coder("王剑灵");
+        //订阅/注册
+        geekNews.addObserver(coder1);
+        geekNews.addObserver(coder2);
+        geekNews.addObserver(coder3);
+        //发布消息
+        geekNews.postNews("最新Android文章-RxJava详解");
+        geekNews.postNews("最新iOS文章-UIView详解");
     }
+
+    //观察者,程序员
+    class Coder implements Observer {
+        public String name;
+
+        public Coder(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void update(Observable o, Object arg) {
+            LjyLogUtil.i("hi, " + name + ", 极客头条有文章更新了,更新内容:" + arg);
+        }
+
+        @Override
+        public String toString() {
+            return "码农:" + name;
+        }
+    }
+
+    //极客头条,被观察者
+    class GeekNews extends Observable {
+        public void postNews(String content) {
+            setChanged();
+            notifyObservers(content);
+        }
+    }
+
 
     /**
      * 命令模式:
