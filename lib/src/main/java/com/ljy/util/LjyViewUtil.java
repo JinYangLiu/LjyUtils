@@ -1,7 +1,6 @@
 package com.ljy.util;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,36 +15,6 @@ import android.widget.RelativeLayout;
  */
 
 public class LjyViewUtil {
-
-    /**
-     * 获得屏幕的宽
-     *
-     * @param context
-     * @return
-     */
-    public static int getScreenWidth(Context context) {
-        if (context == null)
-            return 0;
-        context = context.getApplicationContext();
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int w_screen = dm.widthPixels;
-        return w_screen;
-    }
-
-    /**
-     * 获得屏幕的高
-     *
-     * @param context
-     * @return
-     */
-    public static int getScreenHeight(Context context) {
-        if (context == null)
-            return 0;
-        context = context.getApplicationContext();
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int w_height = dm.heightPixels;
-        return w_height;
-    }
 
     /**
      * 重新计算ListView item的高度，解决ScrollView和ListView两个View都有滚动的效果，在嵌套使用时起冲突的问题
@@ -92,8 +61,8 @@ public class LjyViewUtil {
             return;
         context = context.getApplicationContext();
 
-        int windowWidth = getScreenWidth(context);
-        int windowHeight = getScreenHeight(context);
+        int windowWidth = LjyScreenUtils.getScreenWidth(context);
+        int windowHeight = LjyScreenUtils.getScreenHeight(context);
         int viewWidth;
         int viewHeight;
         type = scaleW <= 0 ? 2 : scaleH <= 0 ? 1 : type;

@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.ljy.util.LjyDensityUtil;
 import com.ljy.util.LjyLogUtil;
-import com.ljy.util.LjySystemUtil;
-import com.ljy.util.LjyViewUtil;
+import com.ljy.util.LjyScreenUtils;
 
 /**
  * Created by Mr.LJY on 2018/3/26.
@@ -21,11 +21,11 @@ public class CustomView extends View {
 
     public CustomView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        float dpi=LjySystemUtil.getDPI(context);
+        float dpi= LjyDensityUtil.getDPI(context);
         LjyLogUtil.i("dpi:"+dpi);
-        int screenWidth=LjyViewUtil.getScreenWidth(context);
+        int screenWidth= LjyScreenUtils.getScreenWidth(context);
         LjyLogUtil.i("screenWidth:"+screenWidth);
-        int screenHeight=LjyViewUtil.getScreenHeight(context);
+        int screenHeight=LjyScreenUtils.getScreenHeight(context);
         LjyLogUtil.i("screenHeight:"+screenHeight);
     }
 

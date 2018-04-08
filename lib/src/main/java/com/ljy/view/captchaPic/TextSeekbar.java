@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.ljy.lib.R;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 
 /**
  * Created by luozhanming on 2018/1/17.
@@ -31,7 +31,7 @@ class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
         super(context, attrs, defStyleAttr);
         textPaint = new Paint();
         textPaint.setTextAlign(Paint.Align.CENTER);
-        int textSize = LjySystemUtil.dp2px(context, 14);
+        int textSize = LjyDensityUtil.dp2px(context, 14);
         textPaint.setTextSize(textSize);
         textPaint.setAntiAlias(true);
         textPaint.setColor(Color.parseColor("#545454"));

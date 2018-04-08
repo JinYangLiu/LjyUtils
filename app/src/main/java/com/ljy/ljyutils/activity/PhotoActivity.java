@@ -23,9 +23,10 @@ import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyPermissionUtil;
 import com.ljy.util.LjyPhotoUtil;
+import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyStringUtil;
-import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyMDDialogManager;
 import com.ljy.view.LjyTagView;
@@ -58,7 +59,7 @@ public class PhotoActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LjySystemUtil.noStatusBar(mActivity);
+        LjyScreenUtils.noStatusBar(mActivity);
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(mActivity);
         initPath();
@@ -161,8 +162,8 @@ public class PhotoActivity extends BaseActivity {
 
     //按钮点击事件监听
     public void onPhotoBtnClick(View view) {
-        if (LjySystemUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
-                LjySystemUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (LjyPermissionUtil.hasPermission(mActivity, Manifest.permission.CAMERA) &&
+                LjyPermissionUtil.hasPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             switch (view.getId()) {
                 case R.id.btn_camera:
                     doCamera();
@@ -249,7 +250,7 @@ public class PhotoActivity extends BaseActivity {
                     break;
             }
         } else {
-            LjySystemUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
+            LjyPermissionUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
     }
@@ -465,7 +466,7 @@ public class PhotoActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        LjySystemUtil.onPermissionResult(grantResults, new LjySystemUtil.PermissionResult() {
+        LjyPermissionUtil.onPermissionResult(grantResults, new LjyPermissionUtil.PermissionResult() {
             @Override
             public void success() {
                 switch (requestCode) {

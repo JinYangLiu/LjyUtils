@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 import com.ljy.view.slidingMenu.LjySlidingMenu;
 
 /**
@@ -58,10 +58,10 @@ public class SlidingMenuActivity extends BaseActivity {
         mSlidingMenu.setMode(LjySlidingMenu.RIGHT);
         // 设置触摸屏幕的模式
         mSlidingMenu.setTouchModeAbove(LjySlidingMenu.TOUCHMODE_FULLSCREEN);
-        mSlidingMenu.setShadowWidth(LjySystemUtil.dp2px(mContext, 20));
+        mSlidingMenu.setShadowWidth(LjyDensityUtil.dp2px(mContext, 20));
 //        menu.setShadowDrawable(R.drawable.shadow);
         // 设置滑动菜单视图的宽度
-        mSlidingMenu.setBehindOffset(LjySystemUtil.dp2px(mContext, 200));
+        mSlidingMenu.setBehindOffset(LjyDensityUtil.dp2px(mContext, 200));
         // 设置渐入渐出效果的值
         mSlidingMenu.setFadeDegree(0.35f);
         //绑定到哪一个Activity对象

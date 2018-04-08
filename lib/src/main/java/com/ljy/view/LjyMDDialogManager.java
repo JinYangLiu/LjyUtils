@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ljy.lib.R;
-import com.ljy.util.LjyViewUtil;
+import com.ljy.util.LjyScreenUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -624,7 +624,7 @@ public class LjyMDDialogManager {
     public static void initWidth(Activity activity, AlertDialog dialog, float scale) {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams p = window.getAttributes(); // 获取对话框当前的参数值
-        p.width = (int) (LjyViewUtil.getScreenWidth(activity) * scale); //设置宽度
+        p.width = (int) (LjyScreenUtils.getScreenWidth(activity) * scale); //设置宽度
         p.dimAmount = (1f - scale) / 2f;
         window.setAttributes(p);
     }

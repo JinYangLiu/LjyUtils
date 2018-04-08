@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljy.lib.R;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 
 /**
  * Created by Mr.LJY on 2018/1/25.
@@ -38,7 +38,7 @@ public class LjyZanView extends LinearLayout implements Animator.AnimatorListene
     private int defalutTextColor = Color.WHITE;
     private String defaluteShadow = "#7F484848";
     private int defalutGravity = Gravity.CENTER_HORIZONTAL;
-    private int defalutSize = LjySystemUtil.dp2px(getContext(), 25);
+    private int defalutSize = LjyDensityUtil.dp2px(getContext(), 25);
 
     private int like = 10;
     private int disLike = 20; //点赞数,差评数

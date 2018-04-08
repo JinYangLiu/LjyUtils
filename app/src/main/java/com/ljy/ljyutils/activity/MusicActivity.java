@@ -15,6 +15,7 @@ import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.service.PlayMusicService;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyTimeUtil;
 import com.ljy.view.LjyLrcView;
@@ -43,7 +44,7 @@ public class MusicActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LjySystemUtil.noStatusBar(mActivity);
+        LjyScreenUtils.noStatusBar(mActivity);
         setContentView(R.layout.activity_music);
         ButterKnife.bind(mActivity);
         initService();

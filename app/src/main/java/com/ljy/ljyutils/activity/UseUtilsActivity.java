@@ -10,12 +10,13 @@ import android.widget.TextView;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyColorUtil;
+import com.ljy.util.LjyDensityUtil;
 import com.ljy.util.LjyEncryUtil;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyTimeUtil;
-import com.ljy.util.LjyViewUtil;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
@@ -51,9 +52,9 @@ public class UseUtilsActivity extends BaseActivity {
         boolean isForeground = LjySystemUtil.isForeground(mContext, UseUtilsActivity.class.getSimpleName());
         LjyLogUtil.i("isForeground:" + isForeground);
         //screen
-        int screenWidth = LjyViewUtil.getScreenWidth(mContext);
+        int screenWidth = LjyScreenUtils.getScreenWidth(mContext);
         LjyLogUtil.i("screenWidth:" + screenWidth);
-        int screenHeight = LjyViewUtil.getScreenHeight(mContext);
+        int screenHeight = LjyScreenUtils.getScreenHeight(mContext);
         LjyLogUtil.i("screenHeight:" + screenHeight);
         //string
         LjyLogUtil.i("123asd:" + LjyStringUtil.isNumber("123asd"));
@@ -117,7 +118,7 @@ public class UseUtilsActivity extends BaseActivity {
         LjyLogUtil.i("getSHA256:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_256));
         LjyLogUtil.i("getSHA512:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_512));
         //二维码
-        int size = LjySystemUtil.dp2px(mContext, 200f);
+        int size = LjyDensityUtil.dp2px(mContext, 200f);
         mImageView.setImageBitmap(LjyEncryUtil.getQrCode(str1, size, size, true));
         mImageView.setClickable(true);
         //一个view左右晃动的动画

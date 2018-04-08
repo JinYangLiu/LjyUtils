@@ -21,6 +21,7 @@ import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyEncryUtil;
 import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyPermissionUtil;
 import com.ljy.util.LjyRetrofitUtil;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
@@ -119,10 +120,10 @@ public class AppUpdateActivity extends BaseActivity {
                 }
                 break;
             case R.id.btn_save:
-                if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (LjyPermissionUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     saveApk();
                 } else {
-                    LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 666);
+                    LjyPermissionUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 666);
                 }
                 break;
             case R.id.btn_install:
@@ -153,7 +154,7 @@ public class AppUpdateActivity extends BaseActivity {
             return;
         if (mDisposable != null && mDisposable == mDownloadBean.getDisposable() && !mDisposable.isDisposed())
             return;
-        if (LjySystemUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (LjyPermissionUtil.hasPermission(mActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
             mDisposable = LjyRetrofitUtil.getInstance().download(mDownloadBean, new LjyRetrofitUtil.ProgressListener() {
                 @Override
@@ -188,7 +189,7 @@ public class AppUpdateActivity extends BaseActivity {
                 }
             });
         } else {
-            LjySystemUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
+            LjyPermissionUtil.requestPermission(mActivity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 999);
         }
     }
 
@@ -284,7 +285,7 @@ public class AppUpdateActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        LjySystemUtil.onPermissionResult(grantResults, new LjySystemUtil.PermissionResult() {
+        LjyPermissionUtil.onPermissionResult(grantResults, new LjyPermissionUtil.PermissionResult() {
             @Override
             public void success() {
                 if (requestCode == 999) {

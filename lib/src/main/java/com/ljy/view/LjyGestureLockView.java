@@ -15,7 +15,7 @@ import android.view.View;
 
 import com.ljy.lib.R;
 import com.ljy.util.LjySPUtil;
-import com.ljy.util.LjyViewUtil;
+import com.ljy.util.LjyScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,7 +233,7 @@ public class LjyGestureLockView extends View {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         // 设置想要的大小
-        float newWidth = LjyViewUtil.getScreenWidth(getContext()) / (xNum + 2f);
+        float newWidth = LjyScreenUtils.getScreenWidth(getContext()) / (xNum + 2f);
         // 计算缩放比例
         float scaleWidth = newWidth / width;
         float scaleHeight = newWidth / height;

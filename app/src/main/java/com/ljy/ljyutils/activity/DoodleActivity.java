@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 import com.ljy.view.LjyDoodleView;
 
 import butterknife.BindView;
@@ -30,7 +30,7 @@ public class DoodleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doodle);
         ButterKnife.bind(mActivity);
-        mDoodleView.setSize(LjySystemUtil.dp2px(mContext, 5));
+        mDoodleView.setSize(LjyDensityUtil.dp2px(mContext, 5));
     }
 
     @Override

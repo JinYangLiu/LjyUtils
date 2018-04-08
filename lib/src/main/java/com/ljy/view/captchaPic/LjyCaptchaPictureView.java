@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ljy.lib.R;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 
 /**
  * Created by ljy on 2018/1/31.
@@ -97,7 +97,7 @@ public class LjyCaptchaPictureView extends LinearLayout {
         thumbDrawableId = typedArray.getResourceId(R.styleable.Captcha_thumbDrawable, R.drawable.thumb);
         mMode = typedArray.getInteger(R.styleable.Captcha_mode, MODE_BAR);
         maxFailedCount = typedArray.getInteger(R.styleable.Captcha_max_fail_count, 3);
-        blockSize = typedArray.getDimensionPixelSize(R.styleable.Captcha_blockSize, LjySystemUtil.dp2px(getContext(), 50));
+        blockSize = typedArray.getDimensionPixelSize(R.styleable.Captcha_blockSize, LjyDensityUtil.dp2px(getContext(), 50));
         typedArray.recycle();
         init();
     }

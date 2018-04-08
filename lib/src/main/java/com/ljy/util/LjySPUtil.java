@@ -70,6 +70,17 @@ public class LjySPUtil {
     }
 
     /**
+     * 移除某个key值已经对应的值
+     *
+     * @param key
+     */
+    public void remove(String key) {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
+    /**
      * 清空到配置文件
      */
     public void clearAll() {
@@ -107,6 +118,16 @@ public class LjySPUtil {
 
     public Map<String, ?> getAll() {
         return sp.getAll();
+    }
+
+    /**
+     * 查询某个key是否已经存在
+     *
+     * @param key
+     * @return
+     */
+    public boolean contains(String key) {
+        return sp.contains(key);
     }
 
 }

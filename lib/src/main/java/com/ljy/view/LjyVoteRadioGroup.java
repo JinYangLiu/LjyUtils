@@ -15,7 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.ljy.lib.R;
-import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyDensityUtil;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
@@ -58,10 +58,10 @@ public class LjyVoteRadioGroup extends RadioGroup {
         mTextViews = new ArrayList<>();
         mLinearLayout_son2s=new ArrayList<>();
         mSelectedRadioContent = "";
-        VOTE_BTN_SIZE= LjySystemUtil.dp2px(context,16);
-        PADDING_ITEM= LjySystemUtil.dp2px(context,4);
-        PADDING_LEFT= LjySystemUtil.dp2px(context,12);
-        HEIGHT_PROGRESS= LjySystemUtil.dp2px(context,8);
+        VOTE_BTN_SIZE= LjyDensityUtil.dp2px(context,16);
+        PADDING_ITEM= LjyDensityUtil.dp2px(context,4);
+        PADDING_LEFT= LjyDensityUtil.dp2px(context,12);
+        HEIGHT_PROGRESS= LjyDensityUtil.dp2px(context,8);
     }
 
 
