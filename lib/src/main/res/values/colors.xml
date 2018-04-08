@@ -6,6 +6,7 @@
     <color name="lrc_timeline_color">#809E9E9E</color>
     <color name="lrc_time_text_color">#809E9E9E</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="thin_green">#89cbc1</color>
     <color name="alpha_gray">#ffdddddd</color>
     <color name="alpha_0">#00ffffff</color>

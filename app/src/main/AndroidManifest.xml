@@ -15,6 +15,9 @@
     //自定义一个权限，MyBroadcastReceiver1中添加了这个权限，其他app如果要给这个注册的接收器发送广播，就需要在Manifest中添加权限
     <permission android:name="com.ljy.ljyutils.BroadcastReceiverPermission"/>
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW"/>
+
     <application
         android:name=".base.MyApplication"
         android:allowBackup="true"
@@ -313,6 +316,8 @@
         <activity android:name=".activity.CustomViewActivity">
         </activity>
         <activity android:name=".activity.RxJavaTestActivity">
+        </activity>
+        <activity android:name=".activity.AspectJTestActivity">
         </activity>
     </application>
 

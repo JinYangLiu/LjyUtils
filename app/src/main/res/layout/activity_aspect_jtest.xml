@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ljy.ljyutils.activity.AspectJTestActivity">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnTestBefore"
+                android:onClick="onBtnClick"
+                android:text="Before"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestAfter"
+                android:onClick="onBtnClick"
+                android:text="After"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestAroundExecution"
+                android:onClick="onBtnClick"
+                android:text="Around execution"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestAroundCall"
+                android:onClick="onBtnClick"
+                android:text="Around call"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestDebugTool"
+                android:onClick="onBtnClick"
+                android:text="自定义注解DebugTool"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestWithinCode0"
+                android:onClick="onBtnClick"
+                android:text="withincode 0"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestWithinCode1"
+                android:onClick="onBtnClick"
+                android:text="withincode 1"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnTestAfterThrowing"
+                android:onClick="onBtnClick"
+                android:text="AfterThrowing"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnToast"
+                android:onClick="onBtnClick"
+                android:text="toast"
+                style="@style/btnStyle"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/textViewShow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
+</LinearLayout>

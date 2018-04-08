@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 //apply plugin: 'com.neenbedankt.android-apt'
 //使用greenDao
 apply plugin: 'org.greenrobot.greendao'
+//AspectJX
+apply plugin: 'android-aspectjx'
 
 android {
     compileSdkVersion 26
@@ -84,6 +86,10 @@ android {
             dirs 'libs'
         }
     }
+
+    aspectjx {
+        excludeJarFilter '.jar'
+    }
 }
 
 dependencies {
@@ -116,6 +122,8 @@ dependencies {
     //友盟推送
     compile project(':push')
     compile 'com.android.support:design:26.+'
+    //AspectJ
+    compile 'org.aspectj:aspectjrt:1.8.9'
 }
 
 // 依赖插件脚本

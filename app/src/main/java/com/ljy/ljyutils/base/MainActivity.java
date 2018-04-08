@@ -12,6 +12,7 @@ import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.AnimatorActivity;
 import com.ljy.ljyutils.activity.AppUpdateActivity;
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
+import com.ljy.ljyutils.activity.AspectJTestActivity;
 import com.ljy.ljyutils.activity.BallActivity;
 import com.ljy.ljyutils.activity.BezierActivity;
 import com.ljy.ljyutils.activity.BindDataActivity;
@@ -109,7 +110,7 @@ public class MainActivity extends BaseActivity {
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用","pdf文件上传",
                 "分组ListView+索引条", "webView测试","xml解析",
-                "设计模式","自定义View","RxJava test"};
+                "设计模式","自定义View","RxJava test","AspectJ使用"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -122,7 +123,7 @@ public class MainActivity extends BaseActivity {
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
-                DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class};
+                DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
