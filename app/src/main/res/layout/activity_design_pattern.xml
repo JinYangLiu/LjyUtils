@@ -76,7 +76,7 @@
                 android:text="状态模式"
                 style="@style/btnStyle"/>
             <Button
-                android:id="@+id/btnIteratorPattern"
+                android:id="@+id/btnDutyChainPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="责任链模式"
                 style="@style/btnStyle"/>
@@ -99,6 +99,16 @@
                 android:id="@+id/btnMemoPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="备忘录模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnIteratorPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="迭代器模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnVisitorPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="访问者模式"
                 style="@style/btnStyle"/>
         </LinearLayout>
     </HorizontalScrollView>

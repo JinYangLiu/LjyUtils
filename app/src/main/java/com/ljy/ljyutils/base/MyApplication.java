@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ljy.ljyutils.BuildConfig;
+import com.ljy.util.LjyDatabaseUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyRetrofitUtil;
 import com.tencent.bugly.Bugly;
@@ -56,6 +57,11 @@ public class MyApplication extends Application {
         initMyUtil();
         initBugly();
         initUmengPush();
+        initDB();
+    }
+
+    private void initDB() {
+        LjyDatabaseUtil.initHelper(applicationContext,"ljyUtilData");
     }
 
     private void initUmengPush() {

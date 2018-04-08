@@ -3,10 +3,12 @@ package com.ljy.ljyutils.activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
+import com.ljy.util.LjyDatabaseUtil;
 import com.ljy.util.LjyLogUtil;
 
 import java.io.ObjectStreamException;
@@ -16,9 +18,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Stack;
 
 import butterknife.BindView;
@@ -55,6 +60,7 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     public void onDesignBtnClick(View view) {
+        mTextViewShow.append("----------" + ((Button) view).getText() + "----------\n");
         LjyLogUtil.setAppendLogMsg(true);
         switch (view.getId()) {
             case R.id.btnSingleton:
@@ -105,9 +111,9 @@ public class DesignPatternActivity extends BaseActivity {
                 //状态模式
                 methodStatePattern();
                 break;
-            case R.id.btnIteratorPattern:
+            case R.id.btnDutyChainPattern:
                 //责任链模式
-                methodIteratorPattern();
+                methodDutyChainPattern();
                 break;
             case R.id.btnInterpreterPattern:
                 //解释器模式
@@ -125,20 +131,283 @@ public class DesignPatternActivity extends BaseActivity {
                 //备忘录模式
                 methodMemoPattern();
                 break;
+            case R.id.btnIteratorPattern:
+                //迭代器模式
+                methodIteratorPattern();
+                break;
+            case R.id.btnVisitorPattern:
+                //访问者模式
+                methodVisitorPattern();
+                break;
         }
-        mTextViewShow.setText(LjyLogUtil.getAllLogMsg());
+        mTextViewShow.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
     }
 
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    /**
+     * 访问者模式:
+     * 将数据操作与数据结构分离
+     * 定义: 封装一些作用于某种数据结构中的各元素的操作,它可以在不改变
+     * 这个数据结构的前提下定义作用于这些元素的新的操作
+     * 使用场景:
+     * 1. 对象结构比较稳定,但经常需要在此对象结构上定义新的操作
+     * 2. 需要对一个对象结构中的对象进行很多不同的并且不相关的操作,
+     * 而需要避免这些操作污染这些对象的类,也不希望在增加新操作时修改这些类
+     * Android源码中的使用:
+     * 编译期注解(依赖APT(Annotation Processing Tools)实现),
+     * ButterKnife,Dagger,Retrofit等开源库都是基于APT
+     */
+    private void methodVisitorPattern() {
+        //以员工绩效评定为例
+        //1.构建报表
+        BusinessReport report = new BusinessReport();
+        LjyLogUtil.i("给CEO看的报表:");
+        report.showReport(new CEOVisitor());
+        LjyLogUtil.i("给CTO看的报表");
+        report.showReport(new CTOVisitor());
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+
+    public interface Visitor {
+        //访问工程师类型
+        void visit(Engineer engineer);
+
+        //访问经理类型
+        void visit(Manage leader);
+    }
+
+    class CEOVisitor implements Visitor {
+
+        @Override
+        public void visit(Engineer engineer) {
+            LjyLogUtil.i("工程师: " + engineer.name + ", KPI: " + engineer.kpi);
+        }
+
+        @Override
+        public void visit(Manage leader) {
+            LjyLogUtil.i("产品: " + leader.name + ", KPI: " + leader.kpi);
+        }
+    }
+
+    class CTOVisitor implements Visitor {
+
+        @Override
+        public void visit(Engineer engineer) {
+            LjyLogUtil.i("工程师: " + engineer.name + ", 代码数量: " + engineer.getCodeLines());
+        }
+
+        @Override
+        public void visit(Manage leader) {
+            LjyLogUtil.i("产品: " + leader.name + ", 产品数量: " + leader.getProducts());
+        }
+    }
+
+    //员工基类
+    abstract class Staff {
+        String name;
+        int kpi;
+
+        public Staff(String name) {
+            this.name = name;
+            this.kpi = new Random().nextInt(10);
+        }
+
+        public abstract void accept(Visitor visitor);
+    }
+
+    //工程师
+    class Engineer extends Staff {
+
+        public Engineer(String name) {
+            super(name);
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visit(this);
+        }
+
+        //工程师这一年写的代码数量
+        public int getCodeLines() {
+            return new Random().nextInt(10 * 100 * 100);
+        }
+    }
+
+    //经理
+    class Manage extends Staff {
+        private int products;//产品数量
+
+        public Manage(String name) {
+            super(name);
+            this.products = new Random().nextInt(10);
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visit(this);
+        }
+
+        public int getProducts() {
+            return products;
+        }
+    }
+
+    //员工业务报表
+    class BusinessReport {
+        List<Staff> mStaffs = new LinkedList<>();
+
+        public BusinessReport() {
+            mStaffs.add(new Manage("经理-王小亮"));
+            mStaffs.add(new Engineer("码农-孔小齐"));
+            mStaffs.add(new Manage("经理-崔小磊"));
+            mStaffs.add(new Engineer("码农-马小哲"));
+            mStaffs.add(new Engineer("码农-刘小洋"));
+        }
+
+        public void showReport(Visitor visitor) {
+            for (Staff staff : mStaffs) {
+                staff.accept(visitor);
+            }
+        }
+    }
+
+
+    /**
+     * 迭代器模式:又称游标(Cursor)模式
+     * 行为型设计模式
+     * 定义:提供一种方法顺序访问一个容器对象中的各个元素,而又不需要暴露该对象的内部表示
+     * android源码中的使用:
+     * List,Map所包含的迭代器,数据库查询使用的Cursor
+     * 优点:
+     * 弱化了容器类与遍历算法之间的关系
+     * 缺点:
+     * 类文件的增加
+     */
+    private void methodIteratorPattern() {
+        //以统计员工数据为例
+        Company1 company1 = new Company1();
+        Company2 company2 = new Company2();
+        Boss1 boss1 = new Boss1();
+        LjyLogUtil.i("----普通方式----");
+        boss1.read1(company1.getEmployees());
+        boss1.read2(company2.getEmployees());
+        LjyLogUtil.i("----iterator方式----");
+        boss1.read3(company1);
+        boss1.read3(company2);
+        LjyDatabaseUtil.getHelper().saveAll(company1.getEmployees());
+        LjyLogUtil.i("----LjyDatabaseUtil----");
+        List<Employee> list = LjyDatabaseUtil.getHelper().queryAll(Employee.class);
+        boss1.read1(list);
+
+    }
+
+    class Employee {
+        private String name;
+        private int age;
+        private String sex;
+        private String job;
+
+        public Employee(String name, int age, String sex, String job) {
+            this.name = name;
+            this.age = age;
+            this.sex = sex;
+            this.job = job;
+        }
+
+        @Override
+        public String toString() {
+            return "员工:{" +
+                    "姓名:'" + name + '\'' +
+                    ", 年龄:" + age +
+                    ", 性别:'" + sex + '\'' +
+                    ", 职位:'" + job + '\'' +
+                    '}';
+        }
+    }
+
+    interface Iterator {
+        //是否还有下一个元素
+        boolean hasNext();
+
+        //返回当前位置的元素,并将位置移至下一位
+        Employee next();
+    }
+
+    class Company1 implements Iterator {
+        private List<Employee> mList = new ArrayList<>();
+        private int index;
+
+        public Company1() {
+            mList.add(new Employee("小金", 23, "男", "程序猿"));
+            mList.add(new Employee("小七", 20, "男", "测试"));
+            mList.add(new Employee("小丽", 21, "女", "UI设计师"));
+            mList.add(new Employee("小亮", 26, "男", "产品"));
+        }
+
+        public List<Employee> getEmployees() {
+            return mList;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !(index > mList.size() - 1 || mList.get(index) == null);
+        }
+
+        @Override
+        public Employee next() {
+            Employee employee = mList.get(index);
+            index++;
+            return employee;
+        }
+    }
+
+    class Company2 implements Iterator {
+        private Employee[] mArray = new Employee[4];
+        private int index;
+
+        public Company2() {
+            mArray[0] = new Employee("毛毛", 19, "男", "前端");
+            mArray[1] = new Employee("华仔", 21, "男", "测试");
+            mArray[2] = new Employee("莉莉", 23, "女", "UI设计师");
+            mArray[3] = new Employee("童歌", 32, "男", "产品");
+        }
+
+        public Employee[] getEmployees() {
+            return mArray;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !(index > mArray.length - 1 || mArray[index] == null);
+        }
+
+        @Override
+        public Employee next() {
+            Employee employee = mArray[index];
+            index++;
+            return employee;
+        }
+    }
+
+    class Boss1 {
+        public void read1(List<Employee> list) {
+            for (int i = 0; i < list.size(); i++) {
+                LjyLogUtil.i(list.get(i).toString());
+            }
+        }
+
+        public void read2(Employee[] array) {
+            for (int i = 0; i < array.length; i++) {
+                LjyLogUtil.i(array[i].toString());
+            }
+        }
+
+        public void read3(Iterator iterator) {
+            while (iterator.hasNext()) {
+                LjyLogUtil.i(iterator.next().toString());
+            }
+        }
+
     }
 
     /**
@@ -150,7 +419,7 @@ public class DesignPatternActivity extends BaseActivity {
      * 实现了信息的封装,不用关心保存状态的细节
      * 缺点:
      * 消耗资源(如果类的成员变量过多,每次保存都会消耗一定的内存)
-     *
+     * <p>
      * android源码中的使用:
      * Activity的onSaveInstanceState,onRestoreInstanceState
      * (非主动退出或跳转到其他activity时触发onSaveInstanceState)
@@ -158,20 +427,30 @@ public class DesignPatternActivity extends BaseActivity {
     private void methodMemoPattern() {
         //以游戏存档为例,屏蔽了外界对CallOfDuty对象的直接访问
         //1.创建
-        CallOfDuty game=new CallOfDuty();
+        CallOfDuty game = new CallOfDuty();
         //2.玩
         game.play();
         //3.存档
-        Caretaker caretaker=new Caretaker();
+        Caretaker caretaker = new Caretaker();
         caretaker.saveMemoto(game.createMemoto());
         //4.退出
         game.quit();
         //5.恢复游戏
-        CallOfDuty newGame=new CallOfDuty();
-        LjyLogUtil.i("newGame,恢复存档前属性:\n"+newGame.toString());
+        CallOfDuty newGame = new CallOfDuty();
+        LjyLogUtil.i("newGame,恢复存档前属性:\n" + newGame.toString());
         newGame.restore(caretaker.getMemoto());
-        LjyLogUtil.i("newGame,恢复存档后游戏属性:\n"+newGame.toString());
+        LjyLogUtil.i("newGame,恢复存档后游戏属性:\n" + newGame.toString());
     }
+
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//    }
 
     //使命召唤游戏
     class CallOfDuty {
@@ -184,8 +463,8 @@ public class DesignPatternActivity extends BaseActivity {
             LjyLogUtil.i("使命召唤:");
             mLifeBar -= 10;
             mCurrentLevel++;
-            mGun="沙漠之鹰+Ak47";
-            LjyLogUtil.i("晋级到第" + mCurrentLevel + "关,当前血量:" + mLifeBar+",当前武器:"+mGun);
+            mGun = "沙漠之鹰+Ak47";
+            LjyLogUtil.i("晋级到第" + mCurrentLevel + "关,当前血量:" + mLifeBar + ",当前武器:" + mGun);
         }
 
         //退出
@@ -196,19 +475,19 @@ public class DesignPatternActivity extends BaseActivity {
         }
 
         //创建备忘录
-        public Memoto createMemoto(){
-            Memoto memoto=new Memoto();
-            memoto.mCurrentLevel=mCurrentLevel;
-            memoto.mLifeBar=mLifeBar;
-            memoto.mGun=mGun;
+        public Memoto createMemoto() {
+            Memoto memoto = new Memoto();
+            memoto.mCurrentLevel = mCurrentLevel;
+            memoto.mLifeBar = mLifeBar;
+            memoto.mGun = mGun;
             return memoto;
         }
 
         //恢复游戏
-        public void restore(Memoto memoto){
-            this.mCurrentLevel=memoto.mCurrentLevel;
-            this.mLifeBar=memoto.mLifeBar;
-            this.mGun=memoto.mGun;
+        public void restore(Memoto memoto) {
+            this.mCurrentLevel = memoto.mCurrentLevel;
+            this.mLifeBar = memoto.mLifeBar;
+            this.mGun = memoto.mGun;
         }
 
         @Override
@@ -238,14 +517,16 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //Caretaker,负责管理Memoto
-    class Caretaker{
+    class Caretaker {
         Memoto mMemoto;
+
         //存档
-        public void saveMemoto(Memoto memoto){
-            this.mMemoto=memoto;
+        public void saveMemoto(Memoto memoto) {
+            this.mMemoto = memoto;
         }
+
         //读档
-        public Memoto getMemoto(){
+        public Memoto getMemoto() {
             return mMemoto;
         }
     }
@@ -644,7 +925,7 @@ public class DesignPatternActivity extends BaseActivity {
      * android源码中的使用:
      * 触摸事件从ViewTree分发传递
      */
-    private void methodIteratorPattern() {
+    private void methodDutyChainPattern() {
         /*
         //构造处理对象
         AbsHandler handler1 = new Handler1();
