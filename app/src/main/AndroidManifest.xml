@@ -319,6 +319,8 @@
         </activity>
         <activity android:name=".activity.AspectJTestActivity">
         </activity>
+        <activity android:name=".activity.AnnotationActivity">
+        </activity>
     </application>
 
 </manifest>

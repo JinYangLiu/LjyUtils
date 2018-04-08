@@ -10,6 +10,7 @@ import android.view.View;
 import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.AnimatorActivity;
+import com.ljy.ljyutils.activity.AnnotationActivity;
 import com.ljy.ljyutils.activity.AppUpdateActivity;
 import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.AspectJTestActivity;
@@ -108,9 +109,10 @@ public class MainActivity extends BaseActivity {
                 "ballView的使用", "贝塞尔曲线的使用", "app更新", "夜间模式", "DataBinding的使用",
                 "一个涂鸦画板", "上传图片", "buglyDemo", "验证码demo",
                 "设置壁纸", "DrawerLayout实现侧滑菜单", "SlidingMenu实现侧滑菜单", "dialog的使用",
-                "动画的使用", "ConstraintLayout的使用", "拼图view的使用","pdf文件上传",
-                "分组ListView+索引条", "webView测试","xml解析",
-                "设计模式","自定义View","RxJava test","AspectJ使用"};
+                "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
+                "分组ListView+索引条", "webView测试", "xml解析",
+                "设计模式", "自定义View", "RxJava test", "AspectJ使用",
+                "注解与反射"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -123,7 +125,8 @@ public class MainActivity extends BaseActivity {
                 VideoLiveWallpaperActivity.class, DrawerActivity.class, SlidingMenuActivity.class, DialogDemoActivity.class,
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
-                DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class};
+                DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
+                AnnotationActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
