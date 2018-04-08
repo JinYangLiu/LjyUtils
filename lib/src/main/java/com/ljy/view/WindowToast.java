@@ -1,4 +1,4 @@
-package com.ljy.util;
+package com.ljy.view;
 
 import android.content.Context;
 import android.graphics.Color;

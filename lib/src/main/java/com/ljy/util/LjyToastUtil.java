@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.ljy.view.WindowToast;
+
 /**
  * Created by Mr.LJY on 2017/12/25.
  */
