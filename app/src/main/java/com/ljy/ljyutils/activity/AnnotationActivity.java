@@ -3,7 +3,10 @@ package com.ljy.ljyutils.activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.ljy.CustomAnnotation;
+import com.ljy.CustomClass;
 import com.ljy.ljyutils.R;
+import com.ljy.ljyutils.annotation.AnnotationActivityUtils;
 import com.ljy.ljyutils.annotation.LBindUtils;
 import com.ljy.ljyutils.annotation.LBindView;
 import com.ljy.ljyutils.annotation.MethodInfo;
@@ -35,7 +38,7 @@ import com.ljy.util.LjyLogUtil;
  * 这个仅仅是告诉编译器忽略特定的警告信息，例如在泛型中使用原生数据类型。
  * 它的保留策略是SOURCE（译者注：在源文件中有效）并且被编译器丢弃。
  */
-
+@CustomClass("AnnotationActivity")
 public class AnnotationActivity extends BaseActivity {
 
     @LBindView(R.id.text_info)
@@ -49,6 +52,8 @@ public class AnnotationActivity extends BaseActivity {
 
         LBindUtils.bind(mActivity);
         MethodInfoUtil.showInfo(this);
+        LjyLogUtil.i("-----------------------");
+        AnnotationActivityUtils.method002(this);
 
         mTextView.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
@@ -57,6 +62,11 @@ public class AnnotationActivity extends BaseActivity {
     @MethodInfo(author = "ljy", comments = "我是method001啊", date = "2018-04-08", revision = 2)
     private void method001() {
 
+    }
+
+    @CustomAnnotation("AnnotationActivity")
+    public void method002() {
+        LjyLogUtil.i("AnnotationActivity.method002");
     }
 
 

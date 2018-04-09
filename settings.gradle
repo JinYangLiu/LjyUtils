@@ -1,1 +1,1 @@
-include ':app', ':lib', ':push'
+include ':app', ':lib', ':push', ':processor'
