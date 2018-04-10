@@ -9,6 +9,9 @@ public class User {
     private String pwd;
     private String age;
 
+    public User() {
+
+    }
     public User(String name, String pwd, String age) {
         this.name = name;
         this.pwd = pwd;
@@ -25,5 +28,18 @@ public class User {
 
     public String getAge() {
         return age;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", pwd='" + pwd + '\'' +
+                ", age='" + age + '\'' +
+                '}';
     }
 }
