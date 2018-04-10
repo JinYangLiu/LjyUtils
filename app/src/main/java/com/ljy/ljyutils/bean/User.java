@@ -5,13 +5,18 @@ package com.ljy.ljyutils.bean;
  */
 
 public class User {
-    private String name;
+    public String name;
     private String pwd;
     private String age;
 
     public User() {
 
     }
+
+    private User(String name) {
+        this.name = name;
+    }
+
     public User(String name, String pwd, String age) {
         this.name = name;
         this.pwd = pwd;
@@ -32,6 +37,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    private void setAge(String age) {
+        this.age = age;
     }
 
     @Override

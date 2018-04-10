@@ -35,10 +35,26 @@ import java.lang.annotation.Target;
 // 指明该注解类型被自动继承。如果用户在当前类中查询这个元注解类型并且当前类的声明中不包含这个元注解类型，
 // 那么也将自动查询当前类的父类是否存在Inherited元注解，这个动作将被重复执行知道这个标注类型被找到，
 // 或者是查询到顶层的父类。
+//
+//    @interface是声明一个注解的关键字,注解可以有或没有元素,如int value();
+//    其元素有如下特点:
+//    1.没有函数体
+//    2.没有函数参数
+//    3.返回的声明必须是一个特定的类型:
+//      a.基本类型(boolean,int,float,...)
+//      b.枚举
+//      c.注解
+//      d.类(如String.class)
+//    4.元素可以有默认值
+//    5.如果注解只有一个元素,则必须取名为value(),使用时可以忽略成员名和赋值号
+//
+//    只会继承类注解,不会继承方法注解
 @Documented
 @Target(ElementType.FIELD)
 @Inherited
 @Retention(RetentionPolicy.CLASS)
 public @interface ViewInjector {
     int value();
+
+//    String name() default "ljy";
 }

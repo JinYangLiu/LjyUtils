@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 /**
  * Annotation and reflection
@@ -38,6 +39,7 @@ import java.lang.reflect.Modifier;
  * VariableElement, 变量元素
  * TypeParameterElement, 类型参数元素
  * <p>
+ * java中注解是从java5开始添加到Java的
  * Java内建注解
  * Java提供了三种内建注解。
  * 1. @Override
@@ -70,7 +72,7 @@ public class AnnotationActivity extends BaseActivity {
         LjyLogUtil.i("-----------获取class对象的三种方法------------");
         getClassObj();
         LjyLogUtil.i("----------反射获取类的对象-------------");
-        getObj();
+        getConstructor();
         LjyLogUtil.i("-----------反射获取类的方法------------");
         getMothods();
         LjyLogUtil.i("------------反射获取类的属性-----------");
@@ -79,6 +81,8 @@ public class AnnotationActivity extends BaseActivity {
         getSuperClass();
         LjyLogUtil.i("------------获取对象实现的接口-----------");
         getInterfaces();
+        LjyLogUtil.i("------------通过反射了解集合泛型的本质-----------");
+        methodType();
 
         mTextView.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
@@ -109,9 +113,10 @@ public class AnnotationActivity extends BaseActivity {
     /**
      * 获取class对象的三种方法
      */
-    public Class getClassObj() {
+    public void getClassObj() {
         // 1.根据类名获取Class对象
         Class clzz1 = Cat.class;
+        LjyLogUtil.i("类的名称是:" + clzz1.getName());
         // 2.根据对象获取Class对象
         Cat cat = new Cat();
         Class clzz2 = cat.getClass();
@@ -121,17 +126,26 @@ public class AnnotationActivity extends BaseActivity {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        LjyLogUtil.i(clzz1.toString());
-        return clzz1;//clzz2,clzz3
+//        return clzz1;//clzz2,clzz3
     }
 
     /**
      * 反射获取类的对象
      */
-    public Object getObj() {
+    public void getConstructor() {
         //获取Class对象
         Class clzz = User.class;
+        //获取所有构造方法
+        //1.所有public 构造函数
+        Constructor[] constructors1 = clzz.getConstructors();
+        for (int i = 0; i < constructors1.length; i++) {
+            LjyLogUtil.i("getConstructors[" + i + "]:" + constructors1[i]);
+        }
+        //2.所有自己的构造函数
+        Constructor[] constructors2 = clzz.getDeclaredConstructors();
+        for (int i = 0; i < constructors2.length; i++) {
+            LjyLogUtil.i("getDeclaredConstructors[" + i + "]:" + constructors2[i]);
+        }
         //获取类对象的Constructor (构造方法)
         try {
             Constructor constructor = clzz.getConstructor(String.class, String.class, String.class);
@@ -139,8 +153,14 @@ public class AnnotationActivity extends BaseActivity {
             constructor.setAccessible(true);
             // 通过 Constructor 来创建对象
             Object obj = constructor.newInstance("小明", "123123", "18");
-            LjyLogUtil.i(obj.toString());
-            return obj;
+            if (obj instanceof User) {
+                User user = (User) obj;
+                LjyLogUtil.i(user.toString());
+//                return user;
+            }
+            //如果有无参数的构造方法:
+            User user2 = (User) clzz.newInstance();
+//            return user2;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -150,7 +170,6 @@ public class AnnotationActivity extends BaseActivity {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     /**
@@ -160,21 +179,30 @@ public class AnnotationActivity extends BaseActivity {
         //获取Class对象
         User user = new User();
         Class clzz = user.getClass();
-        // 获取到类中的所有方法(不包含从父类继承的方法)
-        Method[] methods = clzz.getDeclaredMethods();
-        for (int i = 0; i < methods.length; i++) {
-            LjyLogUtil.i("method[" + i + "]:" + methods[i].getName());
+        // 获取所有方法
+        //1.获取所有的public方法,包括从父类继承而来的
+        Method[] methods1 = clzz.getMethods();
+        for (int i = 0; i < methods1.length; i++) {
+            LjyLogUtil.i("getMethods[" + i + "]:" + methods1[i].getName());
+        }
+        //2.获取所有该类自己声明的方法(不限访问权限, 不包含从父类继承的方法)
+        Method[] methods2 = clzz.getDeclaredMethods();
+        for (int i = 0; i < methods2.length; i++) {
+            LjyLogUtil.i("getDeclaredMethods[" + i + "]:" + methods2[i].getName());
         }
         try {
             // 获取类中的某个方法
             Method method = clzz.getMethod("setName", String.class);
-            LjyLogUtil.i("method:" + method.getName());
+            LjyLogUtil.i("方法名称: " + method.getName());
             // 判断是否是public方法
-            LjyLogUtil.i("method is public:" + Modifier.isPublic(method.getModifiers()));
-            // 获取该方法的参数类型列表
+            LjyLogUtil.i("是否是public方法: " + Modifier.isPublic(method.getModifiers()));
+            //得到方法的返回值类型的类类型
+            Class returnTypeClass = method.getReturnType();
+            LjyLogUtil.i("返回值类型: " + returnTypeClass.getName());
+            // 获取该方法的参数列表类型
             Class[] paramTypes = method.getParameterTypes();
             for (int i = 0; i < paramTypes.length; i++) {
-                LjyLogUtil.i("paramTypes[" + i + "]:" + paramTypes[i].getName());
+                LjyLogUtil.i("参数类型[" + i + "]:" + paramTypes[i].getName());
             }
             LjyLogUtil.i("user.name before:" + user.getName());
             //设置方法值
@@ -198,19 +226,28 @@ public class AnnotationActivity extends BaseActivity {
         //获取Class对象
         User user = new User();
         Class clzz = user.getClass();
-        // 获取当前类和父类的所有属性
-        Field[] fields = clzz.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            LjyLogUtil.i("fields[" + i + "]:" + fields[i].getName());
+        // 获取所有属性
+        //1.获取所有的public属性
+        Field[] fields1 = clzz.getFields();
+        for (int i = 0; i < fields1.length; i++) {
+            LjyLogUtil.i("getFields[" + i + "]:" + fields1[i].getName());
+        }
+        //2.获取该类自己声明的所有属性
+        Field[] fields2 = clzz.getDeclaredFields();
+        for (int i = 0; i < fields2.length; i++) {
+            LjyLogUtil.i("getDeclaredFields[" + i + "]:" + fields2[i].getName());
         }
         try {
             //获取某个属性
             Field field = clzz.getDeclaredField("name");
-            LjyLogUtil.i("user.name before:" + field.get(user));
+            LjyLogUtil.i("属性名称:" + field.getName());
+            //得到属性的类型
+            Class fieldType = field.getType();
+            LjyLogUtil.i("属性类型:" + fieldType.getName());
+            LjyLogUtil.i("调用field.set前 user.name =" + field.get(user));
             //设置属性值
             field.set(user, "明明");
-            LjyLogUtil.i("user.name after:" + field.get(user));
-
+            LjyLogUtil.i("调用field.set后 user.name =" + field.get(user));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -237,15 +274,48 @@ public class AnnotationActivity extends BaseActivity {
     /**
      * 获取对象实现的接口
      */
-    public void getInterfaces(){
+    public void getInterfaces() {
         //获取Class对象
         User user = new User();
         Class clzz = user.getClass();
         //获取该类实现的所有接口
-        Class[] interfaceClasses=clzz.getInterfaces();
+        Class[] interfaceClasses = clzz.getInterfaces();
         for (int i = 0; i < interfaceClasses.length; i++) {
             LjyLogUtil.i("interfaceClasses[" + i + "]:" + interfaceClasses[i].getName());
         }
     }
+
+    /**
+     * 通过反射了解集合泛型的本质
+     */
+    public void methodType() {
+        ArrayList list1 = new ArrayList();
+        list1.add("abc");
+        list1.add(new User("小明", "ax123123", "19"));
+        LjyLogUtil.i("list1: " + list1.toString());
+        ArrayList<String> list2 = new ArrayList();
+        list2.add("qwer");
+        LjyLogUtil.i("list2: " + list2.toString());
+
+        Class c1 = list1.getClass();
+        Class c2 = list2.getClass();
+        LjyLogUtil.i("list1.getClass == list2.getClass:" + (c1 == c2));
+        //得到true说明编译之后集合的泛型是去泛型化的
+        //java中集合的泛型,是防止错误输入的,只是在编译阶段有效,绕过编译就无效了
+        //那么我们可以通过方法的反射来操作,绕过编译
+        try {
+            Method m = c2.getMethod("add", Object.class);
+            m.invoke(list2, new User("小莉", "222222", "17"));
+            LjyLogUtil.i("绕过编译向ArrayList<String>对象中添加User实例:");
+            LjyLogUtil.i("list2: " + list2.toString());
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
