@@ -6,6 +6,12 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,4 +83,63 @@ public class LjyPermissionUtil {
         //disAllowIndexs没有被允许的权限角标
         void fail(List<Integer> disAllowIndexs);
     }
+
+    //-----------使用注解实现权限管理,具体实现写在baseActivity中------------------
+
+    @Target(ElementType.METHOD)//注解的作用域
+    @Retention(RetentionPolicy.RUNTIME)//注解的有效生命周期
+    public @interface PermissionHelper {
+        boolean permissionResult();
+
+        int requestCode();
+    }
+
+    public static void injectActivity(Activity activity, boolean permissionResult, int requestCode) {
+        Class clazz = activity.getClass();
+//        clazz.getMethods();
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(PermissionHelper.class)) {
+                PermissionHelper annotation = method.getAnnotation(PermissionHelper.class);
+                if (permissionResult == annotation.permissionResult() && annotation.requestCode() == requestCode) {
+                    try {
+                        method.setAccessible(true);
+                        method.invoke(activity);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+//    实例:调用拍照权限
+//    需要优化之处:
+//      1）加注解时必须是不参数的method
+//      2）不能对多个权限进行统一设置
+//    public class TestActivity  {
+//
+//        private final int PERMISSION_CAMERA = 100;
+//
+//        @Override
+//        protected void onCreate(Bundle savedInstanceState) {
+//            super.onCreate(savedInstanceState);
+//
+//            if(checkPermission(Manifest.permission.CAMERA, PERMISSION_CAMERA)){
+//                toDoThing();
+//            }
+//
+//        }
+//
+//        @PermissionUtils.PermissionHelper(permissionResult = true, requestCode = PERMISSION_CAMERA)
+//        private void toDoThing(){
+//
+//        }
+//
+//    }
+
+
 }

@@ -2,13 +2,19 @@ package com.ljy.ljyutils.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.ljy.ljyutils.bean.DaoMaster;
 import com.ljy.ljyutils.bean.DaoSession;
+import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyPermissionUtil;
 import com.ljy.util.LjySPUtil;
 import com.ljy.view.swipeBack.LjySwipeBackActivity;
 import com.umeng.message.PushAgent;
@@ -88,5 +94,26 @@ public class BaseActivity extends LjySwipeBackActivity {
     public void removeALLActivityExceptMainTab() {
         if (mApplication != null)
             mApplication.removeALLActivityExceptMain_();// 调用myApplication的销毁所有Activity方法
+    }
+
+    private int permissionRequestCode=0;
+
+    public boolean checkPremission(String permission ,int requestCode){
+        if (PackageManager.PERMISSION_GRANTED== ContextCompat.checkSelfPermission(this,permission)){
+            return true;
+        }else{
+            permissionRequestCode=requestCode;
+            ActivityCompat.requestPermissions(this,new String[]{permission},requestCode);
+            return false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        LjyLogUtil.i("=== onRequestPermissionsResult ===");
+        if (grantResults.length>0){
+            LjyPermissionUtil.injectActivity(this,grantResults[0]== PackageManager.PERMISSION_GRANTED,permissionRequestCode);
+        }
     }
 }
