@@ -1,18 +1,22 @@
 package com.ljy.ljyutils.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.ljy.CustomAnnotation;
 import com.ljy.CustomClass;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.annotation.AnnotationActivityUtils;
+import com.ljy.ljyutils.annotation.LBindLayout;
+import com.ljy.ljyutils.annotation.LBindOnClick;
 import com.ljy.ljyutils.annotation.LBindUtils;
 import com.ljy.ljyutils.annotation.LBindView;
 import com.ljy.ljyutils.annotation.MethodInfo;
 import com.ljy.ljyutils.annotation.MethodInfoUtil;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyToastUtil;
 
 /**
  * Annotation and reflection
@@ -39,6 +43,7 @@ import com.ljy.util.LjyLogUtil;
  * 它的保留策略是SOURCE（译者注：在源文件中有效）并且被编译器丢弃。
  */
 @CustomClass("AnnotationActivity")
+@LBindLayout(R.layout.activity_annotation)
 public class AnnotationActivity extends BaseActivity {
 
     @LBindView(R.id.text_info)
@@ -47,7 +52,7 @@ public class AnnotationActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_annotation);
+//        setContentView(R.layout.activity_annotation);
         LjyLogUtil.setAppendLogMsg(true);
 
         LBindUtils.bind(mActivity);
@@ -69,6 +74,16 @@ public class AnnotationActivity extends BaseActivity {
         LjyLogUtil.i("AnnotationActivity.method002");
     }
 
-
+    @LBindOnClick({R.id.btnTest,R.id.btnTest002})
+    public void btnClick(View v){
+        switch (v.getId()){
+            case R.id.btnTest:
+                LjyToastUtil.showSnackBar(v,"点击了btnTest");
+                break;
+            case R.id.btnTest002:
+                LjyToastUtil.showSnackBar(v,"点击了btnTest002啊~~");
+                break;
+        }
+    }
 
 }

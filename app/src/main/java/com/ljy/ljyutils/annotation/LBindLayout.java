@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by Mr.LJY on 2018/4/8.
+ * Created by LJY on 2018/4/10.
  *
- * 注解实现findViewById
+ * 注解实现setContentView
  */
 
-@Target({ElementType.FIELD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LBindView {
+public @interface LBindLayout {
     int value();
 }
