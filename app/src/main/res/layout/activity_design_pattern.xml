@@ -110,6 +110,11 @@
                 android:onClick="onDesignBtnClick"
                 android:text="访问者模式"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnMediatorPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="中介者模式"
+                style="@style/btnStyle"/>
         </LinearLayout>
     </HorizontalScrollView>
     <ScrollView android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.ljy.ljyutils.activity;
 
+import android.app.KeyguardManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -139,9 +140,175 @@ public class DesignPatternActivity extends BaseActivity {
                 //访问者模式
                 methodVisitorPattern();
                 break;
+            case R.id.btnMediatorPattern:
+                //中介者模式
+                methodMediatorPattern();
+                break;
         }
         mTextViewShow.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    /**
+     * 中介者模式(调解者/调停者模式)
+     * 定义: 包装了一系列对象相互作用的方式,使得这些对象不必相互明显作用,从而实现松耦合.
+     * 当某些对象之间的作用发生改变时,不会影响其他对象,保证独立变化.
+     * 将多对多的相互作用转化为一对多的相互作用,由复杂的网状结构变为以中介者为中心的星型结构
+     *
+     *
+     */
+    private void methodMediatorPattern() {
+        //以电脑播放CD为例
+        //1.构造主板对象
+        MainBoard mainBoard=new MainBoard();
+        //2.构造其他设备
+        CDDevice cdDevice=new CDDevice(mainBoard);
+        CPU cpu=new CPU(mainBoard);
+        GraphicsCard graphicsCard=new GraphicsCard(mainBoard);
+        SoundCard soundCard=new SoundCard(mainBoard);
+        //3.将各个零部件安装到主板
+        mainBoard.setCDDevice(cdDevice);
+        mainBoard.setCPU(cpu);
+        mainBoard.setGraphicsCard(graphicsCard);
+        mainBoard.setSoundCard(soundCard);
+        //4.光驱读取cd-->cpu解析数据-->声卡显卡播放音视频(主板做中介)
+        cdDevice.load();
+
+    }
+
+    //抽象同事类
+    abstract class Colleague{
+        protected Mediator mMediator;//每个同事都该知道其中介者
+
+        public Colleague(Mediator mediator) {
+            mMediator = mediator;
+        }
+    }
+
+    //负责从主板传递来的音视频数据的解码
+    class CPU extends  Colleague{
+        private String dataVideo,dataSound;//视频音频数据
+
+        public CPU(Mediator mediator) {
+            super(mediator);
+        }
+
+        public String getDataVideo() {
+            return dataVideo;
+        }
+
+        public String getDataSound() {
+            return dataSound;
+        }
+
+        public void decodeData(String data){
+            //分割音视频数据
+            String[] tmp=data.split(",");
+            //解析以视频数据
+            dataVideo=tmp[0];
+            dataSound=tmp[1];
+            //告诉中介者自身状态改变
+            mMediator.changed(this);
+        }
+    }
+
+    //光驱负责读取光盘的数据,并提供给主板
+    class CDDevice extends Colleague{
+        public String data;//视频数据
+
+        public CDDevice(Mediator mediator) {
+            super(mediator);
+        }
+
+        //读取视频数据
+        public String read(){
+            return data;
+        }
+
+        //加载视频数据
+        public void load(){
+            data="视频数据,音频数据";
+            //通知中介者
+            mMediator.changed(this);
+        }
+    }
+
+    //显卡声卡负责播放视频和音频
+    class GraphicsCard extends Colleague{
+
+        public GraphicsCard(Mediator mediator) {
+            super(mediator);
+        }
+
+        //播放视频
+        public void videoPlay(String data){
+            LjyLogUtil.i("videoPlay:"+data);
+        }
+    }
+
+    class SoundCard extends Colleague{
+
+        public SoundCard(Mediator mediator) {
+            super(mediator);
+        }
+
+        public void soundPlay(String data){
+            LjyLogUtil.i("soundPlay:"+data);
+        }
+    }
+
+    //抽象的中介者
+    abstract class Mediator{
+        //同事对象改变时通知中介者的方法,由中介者通知其他对象
+        public abstract void changed(Colleague c);
+    }
+
+
+    //中介者实现类:主板
+    class MainBoard extends Mediator{
+        private CDDevice mCDDevice;//光驱
+        private CPU mCPU;//cpu
+        private SoundCard mSoundCard;//声卡
+        private GraphicsCard mGraphicsCard;//显卡
+
+        @Override
+        public void changed(Colleague c) {
+            if (c==mCDDevice){
+                //光驱读取完数据
+                handleCD((CDDevice)c);
+            }else if (c==mCPU){
+                //cpu解析完数据
+                handleCPU((CPU)c);
+            }
+
+        }
+
+        //处理cpu读取数据后与其他设备的交互
+        private void handleCPU(CPU cpu) {
+            mSoundCard.soundPlay(cpu.getDataSound());
+            mGraphicsCard.videoPlay(cpu.getDataVideo());
+        }
+
+        //处理光驱读取数据后与其他设备的交互
+        private void handleCD(CDDevice cdDevice) {
+            mCPU.decodeData(cdDevice.read());
+        }
+
+        public void setCDDevice(CDDevice CDDevice) {
+            mCDDevice = CDDevice;
+        }
+
+        public void setCPU(CPU CPU) {
+            mCPU = CPU;
+        }
+
+        public void setSoundCard(SoundCard soundCard) {
+            mSoundCard = soundCard;
+        }
+
+        public void setGraphicsCard(GraphicsCard graphicsCard) {
+            mGraphicsCard = graphicsCard;
+        }
     }
 
     /**
