@@ -1,10 +1,10 @@
 
-# 面试常见知识点的总结
+## 目录
 
-### 目录
-
-* [Retrofit框架的源码以及原理](#1)
-* [MVC,MVP和MVVM三种架构的区别和优点](#2)
++ [Retrofit框架的源码以及原理](#1)
++ [MVC,MVP和MVVM三种架构的区别和优点](#2)
++ [什么情况下会导致内存泄露](#3)
++ [AsyncTask原理](#4)
 
 #### <span id = "1">Retrofit框架的源码以及原理</span>
 
@@ -103,3 +103,78 @@
     所谓View的Model就是包含View的一些数据属性和操作的这么一个东东，这种模式的关键技术就是
     数据绑定（data binding），View的变化会直接影响ViewModel，ViewModel的变化或者内容也会直接体现在View上。
     这种模式实际上是框架替应用开发者做了一些工作，开发者只需要较少的代码就能实现比较复杂的交互。
+    
+#### <span id = "3">什么情况下会导致内存泄露</span>
+
+- 内存泄露的根本原因：
+    - 长生命周期的对象持有短生命周期的对象的引用。短周期对象就无法及时释放。
+1. 静态集合类引起内存泄露
+    - 主要是HashMap，Vector等，如果是静态集合 这些集合没有及时set null的话，就会一直持有这些对象。
+2. remove方法无法删除set集  
+    - 经过测试，hashcode修改后，就没有办法remove了。
+3. observer 
+    - 我们在使用监听器的时候，往往是addXxxListener，但是当我们不需要的时候，忘记removeXxxListener，就容易内存leak。
+    - 广播没有unRegisterReceiver
+4. 各种数据链接没有关闭
+    - 数据库,cursor,contentProvider,io,socket等
+5. 内部类：
+    - java中的内部类（匿名内部类），会持有宿主类的强引用this。
+    - 所以如果是new Thread这种，后台线程的操作，当线程没有执行结束时，activity不会被回收。
+    - Context的引用，当TextView 等等都会持有上下文的引用。如果有static drawable，就会导致该内存无法释放。
+6. 单例
+    - 单例是一个全局的静态对象，当持有某个复制的类A，A无法被释放，内存leak。
+    
+#### <span id = "4">AsyncTask的工作原理</span>
+
+- 构造方法
+    - public abstract class AsyncTask<Params, Progress, Result> 
+        - Params：doInBackground方法的参数类型；
+        - Progress：AsyncTask所执行的后台任务的进度类型；
+        - Result：后台任务的返回结果类型
+
+- 主要方法
+    - onPreExecute() //此方法会在后台任务执行前被调用，用于进行一些准备工作
+    - doInBackground(Params... params) //此方法中定义要执行的后台任务，在这个方法中可以调用
+    publishProgress来更新任务进度（publishProgress内部会调用onProgressUpdate方法）
+    - onProgressUpdate(Progress... values) //由publishProgress内部调用，表示任务进度更新
+    - onPostExecute(Result result) //后台任务执行完毕后，此方法会被调用，参数即为后台任务的返回结果
+    - onCancelled() //此方法会在后台任务被取消时被调用
+    - 除了doInBackground方法由AsyncTask内部线程池执行外，其余方法均在主线程中执行。
+    
+- AsyncTask是对Handler与线程池的封装
+    - AsyncTask有两个线程池：SerialExecutor 和 ThreadPoolExecutor;
+        - 前者用于任务的排队，默认是串行的线程池, 后者用于真正的执行任务。
+        - 排队执行过程:
+            1. 系统先把参数Params封装为 FutureTask 对象，它相当于Thread 的 Runnable
+            2. 接着FutureTask交给SerialExecutor的execute方法，它先把FutureTask插入到任务队列tasks中，
+            如果这个时候没有正在活动的AsyncTask任务，那么就会执行下一个AsyncTask任务，同时当一个AsyncTask
+            任务执行完毕之后，AsyncTask会继续执行其他任务直到所有任务都被执行为止。
+        - 任务线程池
+            - AsyncTask对应的线程池ThreadPoolExecutor都是进程范围内共享的，都是static的，
+            所以是AsyncTask控制着进程范围内所有的子类实例。由于这个限制的存在，当使用默认线程池时，
+            如果线程数超过线程池的最大容量，线程池就会爆掉(3.0默认串行执行，不会出现这个问题)。
+            - 针对这种情况, 可以尝试自定义线程池，配合AsyncTask使用。
+    - AsyncTask有一个 InternalHandler，用于将执行环境从线程池切换到主线程。
+    AsyncTask内部就是通过InternalHandler来发送任务执行的进度以及执行结束等消息
+    ````
+    new InternalHandler(Looper.getMainLooper())
+    //内部实现
+    public void handleMessage(Message msg) {
+        AsyncTaskResult<?> result = (AsyncTaskResult<?>) msg.obj;
+        switch (msg.what) {
+            case MESSAGE_POST_RESULT:
+                // There is only one result
+                result.mTask.finish(result.mData[0]);
+                break;
+            case MESSAGE_POST_PROGRESS:
+                result.mTask.onProgressUpdate(result.mData);
+                break;
+        }
+    }
+    
+- 局限性：
+  - 在Android 4.1版本之前，AsyncTask类必须在主线程中加载，这意味着对AsyncTask类的第一次访问必须发生在主线程中；
+  在Android 4.1以及以上版本则不存在这一限制，因为ActivityThread（代表了主线程）的main方法中会自动加载AsyncTask
+  - AsyncTask对象必须在主线程中创建
+  - AsyncTask对象的execute方法必须在主线程中调用
+  - 一个AsyncTask对象只能调用一次execute方法   
