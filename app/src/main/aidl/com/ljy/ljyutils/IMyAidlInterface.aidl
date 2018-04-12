@@ -1,12 +1,11 @@
 // IMyAidlInterface.aidl
 package com.ljy.ljyutils;
-
-// Declare any non-default types here with import statements
+import com.ljy.ljyutils.bean.Book;
 
 interface IMyAidlInterface {
-    /**
-     * Demonstrates some basic types that you can use as parameters
-     * and return values in AIDL.
-     */
     void callByService();
+    void addBookIn(in Book bean);
+    void addBookout(out Book bean);
+    void addBookInout(inout Book bean);
+    List<Book> getBooks();
 }
