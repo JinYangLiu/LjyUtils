@@ -40,6 +40,7 @@ import com.ljy.ljyutils.activity.MusicActivity;
 import com.ljy.ljyutils.activity.PDFUploadActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.PicUploadActivity;
+import com.ljy.ljyutils.activity.ProcessActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
@@ -55,7 +56,9 @@ import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
 import com.ljy.ljyutils.activity.WebViewTestActivity;
 import com.ljy.ljyutils.activity.XmlParserTestActivity;
+import com.ljy.ljyutils.bean.ProcessBean;
 import com.ljy.ljyutils.service.TimerService;
+import com.ljy.util.LjyLogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +90,9 @@ public class MainActivity extends BaseActivity {
 
         //启动Android定时器，并且启动服务
         TimerService.getConnet(this);
+
+        ProcessBean.count=18;
+        LjyLogUtil.i("ProcessBean.count="+ProcessBean.count);
     }
 
     @Override
@@ -112,7 +118,7 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射"};
+                "注解与反射","多进程通信"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -126,7 +132,7 @@ public class MainActivity extends BaseActivity {
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
-                AnnotationActivity.class};
+                AnnotationActivity.class, ProcessActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);

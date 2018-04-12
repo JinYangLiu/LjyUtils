@@ -88,7 +88,7 @@ public class LjyPermissionUtil {
 
     @Target(ElementType.METHOD)//注解的作用域
     @Retention(RetentionPolicy.RUNTIME)//注解的有效生命周期
-    public @interface PermissionHelper {
+    public @interface GetPermission {
         boolean permissionResult();
 
         int requestCode();
@@ -99,8 +99,8 @@ public class LjyPermissionUtil {
 //        clazz.getMethods();
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(PermissionHelper.class)) {
-                PermissionHelper annotation = method.getAnnotation(PermissionHelper.class);
+            if (method.isAnnotationPresent(GetPermission.class)) {
+                GetPermission annotation = method.getAnnotation(GetPermission.class);
                 if (permissionResult == annotation.permissionResult() && annotation.requestCode() == requestCode) {
                     try {
                         method.setAccessible(true);

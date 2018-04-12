@@ -321,6 +321,10 @@
         </activity>
         <activity android:name=".activity.AnnotationActivity">
         </activity>
+        <activity android:name=".activity.ProcessActivity"
+        android:process=":process"
+        >
+        </activity>
     </application>
 
 </manifest>

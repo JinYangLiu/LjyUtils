@@ -14,6 +14,7 @@ import com.ljy.ljyutils.BuildConfig;
 import com.ljy.util.LjyDatabaseUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyRetrofitUtil;
+import com.ljy.util.LjySystemUtil;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
@@ -58,6 +59,10 @@ public class MyApplication extends Application {
         initBugly();
         initUmengPush();
         initDB();
+        //当前进程名称:
+        LjyLogUtil.i("当前进程名称:"+ LjySystemUtil.getProcessName(applicationContext));
+
+
     }
 
     private void initDB() {

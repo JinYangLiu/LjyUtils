@@ -234,4 +234,17 @@ public class LjySystemUtil {
         }
     }
 
+    public static String getProcessName(Context context){
+        int pid = android.os.Process.myPid();
+        String processName =null;
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo process: manager.getRunningAppProcesses()) {
+            if(process.pid == pid)
+            {
+                processName = process.processName;
+            }
+        }
+        return processName;
+    }
+
 }
