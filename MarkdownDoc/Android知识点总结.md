@@ -187,28 +187,28 @@
 ### Android多进程通信
 
 - IPC: Inter Process Communication, 进程间通信(进程之间进行数据交换)
-- 定义: 正常情况下, 在Android中多进程是指一个应用中存在多个进程的情况
-- 实现: 除了NDK的fork外,只有一种方法, 在AndroidManifest.xml中声明四大组件时,用android:process属性指定.
-(也就是无法给一个线程或一个实体类指定其运行时所在的进程)
+
+- 多进程定义: 正常情况下, 在Android中多进程是指一个应用中存在多个进程的情况
+
+- 多进程实现: 除了NDK的fork外,只有一种方法, 在AndroidManifest.xml中声明四大组件时,用android:process属性指定.
+    (也就是无法给一个线程或一个实体类指定其运行时所在的进程)
     - 不指定 : 默认运行在主进程,进程名为包名(com.ljy.ljyutils)
     - android:process=":abc" : 运行在"包名:abc"的进程中(com.ljy.ljyutils:abc)
     - android:process="ljy.123.abc" : 运行在名为"ljy.123.abc"的进程中
     - 区别: 以':'开头的进程属于当前应用的私有进程; 而不以:开头的属于全局进程,其他应用通过ShareUID方式可以和它
     跑在同一个进程;
-    - UID: android系统会为每个应用分配唯一的UID,具有相同UID的应用才能共享数据
-    - ShareUID: AndroidManifest.xml根标签中android:sharedUserId="com.ljy.share" 
+        - UID: android系统会为每个应用分配唯一的UID,具有相同UID的应用才能共享数据
+        - ShareUID: AndroidManifest.xml根标签中android:sharedUserId="com.ljy.share" 
         - 两个应用有相同的shareUID并且签名相同才能跑在同一个进程,他们可以相互访问私有数据如data目录,组件信息等,
-    如果在同一个进程还可以共享内存数据;
-- 问题: Android会为每个进程都分配独立的虚拟机,不同虚拟机在内存上有不同的地址空间,
-这就导致不同虚拟机中访问同一个类的对象会产生多份副本,那么多进程就可能造成如下问题:
+        如果在同一个进程还可以共享内存数据;
+        
+- 多进程存在的问题: Android会为每个进程都分配独立的虚拟机,不同虚拟机在内存上有不同的地址空间,
+    这就导致不同虚拟机中访问同一个类的对象会产生多份副本,那么多进程就可能造成如下问题:
     - 静态成员,单例模式完全失效
     - 线程同步机制完全失效
-    - SharedPreferences的可靠性下降(并发写操作会导致一定几率的数据丢失)
+    - SharedPreferences的可靠性下降(由于系统对其读写有一定的缓存策略,即在内存中有一份SharedPreferences文件的缓存,因此高并发的读写访问有很大几率会丢失数据)
     - Application会多次创建
-- 跨进程通信的方式:
-   - Intent
-   - 共享文件和SharedPreferences
-   - 基于Binder的Messenger和AIDL以及Socket
+
 - 序列化:
     - Serializable接口: java提供,空接口,开销大,大量的IO操作
     - Parcelable接口: android提供,通过intent,binder传递,效率要更高,我们常用的Bundle就是其实现类
@@ -216,22 +216,42 @@
         - 数据持久化
         - 通过网络传输给其他客户端
         - 通过Intent和Binder传输数据时
-- Binder: implements IBinder   
-     - 从Android Framework角度讲,Binder是ServiceManager链接各种Manager(ActivityManager,WindowManager等)和ManagerService的桥梁
-     - 从Android 应用层来说,Binder是客户端和服务端进行通信的媒介(bindService)
-        - Binder主要用在Service中包括AIDL和Messenger
-        - 普通的Service中的Binder不涉及进程间通信,没有触及到Binder的核心
-        - Messenger的底层其实就是AIDL
-- AIDL: 
-    - 服务端: 
-        - 创建要操作的实体类，实现 Parcelable 接口
-        - 新建aidl文件夹，在其中创建接口aidl文件以及实体类的映射aidl文件
-        - Make project
-        - 服务service中实现AidlInterface.Stub对象, 并在onBind方法中返回
-    - 客户端:
-        - copy服务端提供的aidl文件夹和实体类
-        - Make project
-        - ServiceConnection.onServiceConnected方法中调用AidlInterface.Stub.asInterface(IBinder)创建AidlInterface实例,并调用其方法
+        
+- 跨进程通信的方式:
+    - Intent+Bundle
+        - 四大组件中的Activity,Service,Receiver都支持使用Bundle传递数据,所以当我们启动不同进程的组件时,就可以用Intent+bundle进行数据传递        
+    - 共享文件和SharedPreferences
+        - 两个进程通过读写同一个文件来交换数据
+        - 对象可以通过序列化和反序列化进行读写
+        - SharedPreferences本质就是读写文件
+    - 基于Binder的Messenger和AIDL
+        - Binder: implements IBinder   
+             - 从Android Framework角度讲,Binder是ServiceManager链接各种Manager(ActivityManager,WindowManager等)和ManagerService的桥梁
+             - 从Android 应用层来说,Binder是客户端和服务端进行通信的媒介(bindService)
+                - Binder主要用在Service中,包括普通的Service,AIDL和Messenger
+                - 普通的Service中的Binder不涉及进程间通信,没有触及到Binder的核心
+                - Messenger(信使,轻量级的IPC方案)
+                    - 通过它可以在不同进程间传递Message对象
+                    - 底层其实就是AIDL, 只是进一步进行了封装, 以方便使用,从下面这个构造方法就可以看出
+                    ````
+                    public Messenger(IBinder target) {
+                        mTarget = IMessenger.Stub.asInterface(target);
+                    }
+                    
+                - AIDL: 
+                    - 服务端: 
+                        - 创建要操作的实体类，实现 Parcelable 接口
+                        - 新建aidl文件夹，在其中创建接口aidl文件以及实体类的映射aidl文件
+                        - Make project
+                        - 服务service中实现AidlInterface.Stub对象, 并在onBind方法中返回
+                    - 客户端:
+                        - copy服务端提供的aidl文件夹和实体类
+                        - Make project
+                        - ServiceConnection.onServiceConnected方法中调用AidlInterface.Stub.asInterface(IBinder)创建AidlInterface实例,并调用其方法
+        
+    - ContentProvider
+    - Socket
+
 
    
    
