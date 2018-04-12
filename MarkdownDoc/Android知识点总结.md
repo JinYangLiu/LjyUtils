@@ -1,12 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-## 目录
+- [Retrofit框架的源码以及原理](#retrofit%E6%A1%86%E6%9E%B6%E7%9A%84%E6%BA%90%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%8E%9F%E7%90%86)
+- [MVC,MVP和MVVM三种架构的区别和优点](#mvcmvp%E5%92%8Cmvvm%E4%B8%89%E7%A7%8D%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E4%BC%98%E7%82%B9)
+- [什么情况下会导致内存泄露](#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2)
+- [AsyncTask的工作原理](#asynctask%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
+- [Android多进程通信](#android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1)
 
-+ [Retrofit框架的源码以及原理](#1)
-+ [MVC,MVP和MVVM三种架构的区别和优点](#2)
-+ [什么情况下会导致内存泄露](#3)
-+ [AsyncTask原理](#4)
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-#### <span id = "1">Retrofit框架的源码以及原理</span>
+
+### Retrofit框架的源码以及原理
 
 - 使用注解+java接口来定义后台服务API接口
 - 使用步骤
@@ -67,7 +72,7 @@
             - 协调调用者与被调用者，降低系统耦合度
             - 减小外部接口与内部接口实现的关联，降低耦合
 
-#### <span id = "2">MVC,MVP和MVVM三种架构的区别和优点</span>
+### MVC,MVP和MVVM三种架构的区别和优点
 
 - MVC
     - View：对应于xml布局文件
@@ -104,7 +109,7 @@
     数据绑定（data binding），View的变化会直接影响ViewModel，ViewModel的变化或者内容也会直接体现在View上。
     这种模式实际上是框架替应用开发者做了一些工作，开发者只需要较少的代码就能实现比较复杂的交互。
     
-#### <span id = "3">什么情况下会导致内存泄露</span>
+### 什么情况下会导致内存泄露
 
 - 内存泄露的根本原因：
     - 长生命周期的对象持有短生命周期的对象的引用。短周期对象就无法及时释放。
@@ -124,7 +129,7 @@
 6. 单例
     - 单例是一个全局的静态对象，当持有某个复制的类A，A无法被释放，内存leak。
     
-#### <span id = "4">AsyncTask的工作原理</span>
+### AsyncTask的工作原理
 
 - 构造方法
     - public abstract class AsyncTask<Params, Progress, Result> 
@@ -178,3 +183,9 @@
   - AsyncTask对象必须在主线程中创建
   - AsyncTask对象的execute方法必须在主线程中调用
   - 一个AsyncTask对象只能调用一次execute方法   
+
+### Android多进程通信
+
+- IPC: Inter Process Communication, 进程间通信(进程之间进行数据交换)
+- Android实现多进程,除了NDK的fork外,就只能是在AndroidManifest.xml中声明组件时,用Android:process属性指定
+    
