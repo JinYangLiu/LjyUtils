@@ -1,8 +1,14 @@
-## 目录
-+ [java多线程sleep与wait区别](#1)
-+ [Collection 和Collections的区别](#2)
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-#### <span id = "1">java多线程sleep与wait区别</span>
+- [java多线程sleep与wait区别](#java%E5%A4%9A%E7%BA%BF%E7%A8%8Bsleep%E4%B8%8Ewait%E5%8C%BA%E5%88%AB)
+- [Collection和Collections的区别](#collection%E5%92%8Ccollections%E7%9A%84%E5%8C%BA%E5%88%AB)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+#### java多线程sleep与wait区别
 
 - sleep
     - 属于Thread类中
@@ -20,7 +26,7 @@
     notify()方法后本线程才进入对象锁定池，准备获取对象锁进入运行状态
     - 由于wait函数的特殊意义，所以他是应该放在同步语句块中的，这样才有意义
     
-#### <span id = "2">Collection和Collections的区别</span>
+#### Collection和Collections的区别
 
 - java.util.Collection是一个集合接口
     - 它提供了对集合对象进行基本操作的通用接口方法
