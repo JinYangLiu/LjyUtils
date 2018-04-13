@@ -9,11 +9,13 @@ apply plugin: 'android-aspectjx'
 //apply plugin: 'com.neenbedankt.android-apt'
 
 android {
+//    compileSdkVersion 'android-P'
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.ljy.ljyutils"
         minSdkVersion 16
+//        targetSdkVersion 'P'
         targetSdkVersion 26
         versionCode 115
         versionName "1.1.5"

@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 
 /**
  * Created by Mr.LJY on 2018/4/8.
@@ -130,6 +131,19 @@ public class LjyScreenUtils {
 //            getWindow().setNavigationBarColor(Color.TRANSPARENT);//底部虚拟按键
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
+    }
 
+    /**
+     * android P 全屏时 适配刘海屏
+     * @param activity
+     */
+    public static void cutOut(Activity activity){
+//        if (Build.VERSION.SDK_INT>=27){
+//            WindowManager.LayoutParams lp
+//                    =activity.getWindow().getAttributes();
+//            lp.layoutInDisplayCutoutMode =
+//                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+//            activity.getWindow().setAttributes(lp);
+//        }
     }
 }
