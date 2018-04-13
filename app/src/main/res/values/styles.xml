@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <!--ActionBar 颜色-->
         <item name="colorPrimary">@color/thin_blue</item>
@@ -19,6 +19,7 @@
     <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/music_bg</item>
     </style>
     <style name="mainBtnStyle">

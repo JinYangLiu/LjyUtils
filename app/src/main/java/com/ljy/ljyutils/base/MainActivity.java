@@ -59,6 +59,8 @@ import com.ljy.ljyutils.activity.XmlParserTestActivity;
 import com.ljy.ljyutils.bean.ProcessBean;
 import com.ljy.ljyutils.service.TimerService;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyScreenUtils;
+import com.ljy.util.LjyToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,18 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LjyScreenUtils.noStatusBar(mActivity);
+        
+        LjyScreenUtils.setCutoutMode(mActivity);
+
+        LjyLogUtil.i("VERSION.SDK_INT=" + android.os.Build.VERSION.SDK_INT);
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            int cutoutHeight = LjyScreenUtils.getCutoutHeight(mRecyclerView);
+            LjyLogUtil.i("cutoutHeight=" + cutoutHeight);
+            LjyToastUtil.showSnackBar(mRecyclerView, "cutoutHeight=" + cutoutHeight);
+        }
+
         ButterKnife.bind(mActivity);
         isNight = getSpUtilInstance().get(IS_NIGHT, false);
         setNightMode(isNight);
@@ -91,8 +105,8 @@ public class MainActivity extends BaseActivity {
         //启动Android定时器，并且启动服务
         TimerService.getConnet(this);
 
-        ProcessBean.count=18;
-        LjyLogUtil.i("ProcessBean.count="+ProcessBean.count);
+        ProcessBean.count = 18;
+        LjyLogUtil.i("ProcessBean.count=" + ProcessBean.count);
     }
 
     @Override
@@ -118,7 +132,7 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射","多进程通信"};
+                "注解与反射", "多进程通信"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,

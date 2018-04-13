@@ -6,9 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.WindowManager;
 
 /**
  * Created by Mr.LJY on 2018/4/8.
@@ -51,19 +51,16 @@ public class LjyScreenUtils {
      * @param context
      * @return
      */
-    public static int getStatusHeight(Context context)
-    {
+    public static int getStatusHeight(Context context) {
 
         int statusHeight = -1;
-        try
-        {
+        try {
             Class<?> clazz = Class.forName("com.android.internal.R$dimen");
             Object object = clazz.newInstance();
             int height = Integer.parseInt(clazz.getField("status_bar_height")
                     .get(object).toString());
             statusHeight = context.getResources().getDimensionPixelSize(height);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return statusHeight;
@@ -75,8 +72,7 @@ public class LjyScreenUtils {
      * @param activity
      * @return
      */
-    public static Bitmap snapShotWithStatusBar(Activity activity)
-    {
+    public static Bitmap snapShotWithStatusBar(Activity activity) {
         View view = activity.getWindow().getDecorView();
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
@@ -96,8 +92,7 @@ public class LjyScreenUtils {
      * @param activity
      * @return
      */
-    public static Bitmap snapShotWithoutStatusBar(Activity activity)
-    {
+    public static Bitmap snapShotWithoutStatusBar(Activity activity) {
         View view = activity.getWindow().getDecorView();
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
@@ -135,15 +130,30 @@ public class LjyScreenUtils {
 
     /**
      * android P 全屏时 适配刘海屏
-     * @param activity
+     * <p>
+     * 刘海屏只有是全屏时才需要手动适配, 有状态栏时(即使是沉浸式/透明的)是不用我们单独适配的
      */
-    public static void cutOut(Activity activity){
-//        if (Build.VERSION.SDK_INT>=27){
+    public static void setCutoutMode(Activity activity) {
+//       setCutoutMode(activity,WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS);
+    }
+
+    public static void setCutoutMode(Activity activity, int mode) {
+        if (Build.VERSION.SDK_INT >= 27) {
 //            WindowManager.LayoutParams lp
 //                    =activity.getWindow().getAttributes();
-//            lp.layoutInDisplayCutoutMode =
-//                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+//            lp.layoutInDisplayCutoutMode =mode;
 //            activity.getWindow().setAttributes(lp);
-//        }
+        }
+    }
+
+    /**
+     * 获取刘海高度
+     */
+    @RequiresApi(api = 28)
+    public static int getCutoutHeight(View view) {
+        int cutoutHeight = 0;
+//        DisplayCutout displayCutout = view.getRootWindowInsets().getDisplayCutout();
+//        cutoutHeight = displayCutout.getSafeInsetTop();
+        return cutoutHeight;
     }
 }
