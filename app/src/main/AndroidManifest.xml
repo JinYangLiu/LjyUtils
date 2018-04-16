@@ -47,6 +47,8 @@
             </intent-filter>
         </receiver>
         //注册service
+        <service android:name=".service.MessengerService"
+                 android:process=":messenger"/>
         <service android:name=".service.MyNormalService"/>
         <service android:name=".service.MyForegroundNormalService"/>
         //注册并声明为远程服务

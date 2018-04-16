@@ -16,5 +16,10 @@
         android:onClick="onBtnClick"
         android:text="反序列化"
         style="@style/btnStyle"/>
+    <Button
+        android:id="@+id/btn3"
+        android:onClick="onBtnClick"
+        android:text="Messenger"
+        style="@style/btnStyle"/>
 
 </LinearLayout>

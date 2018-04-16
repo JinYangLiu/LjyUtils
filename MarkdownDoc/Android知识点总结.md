@@ -237,6 +237,7 @@
                     public Messenger(IBinder target) {
                         mTarget = IMessenger.Stub.asInterface(target);
                     }
+                    - 具体使用请看本项目中的MessengerService.java及其注册调用
                     
                 - AIDL: 
                     - 服务端: 

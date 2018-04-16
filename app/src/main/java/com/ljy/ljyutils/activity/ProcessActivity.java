@@ -1,13 +1,22 @@
 package com.ljy.ljyutils.activity;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.view.View;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.bean.ProcessBean;
 import com.ljy.ljyutils.bean.SeriBean;
+import com.ljy.ljyutils.service.MessengerService;
 import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
@@ -35,6 +44,30 @@ public class ProcessActivity extends BaseActivity {
         LjyLogUtil.i("ProcessBean.count=" + ProcessBean.count);
     }
 
+    //Messenger
+    private Messenger mService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = new Messenger(service);
+            Message msg = Message.obtain(null, MessengerService.MSG_FROM_CLIENT);
+            Bundle data = new Bundle();
+            data.putString("msg", "Hello Messenger ~~~");
+            msg.setData(data);
+            try {
+                mService.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+
     public void onBtnClick(View view) {
         switch (view.getId()) {
             case R.id.btn1:
@@ -44,6 +77,10 @@ public class ProcessActivity extends BaseActivity {
             case R.id.btn2:
                 if (checkPremission(Manifest.permission.READ_EXTERNAL_STORAGE, 102))
                     methodIn();
+                break;
+            case R.id.btn3:
+                Intent intent = new Intent(this, MessengerService.class);
+                bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
                 break;
         }
     }
