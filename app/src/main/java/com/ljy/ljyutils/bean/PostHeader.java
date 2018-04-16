@@ -1,6 +1,6 @@
 package com.ljy.ljyutils.bean;
 
-import com.ljy.util.LjyEncryUtil;
+import com.ljy.util.LjyEncryptUtil;
 import com.ljy.util.LjyTimeUtil;
 
 /**
@@ -22,7 +22,7 @@ public class PostHeader {
         this.appSecret = appSecret;
         this.timeStamp = LjyTimeUtil.timestampToDate(System.currentTimeMillis(),"yyyyMMddHHmmss");
         String row="appId:"+appId+"|appSecret:"+appSecret+"|timeStamp:"+timeStamp+"|"+safeCode;
-        this.accessToken= LjyEncryUtil.getMD5(row);
+        this.accessToken= LjyEncryptUtil.getMD5(row);
     }
 
     public String getAppId() {

@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         LjyScreenUtils.noStatusBar(mActivity);
-        
+
         LjyScreenUtils.setCutoutMode(mActivity);
 
         LjyLogUtil.i("VERSION.SDK_INT=" + android.os.Build.VERSION.SDK_INT);

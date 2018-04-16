@@ -18,7 +18,7 @@ import com.ljy.bean.DownloadBean;
 import com.ljy.ljyutils.BuildConfig;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
-import com.ljy.util.LjyEncryUtil;
+import com.ljy.util.LjyEncryptUtil;
 import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
@@ -96,7 +96,7 @@ public class AppUpdateActivity extends BaseActivity {
             case R.id.btn_getApkHash:
                 if (mDownloadBean == null)
                     return;
-                byte[] apkHash = LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(mDownloadBean.getSaveFile()));
+                byte[] apkHash = LjyEncryptUtil.getMD5(LjyFileUtil.getBytesFromFile(mDownloadBean.getSaveFile()));
                 String hash1 ;
                 try {
                     hash1 = new String(apkHash,"utf-8");
@@ -203,7 +203,7 @@ public class AppUpdateActivity extends BaseActivity {
             return;
         }
 
-        String fileMd5 = LjyStringUtil.byte2hex(LjyEncryUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
+        String fileMd5 = LjyStringUtil.byte2hex(LjyEncryptUtil.getMD5(LjyFileUtil.getBytesFromFile(apkFile)));
         LjyLogUtil.i("fileMd5:" + fileMd5);
         if (!fileMd5.equals("8523F7F2E26F8B43B2A01D92FE1A4D5B")) {
             LjyToastUtil.toast(mContext, "apk的hash值不匹配哦");

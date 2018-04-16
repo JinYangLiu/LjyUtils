@@ -11,8 +11,9 @@ import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyDensityUtil;
-import com.ljy.util.LjyEncryUtil;
+import com.ljy.util.LjyEncryptUtil;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyQRcodeUtil;
 import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjySystemUtil;
@@ -90,36 +91,36 @@ public class UseUtilsActivity extends BaseActivity {
         String str1 = "刘123ab.|";
         LjyLogUtil.i("str1:" + str1);
         //凯撒加密
-        String encodeCaesar = LjyEncryUtil.encodeCaesar(str1, count);
+        String encodeCaesar = LjyEncryptUtil.encodeCaesar(str1, count);
         LjyLogUtil.i("encodeCaesar:" + encodeCaesar);
-        LjyLogUtil.i("decodeCaesar:" + LjyEncryUtil.decodeCaesar(encodeCaesar, count));
+        LjyLogUtil.i("decodeCaesar:" + LjyEncryptUtil.decodeCaesar(encodeCaesar, count));
         //aes加密
-        String aesKey = LjyEncryUtil.getAESKey();
+        String aesKey = LjyEncryptUtil.getAESKey();
         LjyLogUtil.i("aesKey:" + aesKey);
-        String encodeAES = LjyEncryUtil.encodeAES(str1, aesKey, false);
+        String encodeAES = LjyEncryptUtil.encodeAES(str1, aesKey, false);
         LjyLogUtil.i("encodeAES:" + encodeAES);
-        LjyLogUtil.i("decodeAES:" + LjyEncryUtil.decodeAES(encodeAES, aesKey, false));
-        encodeAES = LjyEncryUtil.encodeAES(str1, aesKey, true);
+        LjyLogUtil.i("decodeAES:" + LjyEncryptUtil.decodeAES(encodeAES, aesKey, false));
+        encodeAES = LjyEncryptUtil.encodeAES(str1, aesKey, true);
         LjyLogUtil.i("encodeAES_hex:" + encodeAES);
-        LjyLogUtil.i("decodeAES_hex:" + LjyEncryUtil.decodeAES(encodeAES, aesKey, true));
+        LjyLogUtil.i("decodeAES_hex:" + LjyEncryptUtil.decodeAES(encodeAES, aesKey, true));
         //des加密
-        String ivStr = LjyEncryUtil.getDESIV();
-        String encodeDES = LjyEncryUtil.encodeDES(str1, aesKey, ivStr);
+        String ivStr = LjyEncryptUtil.getDESIV();
+        String encodeDES = LjyEncryptUtil.encodeDES(str1, aesKey, ivStr);
         LjyLogUtil.i("encodeDES:" + encodeDES);
-        LjyLogUtil.i("decodeDES:" + LjyEncryUtil.decodeDES(encodeDES, aesKey, ivStr));
+        LjyLogUtil.i("decodeDES:" + LjyEncryptUtil.decodeDES(encodeDES, aesKey, ivStr));
         //RSA
-        KeyPair key = LjyEncryUtil.getRsaKey(1024);
-        String encodeRSA = LjyEncryUtil.encodeRSA(str1, key.getPublic());
+        KeyPair key = LjyEncryptUtil.getRsaKey(1024);
+        String encodeRSA = LjyEncryptUtil.encodeRSA(str1, key.getPublic());
         LjyLogUtil.i("encodeRSA:" + encodeRSA);
-        LjyLogUtil.i("decodeRSA:" + LjyEncryUtil.decodeRSA(encodeRSA, key.getPrivate()));
+        LjyLogUtil.i("decodeRSA:" + LjyEncryptUtil.decodeRSA(encodeRSA, key.getPrivate()));
         //MD5
-        LjyLogUtil.i("getMD5:" + LjyEncryUtil.getMD5(str1));
+        LjyLogUtil.i("getMD5:" + LjyEncryptUtil.getMD5(str1));
         //SHA
-        LjyLogUtil.i("getSHA256:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_256));
-        LjyLogUtil.i("getSHA512:" + LjyEncryUtil.getSHA(str1, LjyEncryUtil.SHA_512));
+        LjyLogUtil.i("getSHA256:" + LjyEncryptUtil.getSHA(str1, LjyEncryptUtil.SHA_256));
+        LjyLogUtil.i("getSHA512:" + LjyEncryptUtil.getSHA(str1, LjyEncryptUtil.SHA_512));
         //二维码
         int size = LjyDensityUtil.dp2px(mContext, 200f);
-        mImageView.setImageBitmap(LjyEncryUtil.getQrCode(str1, size, size, true));
+        mImageView.setImageBitmap(LjyQRcodeUtil.createQRCode(str1, size, size, true));
         mImageView.setClickable(true);
         //一个view左右晃动的动画
         final Animation mShakeAnim = AnimationUtils.loadAnimation(mContext, R.anim.shake_x);
