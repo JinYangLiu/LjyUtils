@@ -60,12 +60,6 @@
                 android:text="建造者模式"
                 style="@style/btnStyle"/>
             <Button
-                android:id="@+id/btnFacadePattern"
-                android:onClick="onDesignBtnClick"
-                android:text="外观模式"
-                style="@style/btnStyle"/>
-
-            <Button
                 android:id="@+id/btnProtoPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="原型模式"
@@ -114,6 +108,31 @@
                 android:id="@+id/btnMediatorPattern"
                 android:onClick="onDesignBtnClick"
                 android:text="中介者模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnCompositePattern"
+                android:onClick="onDesignBtnClick"
+                android:text="组合模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnDecoratorPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="装饰模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnFlyweightPattern"
+                android:onClick="onDesignBtnClick"
+                android:text="享元模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnFacadePattern"
+                android:onClick="onDesignBtnClick"
+                android:text="外观模式"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnBridgePattern"
+                android:onClick="onDesignBtnClick"
+                android:text="桥接模式"
                 style="@style/btnStyle"/>
         </LinearLayout>
     </HorizontalScrollView>

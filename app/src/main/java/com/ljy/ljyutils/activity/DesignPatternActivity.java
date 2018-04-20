@@ -1,8 +1,10 @@
 package com.ljy.ljyutils.activity;
 
-import android.app.KeyguardManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,84 +67,100 @@ public class DesignPatternActivity extends BaseActivity {
         LjyLogUtil.setAppendLogMsg(true);
         switch (view.getId()) {
             case R.id.btnSingleton:
-                //单例模式
+                //1.单例模式
                 methodSingleton();
                 break;
+            case R.id.btnBuilderPattern:
+                //2.建造者模式
+                methodBuilderPattern();
+                break;
+            case R.id.btnProtoPattern:
+                //3.原型模式
+                methodProtoPattern();
+                break;
             case R.id.btnSimpleFactoryPattern:
-                //简单工厂模式
+                //4.1.简单工厂模式
                 methodSimpleFactoryPattern();
                 break;
             case R.id.btnFactoryMethod:
-                //工厂方法模式
+                //4.2.工厂方法模式
                 methodFactoryMethod();
                 break;
             case R.id.btnAbstractFactoryPattern:
-                //抽象工厂模式
+                //5.抽象工厂模式
                 methodAbstractFactoryPattern();
                 break;
             case R.id.btnStrategyPattern:
-                //策略模式
+                //6.策略模式
                 methodStrategyPattern();
                 break;
-            case R.id.btnAdapterPattern:
-                //适配器模式
-                methodAdapterPattern();
-                break;
-            case R.id.btnProxyPattern:
-                //代理模式
-                methodProxyPattern();
-                break;
-            case R.id.btnTemplateMethodPattern:
-                //模板方法模式
-                methodTemplateMethodPattern();
-                break;
-            case R.id.btnBuilderPattern:
-                //建造者模式
-                methodBuilderPattern();
-                break;
-            case R.id.btnFacadePattern:
-                //外观模式
-                methodFacadePattern();
-                break;
-            case R.id.btnProtoPattern:
-                //原型模式
-                methodProtoPattern();
-                break;
             case R.id.btnStatePattern:
-                //状态模式
+                //7.状态模式
                 methodStatePattern();
                 break;
             case R.id.btnDutyChainPattern:
-                //责任链模式
+                //8.责任链模式
                 methodDutyChainPattern();
                 break;
             case R.id.btnInterpreterPattern:
-                //解释器模式
+                //9.解释器模式
                 methodInterpreterPattern();
                 break;
             case R.id.btnICommandPattern:
-                //命令模式
+                //10.命令模式
                 methodICommandPattern();
                 break;
             case R.id.btnObserverPattern:
-                //观察者模式
+                //11.观察者模式
                 methodObserverPattern();
                 break;
             case R.id.btnMemoPattern:
-                //备忘录模式
+                //12.备忘录模式
                 methodMemoPattern();
                 break;
             case R.id.btnIteratorPattern:
-                //迭代器模式
+                //13.迭代器模式
                 methodIteratorPattern();
                 break;
+            case R.id.btnTemplateMethodPattern:
+                //14.模板方法模式
+                methodTemplateMethodPattern();
+                break;
             case R.id.btnVisitorPattern:
-                //访问者模式
+                //15.访问者模式
                 methodVisitorPattern();
                 break;
             case R.id.btnMediatorPattern:
-                //中介者模式
+                //16.中介者模式
                 methodMediatorPattern();
+                break;
+            case R.id.btnProxyPattern:
+                //17.代理模式
+                methodProxyPattern();
+                break;
+            case R.id.btnCompositePattern:
+                //18.组合模式
+                methodCompositePattern();
+                break;
+            case R.id.btnAdapterPattern:
+                //19.适配器模式
+                methodAdapterPattern();
+                break;
+            case R.id.btnDecoratorPattern:
+                //20.装饰模式
+                methodDecoratorPattern();
+                break;
+            case R.id.btnFlyweightPattern:
+                //21.享元模式
+                methodFlyweightPattern();
+                break;
+            case R.id.btnFacadePattern:
+                //22.外观模式
+                methodFacadePattern();
+                break;
+            case R.id.btnBridgePattern:
+                //23.桥接模式
+                methodBridgePattern();
                 break;
         }
         mTextViewShow.append(LjyLogUtil.getAllLogMsg());
@@ -150,22 +168,498 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     /**
+     * 桥接模式/桥梁模式
+     * 结构型设计模式
+     * 定义: 将抽象部分与实现部分分离,使他们都可以独立的进行变化
+     * 作用: 连接抽象部分与实现部分
+     * 使用场景:
+     * 任何多维度变化类或者多个树状类之间的耦合都可以使用桥接模式来实现解耦
+     * 1.需要在抽象化角色与具体化角色间增加更多灵活性,避免建立静态的继承联系
+     * 2.不希望使用继承或由于多层次继承导致系统类的个数急剧增加时
+     * 3.一个类存在两个独立变化的维度,且这两个维度都需要进行扩展
+     * Android源码中的使用:
+     * 1.CheckBox,Button,TextView,等View的绘制都是由与View相关的功能实现类DisplayList,HardwareLayer,Canvas负责
+     * 2.Adapter和AdapterView(AbsListView的父类)
+     * 3.Window和WindowManager
+     *
+     *
+     */
+    private void methodBridgePattern() {
+        //以咖啡大小杯和是否加糖为例,不管是coffee变化(大小杯),还是CoffeeAdditives变化(风味)
+        //其相对于对方而言都是独立的,两者唯一的联系就是coffee中保持对coffeeAdditives的引用,为二者间的纽带,这就是桥接模式
+        //原味
+        Ordinary ordinary=new Ordinary();
+        //加糖
+        Sugar sugar=new Sugar();
+        //大杯原味
+        LargeCoffee largeCoffeeOrdinary=new LargeCoffee(ordinary);
+        largeCoffeeOrdinary.makeCoffee();
+        //大杯加糖
+        LargeCoffee largeCoffeeSugar=new LargeCoffee(sugar);
+        largeCoffeeSugar.makeCoffee();
+        //小杯原味
+        SmallCoffee smallCoffeeOrdinary=new SmallCoffee(ordinary);
+        smallCoffeeOrdinary.makeCoffee();
+        //小杯加糖
+        SmallCoffee smallCoffeeSugar=new SmallCoffee(sugar);
+        smallCoffeeSugar.makeCoffee();
+    }
+
+    //咖啡中添加调味
+    public abstract class CoffeeAdditives{
+        public abstract String addSomething();
+    }
+
+    public class Sugar extends CoffeeAdditives{
+
+        @Override
+        public String addSomething() {
+            return "加糖";
+        }
+    }
+
+    public class Ordinary extends CoffeeAdditives{
+
+        @Override
+        public String addSomething() {
+            return "原味";
+        }
+    }
+
+    public abstract class Coffee{
+        protected CoffeeAdditives impl;
+
+        public Coffee(CoffeeAdditives impl) {
+            this.impl = impl;
+        }
+
+        public abstract void makeCoffee();
+    }
+
+    //大杯
+    public class LargeCoffee extends Coffee{
+        public LargeCoffee(CoffeeAdditives impl) {
+            super(impl);
+        }
+
+        @Override
+        public void makeCoffee() {
+            LjyLogUtil.i("大杯的"+impl.addSomething()+"咖啡");
+        }
+    }
+    //小杯
+    public class SmallCoffee extends Coffee{
+        public SmallCoffee(CoffeeAdditives impl) {
+            super(impl);
+        }
+
+        @Override
+        public void makeCoffee() {
+            LjyLogUtil.i("小杯的"+impl.addSomething()+"咖啡");
+        }
+    }
+
+
+    /**
+     * 享元模式 :
+     * 作用: 对象共享,避免创建多对象,提升性能减少内存
+     * 定义: 运用共享技术有效的支持大量细粒度的对象。
+     * 使用场景:
+     * 1.系统中存在大量的相似对象
+     * 2.细粒度的对象都具备较接近的外部状态, 而内部状态与环境无关,
+     * 也就是说对象没有特定身份
+     * 3.需要缓冲池的场景
+     * android源码中的使用:
+     * Handler中的getPostMessage所得到的message对象就是通过享元模式创建的
+     * 优点:
+     * 大幅度降低内存中对象的数量
+     * 缺点:
+     * 为了使对象可以共享,需要将一些状态外部化,使得程序逻辑复杂化,而且读取外部状态使得运行时间稍微变长
+     */
+    private void methodFlyweightPattern() {
+        //以购买火车票为例
+        Ticket ticket1 = TicketFactory.getTicket("北京", "廊坊");
+        ticket1.showTicketInfo("软座");
+        Ticket ticket2 = TicketFactory.getTicket("北京", "云南");
+        ticket2.showTicketInfo("上铺");
+        Ticket ticket3 = TicketFactory.getTicket("北京", "廊坊");
+        ticket3.showTicketInfo("站票");
+        doSomeThing();
+        LjyLogUtil.i("从开机到现在的毫秒数（手机睡眠的时间不包括在内）= SystemClock.uptimeMillis():" + SystemClock.uptimeMillis());
+        LjyLogUtil.i("从1970年1月1日 UTC到现在的毫秒数 = System.currentTimeMillis():" + System.currentTimeMillis());
+
+    }
+
+    //handler创建时如果不传递looper,那么就持有当前线程的looper,从这个looper中获取消息队列
+    Handler mHandler = new Handler();
+//    Handler mHandler2 = new Handler(Looper.getMainLooper());
+
+    private void doSomeThing() {
+        new Thread() {
+            @Override
+            public void run() {
+                //子线程中创建handler
+                Looper.prepare();//创建Looper,并且会绑定到ThreadLocal中
+                Handler handler=new Handler();
+                Handler handler2=new Handler(Looper.getMainLooper());
+                Looper.loop();//启动消息循环
+                try {
+                    //to do something
+                    Thread.sleep(1000);
+//                    mHandler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            //更新UI
+//                            mTextViewShow.append("\nnew Thread.run(){mHandler.post(new Runnable(){run{更新UI}})}");
+//                        }
+//                    });
+                    handler2.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTextViewShow.append("\nThread中new Handler(Looper.getMainLooper()) 更新UI");
+                        }
+                    });
+                    /**
+                     * 源码:
+                         public final boolean post(Runnable r){
+                            return  sendMessageDelayed(getPostMessage(r), 0);
+                         }
+
+                         private static Message getPostMessage(Runnable r) {
+                             Message m = Message.obtain();
+                             m.callback = r;
+                             return m;
+                         }
+
+                     // 可以看到Message对象并不是通过new去大量构建的,而是通过一个默认大小为50的对象池
+                     public static Message obtain() {
+                         synchronized (sPoolSync) {
+                             if (sPool != null) {
+                                 Message m = sPool;
+                                 sPool = m.next;
+                                 m.next = null;
+                                 m.flags = 0; // clear in-use flag
+                                 sPoolSize--;
+                                 return m;
+                             }
+                         }
+                         return new Message();
+                     }
+
+
+                     */
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    public interface Ticket {
+        //展示车票信息的函数
+        void showTicketInfo(String bunk);
+    }
+
+    //火车票
+    public static class TrainTicket implements Ticket {
+        public String from;//始发地
+        public String to;//目的地
+        public String bunk;//铺位
+        public int price;//价格
+
+        public TrainTicket(String from, String to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public void showTicketInfo(String bunk) {
+            this.bunk = bunk;
+            price = new Random().nextInt(500);
+            LjyLogUtil.i("购买 从 " + from + " 到 " + to + " 的 " + bunk + " " +
+                    "火车票" + ", 价格: " + price);
+        }
+
+    }
+
+    public static class TicketFactory {
+        static Map<String, Ticket> sTicketMap = new HashMap<>();
+
+        public static Ticket getTicket(String from, String to) {
+            //1.普通写法: 每次都new会消耗资源和内存,甚至导致OOM
+//            return new TrainTicket(from, to);
+            //2.享元模式
+            String key = from + "-" + to;
+            if (sTicketMap.containsKey(key)) {
+                LjyLogUtil.i("使用缓存==> " + key);
+                return sTicketMap.get(key);
+            } else {
+                LjyLogUtil.i("创建对象==> " + key);
+                Ticket ticket = new TrainTicket(from, to);
+                sTicketMap.put(key, ticket);
+                return ticket;
+            }
+
+        }
+    }
+
+    /**
+     * 装饰模式(包装模式)
+     * 结构性设计模式
+     * 使用一种对客户端透明的方式来动态的扩展对象的功能,也是继承关系的一种替代方案
+     * 定义: 动态的给一个对象添加一下额外的职责,就增加功能来说,装饰模式相比生成子类更为灵活
+     * 使用场景: 需要透明且动态的扩张类的功能时
+     * 与代理模式的区别:装饰模式是为所装饰的对象增强功能;代理模式则是对代理的对象施加控制,但不对对象本身的功能进行增强;
+     * Android源码中的使用:
+     * Activity-->ContextThemeWrapper-->ContextWrapper-->Context
+     * Service-->ContextWrapper-->Context
+     * Application-->ContextWrapper-->Context
+     * Context是抽象类,而上面三者这可以看作其装饰类
+     */
+    private void methodDecoratorPattern() {
+        //以人穿衣服为例
+        People people = new Boy();
+        LjyLogUtil.i("PoorCloth:");
+        PeopleCloth clothPoor = new PoorCloth(people);
+        clothPoor.dressed();
+        LjyLogUtil.i("RichCloth:");
+        PeopleCloth clothRich = new RichCloth(people);
+        clothRich.dressed();
+    }
+
+    public abstract class People {
+        //穿着
+        public abstract void dressed();
+    }
+
+    public class Boy extends People {
+
+        @Override
+        public void dressed() {
+            LjyLogUtil.i("穿了内裤哦");
+        }
+    }
+
+    public abstract class PeopleCloth extends People {
+        //持有一个people的引用
+        protected People mPeople;
+
+        public PeopleCloth(People people) {
+            mPeople = people;
+        }
+
+        @Override
+        public void dressed() {
+            mPeople.dressed();
+        }
+    }
+
+    public class RichCloth extends PeopleCloth {
+
+        public RichCloth(People people) {
+            super(people);
+        }
+
+        //穿T恤
+        private void dressShirt() {
+            LjyLogUtil.i("穿件T恤");
+        }
+
+        //穿皮衣
+        private void dressLeather() {
+            LjyLogUtil.i("穿皮衣");
+        }
+
+        //穿牛仔裤
+        private void dressJean() {
+            LjyLogUtil.i("穿牛仔裤");
+        }
+
+        @Override
+        public void dressed() {
+            super.dressed();
+            dressShirt();
+            dressLeather();
+            dressJean();
+        }
+    }
+
+    public class PoorCloth extends PeopleCloth {
+
+        public PoorCloth(People people) {
+            super(people);
+        }
+
+        //穿短裤
+        private void dressShorts() {
+            LjyLogUtil.i("穿短裤");
+        }
+
+        @Override
+        public void dressed() {
+            super.dressed();
+            dressShorts();
+        }
+    }
+
+    /**
+     * 组合模式(部分整体模式)
+     * 结构型设计模式
+     * 定义:将对象组合成树形结构以表示'部分-整体'的层次结构,
+     * 使得用户对单个对象和组合对象的使用具有一致性
+     * 优点:
+     * 1.清楚的定义分层次的复杂对象, 表示对象的全部或部分层次,
+     * 让高层模块忽略了层次的差异,方便对整个层次结构进行控制
+     * 2.高层模块可以一致的使用一个组合结构或其中单个对象,
+     * 不必关心处理的是单个对象还是整个组合结构,简化了高层模块的代码
+     * 3.增加新的枝干构件和叶子构件都很方便,无需对现有类库进行更改,
+     * 符合开闭原则
+     * 4.为树形结构的面向对象实现提供了一种灵活的解决方案,通过叶子对象和
+     * 枝干对象的递归组合,可以形成复杂的树形结构,但对树形结构的控制却非常简单
+     * 缺点:
+     * 新增构件时不好对枝干中的构件类型进行限制,不能依赖类型系统来
+     * 施加这些约束,因为大多数情况,它们都来自相同的抽象层,此时,必须进行类型检查,
+     * 这个实现过程较为复杂
+     * android源码中的应用:View和ViewGroup
+     */
+    private void methodCompositePattern() {
+        //以电脑中的文件和文件夹为例
+        //创建一个目录对象表示根目录
+        Dir diskD = new Folder("D");
+        //D下创建一个文件
+        diskD.addDir(new File("dog.png"));
+        //game目录
+        Dir dirGame = new Folder("game");
+        diskD.addDir(dirGame);
+        //music目录
+        Dir dirMusic = new Folder("music");
+        dirMusic.addDir(new File("红蔷薇.mp3"));
+        dirMusic.addDir(new File("后来.mp3"));
+        diskD.addDir(dirMusic);
+        //打印文件结构
+        LjyLogUtil.i(diskD.print());
+    }
+
+    public abstract class Dir {
+        //存储文件夹下的所有元素
+        protected List<Dir> mDirs = new ArrayList<>();
+        private String name;//当前文件或文件夹名
+
+        public Dir(String name) {
+            this.name = name;
+        }
+
+        //添加
+        public abstract void addDir(Dir dir);
+
+        //移除
+        public abstract void rmDir(Dir dir);
+
+        //清空
+        public abstract void clear();
+
+        //获取所有子元素
+        public abstract List<Dir> getFiles();
+
+        //获取当前文件名
+        public String getName() {
+            return name;
+        }
+
+        //输出文件夹目录结构
+        public abstract String print();
+    }
+
+    public class Folder extends Dir {
+
+        public Folder(String name) {
+            super(name);
+        }
+
+        @Override
+        public void addDir(Dir dir) {
+            mDirs.add(dir);
+        }
+
+        @Override
+        public void rmDir(Dir dir) {
+            mDirs.remove(dir);
+        }
+
+        @Override
+        public void clear() {
+            mDirs.clear();
+        }
+
+        @Override
+        public List<Dir> getFiles() {
+            return mDirs;
+        }
+
+        @Override
+        public String print() {
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(getName() + ":(");
+            java.util.Iterator<Dir> iterator = mDirs.iterator();
+            while (iterator.hasNext()) {
+                Dir dir = iterator.next();
+                dir.print();
+                if (iterator.hasNext()) {
+                    stringBuffer.append(",");
+                }
+            }
+            stringBuffer.append(")");
+            return stringBuffer.toString();
+        }
+    }
+
+    public class File extends Dir {
+
+        public File(String name) {
+            super(name);
+        }
+
+        @Override
+        public void addDir(Dir dir) {
+            throw new UnsupportedOperationException("文件对象不支持该操作");
+        }
+
+        @Override
+        public void rmDir(Dir dir) {
+            throw new UnsupportedOperationException("文件对象不支持该操作");
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException("文件对象不支持该操作");
+        }
+
+        @Override
+        public List<Dir> getFiles() {
+            throw new UnsupportedOperationException("文件对象不支持该操作");
+        }
+
+        @Override
+        public String print() {
+            return getName();
+        }
+    }
+
+    /**
      * 中介者模式(调解者/调停者模式)
      * 定义: 包装了一系列对象相互作用的方式,使得这些对象不必相互明显作用,从而实现松耦合.
      * 当某些对象之间的作用发生改变时,不会影响其他对象,保证独立变化.
      * 将多对多的相互作用转化为一对多的相互作用,由复杂的网状结构变为以中介者为中心的星型结构
-     *
-     *
      */
     private void methodMediatorPattern() {
         //以电脑播放CD为例
         //1.构造主板对象
-        MainBoard mainBoard=new MainBoard();
+        MainBoard mainBoard = new MainBoard();
         //2.构造其他设备
-        CDDevice cdDevice=new CDDevice(mainBoard);
-        CPU cpu=new CPU(mainBoard);
-        GraphicsCard graphicsCard=new GraphicsCard(mainBoard);
-        SoundCard soundCard=new SoundCard(mainBoard);
+        CDDevice cdDevice = new CDDevice(mainBoard);
+        CPU cpu = new CPU(mainBoard);
+        GraphicsCard graphicsCard = new GraphicsCard(mainBoard);
+        SoundCard soundCard = new SoundCard(mainBoard);
         //3.将各个零部件安装到主板
         mainBoard.setCDDevice(cdDevice);
         mainBoard.setCPU(cpu);
@@ -177,7 +671,7 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //抽象同事类
-    abstract class Colleague{
+    abstract class Colleague {
         protected Mediator mMediator;//每个同事都该知道其中介者
 
         public Colleague(Mediator mediator) {
@@ -186,8 +680,8 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //负责从主板传递来的音视频数据的解码
-    class CPU extends  Colleague{
-        private String dataVideo,dataSound;//视频音频数据
+    class CPU extends Colleague {
+        private String dataVideo, dataSound;//视频音频数据
 
         public CPU(Mediator mediator) {
             super(mediator);
@@ -201,19 +695,19 @@ public class DesignPatternActivity extends BaseActivity {
             return dataSound;
         }
 
-        public void decodeData(String data){
+        public void decodeData(String data) {
             //分割音视频数据
-            String[] tmp=data.split(",");
+            String[] tmp = data.split(",");
             //解析以视频数据
-            dataVideo=tmp[0];
-            dataSound=tmp[1];
+            dataVideo = tmp[0];
+            dataSound = tmp[1];
             //告诉中介者自身状态改变
             mMediator.changed(this);
         }
     }
 
     //光驱负责读取光盘的数据,并提供给主板
-    class CDDevice extends Colleague{
+    class CDDevice extends Colleague {
         public String data;//视频数据
 
         public CDDevice(Mediator mediator) {
@@ -221,51 +715,51 @@ public class DesignPatternActivity extends BaseActivity {
         }
 
         //读取视频数据
-        public String read(){
+        public String read() {
             return data;
         }
 
         //加载视频数据
-        public void load(){
-            data="视频数据,音频数据";
+        public void load() {
+            data = "视频数据,音频数据";
             //通知中介者
             mMediator.changed(this);
         }
     }
 
     //显卡声卡负责播放视频和音频
-    class GraphicsCard extends Colleague{
+    class GraphicsCard extends Colleague {
 
         public GraphicsCard(Mediator mediator) {
             super(mediator);
         }
 
         //播放视频
-        public void videoPlay(String data){
-            LjyLogUtil.i("videoPlay:"+data);
+        public void videoPlay(String data) {
+            LjyLogUtil.i("videoPlay:" + data);
         }
     }
 
-    class SoundCard extends Colleague{
+    class SoundCard extends Colleague {
 
         public SoundCard(Mediator mediator) {
             super(mediator);
         }
 
-        public void soundPlay(String data){
-            LjyLogUtil.i("soundPlay:"+data);
+        public void soundPlay(String data) {
+            LjyLogUtil.i("soundPlay:" + data);
         }
     }
 
     //抽象的中介者
-    abstract class Mediator{
+    abstract class Mediator {
         //同事对象改变时通知中介者的方法,由中介者通知其他对象
         public abstract void changed(Colleague c);
     }
 
 
     //中介者实现类:主板
-    class MainBoard extends Mediator{
+    class MainBoard extends Mediator {
         private CDDevice mCDDevice;//光驱
         private CPU mCPU;//cpu
         private SoundCard mSoundCard;//声卡
@@ -273,12 +767,12 @@ public class DesignPatternActivity extends BaseActivity {
 
         @Override
         public void changed(Colleague c) {
-            if (c==mCDDevice){
+            if (c == mCDDevice) {
                 //光驱读取完数据
-                handleCD((CDDevice)c);
-            }else if (c==mCPU){
+                handleCD((CDDevice) c);
+            } else if (c == mCPU) {
                 //cpu解析完数据
-                handleCPU((CPU)c);
+                handleCPU((CPU) c);
             }
 
         }
