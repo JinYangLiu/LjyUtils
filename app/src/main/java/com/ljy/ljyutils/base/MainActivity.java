@@ -1,6 +1,7 @@
 package com.ljy.ljyutils.base;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
@@ -107,6 +108,40 @@ public class MainActivity extends BaseActivity {
 
         ProcessBean.count = 18;
         LjyLogUtil.i("ProcessBean.count=" + ProcessBean.count);
+
+        initWebJump();
+    }
+
+    /**
+     <!doctype html>
+     <html lang="en">
+     <head>
+     <meta charset="UTF-8">
+     <meta name="Generator" content="EditPlus®">
+     <meta name="Author" content="">
+     <meta name="Keywords" content="">
+     <meta name="Description" content="">
+     <title>Document</title>
+     </head>
+     <body>
+     <a href="anxindai://junanxin.app/openwith?url=www.baidu.com">启动应用程序</a>
+     </body>
+     </html>
+     */
+    private void initWebJump() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+
+        if(Intent.ACTION_VIEW.equals(action)){
+            Uri uri = intent.getData();
+            if(uri != null){
+                String url = uri.getQueryParameter("url");
+                LjyLogUtil.i("url:"+url);
+                Intent intent1=new Intent(mActivity,WebViewTestActivity.class);
+                intent1.putExtra("url",url);
+                startActivity(intent1);
+            }
+        }
     }
 
     @Override

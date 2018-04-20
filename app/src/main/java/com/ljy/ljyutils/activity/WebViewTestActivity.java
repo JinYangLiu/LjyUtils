@@ -42,6 +42,13 @@ public class WebViewTestActivity extends BaseActivity {
         setContentView(R.layout.activity_web_view_test);
         ButterKnife.bind(mActivity);
         initWebView();
+        intIntent();
+    }
+
+    private void intIntent() {
+        String url=getIntent().getStringExtra("url");
+        LjyLogUtil.i("intent.url:"+url);
+        mWebView.loadUrl(url);
     }
 
     private void initWebView() {
@@ -94,11 +101,12 @@ public class WebViewTestActivity extends BaseActivity {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-
+        //设置网页字体不跟随系统字体发生改变
+        mWebView.getSettings().setTextZoom(100);
         //load本地
         //mWebView.loadUrl("file:///android_asset/hellotest.html");
         //load在线
-        mWebView.loadUrl("https://club.anxin.com/m2018/fanxian");
+//        mWebView.loadUrl("https://club.anxin.com/m2018/fanxian");
         //如果右侧的滚动条占据的地方出现了白边
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         //是否可以后退
