@@ -124,6 +124,15 @@
         resource：中的@xml/file_paths是我们接下来要添加的文件
         */
 
+        //注册BookProvider
+        //authorities是唯一标识,外部应用通过这个访问BookProvider
+        //为了演示方便,这里让其运行在独立进程,并添加了权限(权限还可以细分为读和写)
+        <provider
+            android:name=".provider.BookProvider"
+            android:authorities="com.ljy.ljyutils.provider.Book.Provider"
+            android:permission="com.ljy.Book.Provider"
+            android:process=":bookProvider"/>
+
         //activity
         //bugly
         <activity
@@ -144,7 +153,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="anxindai" android:host="junanxin.app" android:pathPrefix="/openwith"/>
+                <data android:scheme="anxindai" android:host="junanxin.app"
+                      android:pathPrefix="/openwith"/>
             </intent-filter>
         </activity>
         <activity
@@ -330,7 +340,7 @@
         <activity android:name=".activity.AnnotationActivity">
         </activity>
         <activity android:name=".activity.ProcessActivity"
-        android:process=":process"
+                  android:process=":process"
         >
         </activity>
     </application>

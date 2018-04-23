@@ -222,37 +222,49 @@
 - 跨进程通信的方式:
     - Intent+Bundle
         - 四大组件中的Activity,Service,Receiver都支持使用Bundle传递数据,所以当我们启动不同进程的组件时,就可以用Intent+bundle进行数据传递        
+        
     - 共享文件和SharedPreferences
         - 两个进程通过读写同一个文件来交换数据
         - 对象可以通过序列化和反序列化进行读写
         - SharedPreferences本质就是读写文件
-    - 基于Binder的Messenger和AIDL
-        - Binder: implements IBinder   
-             - 从Android Framework角度讲,Binder是ServiceManager链接各种Manager(ActivityManager,WindowManager等)和ManagerService的桥梁
-             - 从Android 应用层来说,Binder是客户端和服务端进行通信的媒介(bindService)
-                - Binder主要用在Service中,包括普通的Service,AIDL和Messenger
-                - 普通的Service中的Binder不涉及进程间通信,没有触及到Binder的核心
-                - Messenger(信使,轻量级的IPC方案)
-                    - 通过它可以在不同进程间传递Message对象
-                    - 底层其实就是AIDL, 只是进一步进行了封装, 以方便使用,从下面这个构造方法就可以看出
-                    ````
-                    public Messenger(IBinder target) {
-                        mTarget = IMessenger.Stub.asInterface(target);
-                    }
-                    - 具体使用请看本项目中的MessengerService.java及其注册调用
-                    
-                - AIDL: 
-                    - 服务端: 
-                        - 创建要操作的实体类，实现 Parcelable 接口
-                        - 新建aidl文件夹，在其中创建接口aidl文件以及实体类的映射aidl文件
-                        - Make project
-                        - 服务service中实现AidlInterface.Stub对象, 并在onBind方法中返回
-                    - 客户端:
-                        - copy服务端提供的aidl文件夹和实体类
-                        - Make project
-                        - ServiceConnection.onServiceConnected方法中调用AidlInterface.Stub.asInterface(IBinder)创建AidlInterface实例,并调用其方法
+        
+    - Binder: implements IBinder   
+        - 基于Binder的: AIDL,Messenger,ContentProvider
+        - 从Android Framework角度讲,Binder是ServiceManager链接各种Manager(ActivityManager,WindowManager等)和ManagerService的桥梁
+        - 从Android 应用层来说,Binder是客户端和服务端进行通信的媒介(bindService)
+        - Binder主要用在Service中,包括普通的Service,AIDL和Messenger
+        - 普通的Service中的Binder不涉及进程间通信,没有触及到Binder的核心
+        
+    - AIDL: 
+        - 服务端: 
+            - 创建要操作的实体类，实现 Parcelable 接口
+            - 新建aidl文件夹，在其中创建接口aidl文件以及实体类的映射aidl文件
+            - Make project
+            - 服务service中实现AidlInterface.Stub对象, 并在onBind方法中返回
+        - 客户端:
+            - copy服务端提供的aidl文件夹和实体类
+            - Make project
+            - ServiceConnection.onServiceConnected方法中调用AidlInterface.Stub.asInterface(IBinder)创建AidlInterface实例,并调用其方法
+            
+    - Messenger(信使,轻量级的IPC方案)
+            - 通过它可以在不同进程间传递Message对象
+            - 底层其实就是AIDL, 只是进一步进行了封装, 以方便使用,从下面这个构造方法就可以看出
+            ````
+            public Messenger(IBinder target) {
+                mTarget = IMessenger.Stub.asInterface(target);
+            }
+            - 具体使用请看本项目中的MessengerService.java及其注册调用
         
     - ContentProvider
+        - Android中提供的专门用于不同应用间进行数据共享的方式,天生就适合进程间通信
+        - 底层实现同样也是Binder,而且比AIDL要简单
+        - 需要注意的: CRUD操作,防止SQL注入,权限控制
+        - 系统中预制了许多ContentProvider,如通讯录,日程表信息等
+        - query,insert,delete,update是运行在Binder线程中的, 存在多线程并发访问,方法内部要做好线程同步
+            - 例子BookProvider中采用了SQLite,并且只有一个SQLiteDatabase的链接, 所以可以正确的应对多线程情况,
+            因为SQLiteDatabase内部对数据库的操作是有同步处理的
+        - onCreate运行在main线程(UI线程),不能进行耗时操作
+        
     - Socket
 
 
