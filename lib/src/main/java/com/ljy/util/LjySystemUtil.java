@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -245,6 +246,16 @@ public class LjySystemUtil {
             }
         }
         return processName;
+    }
+
+    public static void clostStream(Closeable closeable){
+        if (closeable!=null){
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

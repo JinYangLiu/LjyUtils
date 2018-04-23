@@ -9,10 +9,13 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,16 +27,26 @@ import com.ljy.ljyutils.bean.ProcessBean;
 import com.ljy.ljyutils.bean.SeriBean;
 import com.ljy.ljyutils.provider.BookProvider;
 import com.ljy.ljyutils.service.MessengerService;
+import com.ljy.ljyutils.service.TcpServerService;
 import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
+import com.ljy.util.LjySystemUtil;
+import com.ljy.util.LjyTimeUtil;
 import com.ljy.util.LjyToastUtil;
+import com.ljy.view.LjyMDDialogManager;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +62,15 @@ public class ProcessActivity extends BaseActivity {
 
     @BindView(R.id.text_info)
     TextView mTextViewInfo;
+    @BindView(R.id.btnSend)
+    Button btnSend;
+
+    private static final int MESSAGE_RECEIVE_NEW_MSG = 1;
+    private static final int MESSAGE_SOCKET_CONNECTED = 2;
+
+    private MyHandler mHandler = new MyHandler(this);
+    private Socket mClientSocket;
+    private PrintWriter mPrintWriter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,32 +121,106 @@ public class ProcessActivity extends BaseActivity {
                 bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
                 break;
             case R.id.btn4:
-                Uri bookUri = BookProvider.BOOK_CONTENT_URI;
-                ContentValues values = new ContentValues();
-                values.put("_id", 6);
-                values.put("name", "红楼梦");
-                getContentResolver().insert(bookUri, values);
-                Cursor bookCursor = getContentResolver().query(bookUri, new String[]{"_id", "name"}, null, null, null);
-                while (bookCursor.moveToNext()) {
-                    Book book = new Book();
-                    LjyLogUtil.i("id:" + bookCursor.getInt(0) + ",name:" + bookCursor.getString(1));
-                    book.name = bookCursor.getString(1);
-                    LjyLogUtil.i(book.toString());
-                }
-                bookCursor.close();
-
-                Uri userUri = BookProvider.USER_CONTENT_URI;
-                Cursor userCursor = getContentResolver().query(userUri, new String[]{"_id", "name", "age"}, null, null, null);
-                while (userCursor.moveToNext()) {
-                    LjyLogUtil.i("user--> id:" + userCursor.getInt(0) + ",name:" + userCursor.getString(1) + ",age:" + userCursor.getInt(2));
-                }
-                userCursor.close();
-
+                methodProvider();
+                break;
+            case R.id.btn5:
+                methodSocket();
+                break;
+            case R.id.btnSend:
+                new LjyMDDialogManager(ProcessActivity.this).alertEditTextMD("请输入消息内容:", new LjyMDDialogManager.PositiveListenerText() {
+                    @Override
+                    public void positive(String text) {
+                        final String msg = text;
+                        if (!TextUtils.isEmpty(msg) && mPrintWriter != null) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    mPrintWriter.println(msg);
+                                }
+                            }.start();
+                            String time = LjyTimeUtil.timestampToDate(System.currentTimeMillis());
+                            final String showedMsg = "self " + time + ":" + msg + "\n";
+                            mTextViewInfo.append(showedMsg);
+                        }
+                    }
+                }, null);
                 break;
 
         }
         mTextViewInfo.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    private void methodSocket() {
+        Intent intent = new Intent(mContext, TcpServerService.class);
+        startService(intent);
+        new Thread() {
+            @Override
+            public void run() {
+                connectTCPServer();
+            }
+        }.start();
+
+    }
+
+    private void connectTCPServer() {
+        Socket socket = null;
+        //超时重连策略
+        while (socket == null) {
+            try {
+                socket = new Socket("localhost", TcpServerService.port);
+                mClientSocket = socket;
+                mPrintWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                mHandler.sendEmptyMessage(MESSAGE_SOCKET_CONNECTED);
+                LjyLogUtil.i("connect server success");
+            } catch (IOException e) {
+                SystemClock.sleep(1000);
+                LjyLogUtil.i("connect tcp server failed,retry...");
+            }
+        }
+
+        try {
+            //接收服务端消息
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            while (!ProcessActivity.this.isFinishing()) {
+                String msg = br.readLine();
+                LjyLogUtil.i("receive: " + msg);
+                if (!TextUtils.isEmpty(msg)) {
+                    String time = LjyTimeUtil.timestampToDate(System.currentTimeMillis());
+                    String showedMsg = "server " + time + ":" + msg + "\n";
+                    mHandler.obtainMessage(MESSAGE_RECEIVE_NEW_MSG, showedMsg).sendToTarget();
+                }
+            }
+            LjyLogUtil.i("quit...");
+            LjySystemUtil.clostStream(mPrintWriter);
+            LjySystemUtil.clostStream(br);
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void methodProvider() {
+        Uri bookUri = BookProvider.BOOK_CONTENT_URI;
+        ContentValues values = new ContentValues();
+        values.put("_id", 6);
+        values.put("name", "红楼梦");
+        getContentResolver().insert(bookUri, values);
+        Cursor bookCursor = getContentResolver().query(bookUri, new String[]{"_id", "name"}, null, null, null);
+        while (bookCursor.moveToNext()) {
+            Book book = new Book();
+            LjyLogUtil.i("id:" + bookCursor.getInt(0) + ",name:" + bookCursor.getString(1));
+            book.name = bookCursor.getString(1);
+            LjyLogUtil.i(book.toString());
+        }
+        bookCursor.close();
+
+        Uri userUri = BookProvider.USER_CONTENT_URI;
+        Cursor userCursor = getContentResolver().query(userUri, new String[]{"_id", "name", "age"}, null, null, null);
+        while (userCursor.moveToNext()) {
+            LjyLogUtil.i("user--> id:" + userCursor.getInt(0) + ",name:" + userCursor.getString(1) + ",age:" + userCursor.getInt(2));
+        }
+        userCursor.close();
     }
 
     @LjyPermissionUtil.GetPermission(permissionResult = true, requestCode = 102)
@@ -180,6 +276,29 @@ public class ProcessActivity extends BaseActivity {
                 }
             }
 
+        }
+    }
+
+    static class MyHandler extends Handler {
+
+        private final ProcessActivity processActivity;
+
+        public MyHandler(ProcessActivity processActivity) {
+            this.processActivity = processActivity;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_RECEIVE_NEW_MSG:
+                    processActivity.mTextViewInfo.append((String) msg.obj);
+                    break;
+                case MESSAGE_SOCKET_CONNECTED:
+                    processActivity.btnSend.setClickable(true);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -19,6 +19,11 @@ import java.util.List;
  */
 
 public class LjyTimeUtil {
+
+    public static String timestampToDate(long time) {
+        return timestampToDate(time,null);
+    }
+
     /**
      * 将时间戳转换为指定格式字符串
      *

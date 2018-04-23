@@ -31,6 +31,17 @@
                 android:onClick="onBtnClick"
                 android:text="ContentProvider"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn5"
+                android:onClick="onBtnClick"
+                android:text="Socket"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btnSend"
+                android:onClick="onBtnClick"
+                android:clickable="false"
+                android:text="向tcpServer发送消息"
+                style="@style/btnStyle"/>
 
         </LinearLayout>
     </HorizontalScrollView>
