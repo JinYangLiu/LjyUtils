@@ -42,6 +42,11 @@
                 android:clickable="false"
                 android:text="向tcpServer发送消息"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn6"
+                android:onClick="onBtnClick"
+                android:text="一个Service管理多个AIDL"
+                style="@style/btnStyle"/>
 
         </LinearLayout>
     </HorizontalScrollView>

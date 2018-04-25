@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.ljy.ljyutils.ICompute;
+import com.ljy.ljyutils.ISecurityCenter;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.ljyutils.bean.Book;
@@ -28,6 +30,9 @@ import com.ljy.ljyutils.bean.SeriBean;
 import com.ljy.ljyutils.provider.BookProvider;
 import com.ljy.ljyutils.service.MessengerService;
 import com.ljy.ljyutils.service.TcpServerService;
+import com.ljy.ljyutils.stub.BinderPool;
+import com.ljy.ljyutils.stub.ComputeImpl;
+import com.ljy.ljyutils.stub.SecurityCenterImpl;
 import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
@@ -71,6 +76,8 @@ public class ProcessActivity extends BaseActivity {
     private MyHandler mHandler = new MyHandler(this);
     private Socket mClientSocket;
     private PrintWriter mPrintWriter;
+    private ISecurityCenter mSecurityCenter;
+    private ICompute mCompute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,10 +152,47 @@ public class ProcessActivity extends BaseActivity {
                     }
                 }, null);
                 break;
-
+            case R.id.btn6:
+                new Thread() {
+                    @Override
+                    public void run() {
+                        methodBinderPool();
+                    }
+                }.start();
+                break;
         }
         mTextViewInfo.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    /**
+     * 建议在子线程中执行
+     */
+    private void methodBinderPool() {
+        LjyLogUtil.i("ProcessActivity.mContext:" + mContext);
+
+        BinderPool binderPool = BinderPool.getInstance(mContext);
+
+        IBinder securityBinder = binderPool.queryBinder(BinderPool.BINDER_SECURITY_CENTER);
+        mSecurityCenter = SecurityCenterImpl.asInterface(securityBinder);
+        LjyLogUtil.i("visit ISecurityCenter");
+        String msg = "你好,Android";
+        LjyLogUtil.i("msg:" + msg);
+        try {
+            String pwd = mSecurityCenter.encrypt(msg);
+            LjyLogUtil.i("encrypt:" + pwd);
+            LjyLogUtil.i("decrypt:" + mSecurityCenter.decrypt(pwd));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        IBinder computeBinder = binderPool.queryBinder(BinderPool.BINDER_COMPUTE);
+        mCompute = ComputeImpl.asInterface(computeBinder);
+        try {
+            LjyLogUtil.i("2+3=" + mCompute.add(2, 3));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private void methodSocket() {

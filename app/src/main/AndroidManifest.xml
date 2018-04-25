@@ -54,7 +54,7 @@
         <service android:name=".service.MyNormalService"/>
         <service android:name=".service.MyForegroundNormalService"/>
         //注册并声明为远程服务
-        //android:process=":remote" //将本地服务设置成远程服务
+        //android:process=":remote" //将本地服务设置成远程服务(单独进程)
         //android:exported="true" //设置可被其他进程调用
         //该Service可以响应带有com.ljy.ljyutils.IMyAidlInterface这个action的Intent。
         //此处Intent的action必须写成“服务器端包名.aidl文件名”
@@ -65,6 +65,11 @@
             <intent-filter>
                 <action android:name="com.ljy.ljyutils.IMyAidlInterface"/>
             </intent-filter>
+        </service>
+        <service
+            android:name=".service.BinderPoolService"
+            android:exported="true"
+            android:process=":binderPoolService">
         </service>
         //注册并声明intentService
         <service android:name=".service.MyIntentService">
