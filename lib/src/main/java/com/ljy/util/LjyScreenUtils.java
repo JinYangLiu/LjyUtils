@@ -112,7 +112,7 @@ public class LjyScreenUtils {
     }
 
     /**
-     * 沉浸式状态栏
+     * 沉浸式(透明)状态栏
      *
      * @param activity
      */
@@ -121,10 +121,23 @@ public class LjyScreenUtils {
             View decorView = activity.getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-//            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION//底部虚拟按键
             decorView.setSystemUiVisibility(option);
-//            getWindow().setNavigationBarColor(Color.TRANSPARENT);//底部虚拟按键
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
+
+    /**
+     * 沉浸式(透明)底部虚拟按键
+     * @param activity
+     */
+    public static void noNavigationBar(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = activity.getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;//底部虚拟按键
+            decorView.setSystemUiVisibility(option);
+            activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);//底部虚拟按键
         }
     }
 
