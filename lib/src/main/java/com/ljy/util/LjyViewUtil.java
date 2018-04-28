@@ -109,64 +109,115 @@ public class LjyViewUtil {
         view.measure(width, height);
         return view.getMeasuredHeight();
     }
+    //1. 该方法测量的宽度和高度可能与视图绘制完成后的真实的宽度和高度不一致。
+//        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//        view.measure(width, height);
+//        return view.getMeasuredHeight();
+    //2.在视图将要绘制时调用该监听事件，会被调用多次，因此获取到视图的宽度和高度后要移除该监听事件。
+//        view.getViewTreeObserver().addOnPreDrawListener(
+//                new ViewTreeObserver.OnPreDrawListener() {
+//
+//                    @Override
+//                    public boolean onPreDraw() {
+//                        view.getViewTreeObserver().removeOnPreDrawListener(this);
+//                        view.getWidth(); // 获取宽度
+//                        view.getHeight(); // 获取高度
+//                        return true;
+//                    }
+//                });
+    //3.在布局发生改变或者某个视图的可视状态发生改变时调用该事件，会被多次调用，因此需要在获取到视图的宽度和高度后执行 remove 方法移除该监听事件。
+//        view.getViewTreeObserver().addOnGlobalLayoutListener(
+//                new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if (Build.VERSION.SDK_INT >= 16) {
+//                            view.getViewTreeObserver()
+//                                    .removeOnGlobalLayoutListener(this);
+//                        }
+//                        else {
+//                            view.getViewTreeObserver()
+//                                    .removeGlobalOnLayoutListener(this);
+//                        }
+//                        view.getWidth(); // 获取宽度
+//                        view.getHeight(); // 获取高度
+//                    }
+//                });
+    //四、重写 View 的 onSizeChanged 方法,在视图的大小发生改变时调用该方法，会被多次调用，因此获取到宽度和高度后需要考虑禁用掉代码。
+    //该实现方法需要继承 View，且多次被调用，不建议使用
+//        @Override
+//        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//            super.onSizeChanged(w, h, oldw, oldh);
+//
+//            view.getWidth(); // 获取宽度
+//            view.getHeight(); // 获取高度
+//        }
+    //五、重写 View 的 onLayout 方法,该方法会被多次调用，获取到宽度和高度后需要考虑禁用掉代码。
+    //该实现方法需要继承 View，且多次被调用，不建议使用。
+//        @Override
+//        protected void onLayout(boolean changed, int l, int t, int r, int b) {
+//            super.onLayout(changed, l, t, r, b);
+//            view.getWidth(); // 获取宽度
+//            view.getHeight(); // 获取高度
+//        }
+    //六、使用 View.OnLayoutChangeListener 监听事件（API >= 11）,在视图的 layout 改变时调用该事件，会被多次调用，因此需要在获取到视图的宽度和高度后执行 remove 方法移除该监听事件。
+//        view.addOnLayoutChangeListener(
+//                new View.OnLayoutChangeListener() {
+//
+//                    @Override
+//                    public void onLayoutChange(View v, int l, int t, int r, int b,
+//                                               int oldL, int oldT, int oldR, int oldB) {
+//                        view.removeOnLayoutChangeListener(this);
+//                        view.getWidth(); // 获取宽度
+//                        view.getHeight(); // 获取高度
+//                    }
+//                });
+    //7.Runnable 对象中的方法会在 View 的 measure、layout 等事件完成后触发。
+    //UI 事件队列会按顺序处理事件，在 setContentView() 被调用后，事件队列中会包含一个要求重新 layout 的 message，所以任何 post 到队列中的 Runnable 对象都会在 Layout 发生变化后执行。
+    //该方法只会执行一次，且逻辑简单，建议使用。
 
     /**
      * 使view可以拖拽移动
      */
-    public static void touchMove(final View view, ViewGroup parentView) {
-        final int parentViewWidth = parentView.getWidth();
-        final int parentViewHeight = parentView.getHeight();
-        final int viewWidth = getViewWidth(view);
-        final int viewHeight = getViewHeight(view);
+    public static void touchMove(final View view) {
+        final View parentView = ((View) view.getParent());
+        final int parentViewWidth = getViewWidth(parentView);
+        final int parentViewHeight = getViewHeight(parentView);
         view.setOnTouchListener(new View.OnTouchListener() {
-            public int lastY;
-            public int lastX;
-            public int firstX;
-            public int firstY;
+            private int lastY;
+            private int lastX;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
+                int x = (int) event.getRawX();
+                int y = (int) event.getRawY();
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        lastX = firstX = (int) event.getRawX();
-                        lastY = firstY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        int dx = (int) event.getRawX() - lastX;
-                        int dy = (int) event.getRawY() - lastY;
-
-                        int top = v.getTop() + dy;
-
-                        int left = v.getLeft() + dx;
-
-                        if (top <= 0) {
-                            top = 0;
+                        int dx = x - lastX;
+                        int dy = y - lastY;
+                        //边界检测
+                        if (dx + v.getX() < 0)
+                            dx = (int) -v.getX();
+                        if (dy + v.getY() < 0)
+                            dy = (int) -v.getY();
+                        if (dx + v.getX() + v.getWidth() > parentViewWidth) {
+                            dx = (int) (parentViewWidth - v.getWidth() - v.getX());
                         }
-
-                        if (top >= parentViewHeight - viewHeight) {
-                            top = parentViewHeight - viewHeight;
+                        if (dy + v.getY() + v.getHeight() > parentViewHeight) {
+                            dy = (int) (parentViewHeight - v.getHeight() - v.getY());
                         }
-                        if (left >= parentViewWidth - viewWidth) {
-                            left = parentViewWidth - viewWidth;
-                        }
-
-                        if (left <= 0) {
-                            left = 0;
-                        }
-
-                        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        param.leftMargin = left;
-                        param.topMargin = top;
-                        v.setLayoutParams(param);
+                        //方式1:
+//                        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//                        param.leftMargin = left;
+//                        param.topMargin = top;
+//                        v.setLayoutParams(param);
+                        //方式2:
+                        v.setTranslationX(v.getTranslationX() + dx);
+                        v.setTranslationY(v.getTranslationY() + dy);
                         v.postInvalidate();
-                        lastX = (int) event.getRawX();
-                        lastY = (int) event.getRawY();
-                        if (event.getRawX() == firstX && event.getRawY() == firstY) {
-                            view.setClickable(true);
-                        } else {
-                            view.setClickable(false);
-                        }
                         break;
                     case MotionEvent.ACTION_UP:
                         break;
@@ -174,9 +225,12 @@ public class LjyViewUtil {
                         break;
 
                 }
-                return false;
+                lastX = x;
+                lastY = y;
+                return true;
             }
         });
     }
+
 
 }
