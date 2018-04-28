@@ -1,17 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ljy.ljyutils.activity.CustomViewActivity">
+    <HorizontalScrollView
+        android:id="@+id/hs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn1"
+                android:text="scroller"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn2"
+                android:text="scrollTo"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn3"
+                android:text="scrollBy"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn4"
+                android:text="anim"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn5"
+                android:text="LayoutParams"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn6"
+                android:text="LjyViewUtil"
+                android:onClick="btnClick"
+                style="@style/btnStyle"/>
+        </LinearLayout>
+    </HorizontalScrollView>
     <com.ljy.ljyutils.view.CustomView
         android:id="@+id/customView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:background="@color/thin_green"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
     />
 
+    <RelativeLayout
+        android:id="@+id/relativeBlue"
+        android:layout_below="@+id/hs"
+        android:layout_width="200dp"
+        android:background="@color/thin_blue"
+        android:layout_centerHorizontal="true"
+        android:layout_height="200dp">
+        <Button
+            android:id="@+id/view"
+            android:layout_centerInParent="true"
+            android:background="@color/thin_red"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+    </RelativeLayout>
 </RelativeLayout>
