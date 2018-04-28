@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
 import com.ljy.ljyutils.R;
@@ -71,7 +73,7 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
      */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+        super.onLayout(changed,left,top,right,bottom);
         LjyLogUtil.i(String.format("changed_%b,top_%d,left_%d,bottom_%d,right_%d", changed, top, left, bottom, right));
         LjyLogUtil.i(String.format("getXX--->top_%d,left_%d,bottom_%d,right_%d", getTop(), getLeft(), getBottom(), getRight()));
     }
@@ -120,6 +122,7 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
     }
 
     private int firstX, firstY, lastX, lastY;
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
@@ -23,6 +24,8 @@ public class CustomViewActivity extends BaseActivity {
     CustomView customView;
     @BindView(R.id.view)
     Button mView;
+    @BindView(R.id.rootScroll)
+    ScrollView rootScroll;
     @BindView(R.id.relativeBlue)
     RelativeLayout relativeBlue;
 
@@ -41,6 +44,9 @@ public class CustomViewActivity extends BaseActivity {
                 LjyLogUtil.i("mView onClick");
             }
         });
+
+        //不允许ScrollView截断点击事件，点击事件由子View处理
+        rootScroll.requestDisallowInterceptTouchEvent(true);
         LjyViewUtil.touchMove(mView);
     }
 
