@@ -86,79 +86,9 @@ public class LjyTagView extends RelativeLayout {
         LayoutParams params = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         tagView.setLayoutParams(params);
-        tagView.setTouch(parentView);
+
 
         return tagView;
-    }
-
-    private void setTouch(RelativeLayout parentView) {
-        final int parentViewWidth = parentView.getWidth();
-        final int parentViewHeight = parentView.getHeight();
-        final int viewWidth = LjyViewUtil.getViewWidth(this);
-        final int viewHeight = LjyViewUtil.getViewHeight(this);
-        setOnTouchListener(new OnTouchListener() {
-            public int lastY;
-            public int lastX;
-            public int firstX;
-            public int firstY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        lastX = firstX = (int) event.getRawX();
-                        lastY = firstY = (int) event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        int x = (int) event.getRawX();
-                        int y = (int) event.getRawY();
-                        int dx = x - lastX;
-                        int dy = y - lastY;
-
-                        int top = v.getTop() + dy;
-
-                        int left = v.getLeft() + dx;
-
-                        if (top <= 0) {
-                            top = 0;
-                        }
-
-                        if (top >= parentViewHeight - viewHeight) {
-                            top = parentViewHeight - viewHeight;
-                        }
-                        if (left >= parentViewWidth - viewWidth) {
-                            left = parentViewWidth - viewWidth;
-                        }
-
-                        if (left <= 0) {
-                            left = 0;
-                        }
-
-                        LayoutParams param = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                        param.leftMargin = left;
-                        param.topMargin = top;
-                        v.setLayoutParams(param);
-                        v.postInvalidate();
-
-                        if (x == firstX && y == firstY && x == lastX && y == lastY) {
-                            if (onLongClickListener != null)
-                                setOnLongClickListener(onLongClickListener);
-                        } else {
-                            setOnLongClickListener(null);
-                        }
-                        lastX = (int) event.getRawX();
-                        lastY = (int) event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        break;
-                    default:
-                        break;
-
-                }
-                return false;
-            }
-        });
     }
 
     public void setTagBackGround(int resId) {

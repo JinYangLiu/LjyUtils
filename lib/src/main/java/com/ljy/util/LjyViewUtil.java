@@ -95,20 +95,6 @@ public class LjyViewUtil {
         layoutParams.width = viewWidth;
         layoutParams.height = viewHeight;
     }
-
-    public static int getViewWidth(View view) {
-        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        view.measure(width, height);
-        return view.getMeasuredWidth();
-    }
-
-    public static int getViewHeight(View view) {
-        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        view.measure(width, height);
-        return view.getMeasuredHeight();
-    }
     //1. 该方法测量的宽度和高度可能与视图绘制完成后的真实的宽度和高度不一致。
 //        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 //        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -182,8 +168,8 @@ public class LjyViewUtil {
      */
     public static void touchMove(final View view) {
         final View parentView = ((View) view.getParent());
-        final int parentViewWidth = getViewWidth(parentView);
-        final int parentViewHeight = getViewHeight(parentView);
+//        final int parentViewWidth = getViewWidth(parentView);
+//        final int parentViewHeight = getViewHeight(parentView);
         view.setOnTouchListener(new View.OnTouchListener() {
             private int lastY;
             private int lastX;
@@ -203,11 +189,11 @@ public class LjyViewUtil {
                             dx = (int) -v.getX();
                         if (dy + v.getY() < 0)
                             dy = (int) -v.getY();
-                        if (dx + v.getX() + v.getWidth() > parentViewWidth) {
-                            dx = (int) (parentViewWidth - v.getWidth() - v.getX());
+                        if (dx + v.getX() + v.getWidth() > parentView.getWidth()) {
+                            dx = (int) (parentView.getWidth() - v.getWidth() - v.getX());
                         }
-                        if (dy + v.getY() + v.getHeight() > parentViewHeight) {
-                            dy = (int) (parentViewHeight - v.getHeight() - v.getY());
+                        if (dy + v.getY() + v.getHeight() > parentView.getHeight()) {
+                            dy = (int) (parentView.getHeight() - v.getHeight() - v.getY());
                         }
                         //方式1:
 //                        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

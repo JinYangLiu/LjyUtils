@@ -28,6 +28,7 @@ import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyStringUtil;
 import com.ljy.util.LjyToastUtil;
+import com.ljy.util.LjyViewUtil;
 import com.ljy.view.LjyMDDialogManager;
 import com.ljy.view.LjyTagView;
 import com.zhihu.matisse.Matisse;
@@ -218,6 +219,7 @@ public class PhotoActivity extends BaseActivity {
                     });
 
                     tagsContainer.addView(tagView);
+                    LjyViewUtil.touchMove(tagView);
                     break;
                 case R.id.btn_clearlabel:
                     if (tagsContainer != null)
