@@ -1,6 +1,7 @@
 package com.ljy.ljyutils.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,10 +26,12 @@ import com.ljy.util.LjyScreenUtils;
  */
 
 public class CustomView extends View implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+    private  int mCircleColor;
     private Scroller scroller;
     private GestureDetector gestureDetector;
     //    VelocityTracker:速度追踪
     private VelocityTracker velocityTracker;
+    private int mWidth, mHeight;
 
     public CustomView(Context context) {
         super(context);
@@ -36,6 +39,11 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
 
     public CustomView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray a=context.obtainStyledAttributes(attrs,R.styleable.CustomView);
+        mCircleColor=a.getColor(R.styleable.CustomView_circle_color,Color.RED);
+        a.recycle();
+
         float dpi = LjyDensityUtil.getDPI(context);
         LjyLogUtil.i("dpi:" + dpi);
         int screenWidth = LjyScreenUtils.getScreenWidth(context);
@@ -48,6 +56,13 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
         gestureDetector = new GestureDetector(getContext(), this);
 
         scroller = new Scroller(getContext());
+
+        mWidth = mHeight = LjyDensityUtil.dp2px(getContext(), 200);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 
     /**
@@ -56,16 +71,37 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // 1. 获取测量模式（Mode）
-        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
-        LjyLogUtil.i("widthSpecMode:" + widthSpecMode);
-        // 2. 获取测量大小（Size）
-        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-        LjyLogUtil.i("widthSpecSize :" + widthSpecSize);
-        // 3. 通过Mode 和 Size 生成新的SpecMode
-        int newWidthSpec = MeasureSpec.makeMeasureSpec(widthSpecSize * 2, widthSpecMode);
-//        super.onMeasure(newWidthSpec, heightMeasureSpec);
+//        // 1. 获取测量模式（Mode）
+//        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+//        LjyLogUtil.i("widthSpecMode:" + widthSpecMode);
+//        // 2. 获取测量大小（Size）
+//        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+//        LjyLogUtil.i("widthSpecSize :" + widthSpecSize);
+//        // 3. 通过Mode 和 Size 生成新的SpecMode
+//        int newWidthSpec = MeasureSpec.makeMeasureSpec(widthSpecSize * 2, widthSpecMode);
+////        super.onMeasure(newWidthSpec, heightMeasureSpec);
 
+        //支持wrap_content:就是给个默认的宽高
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+        LjyLogUtil.i("widthSpecMode:"+widthSpecMode);
+        LjyLogUtil.i("heightSpecMode:"+heightSpecMode);
+        if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(mWidth, mHeight);
+        } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(mWidth, heightSpecSize);
+        } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSpecSize, mHeight);
+        }
+
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
     }
 
     /**
@@ -73,7 +109,7 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
      */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed,left,top,right,bottom);
+        super.onLayout(changed, left, top, right, bottom);
         LjyLogUtil.i(String.format("changed_%b,top_%d,left_%d,bottom_%d,right_%d", changed, top, left, bottom, right));
         LjyLogUtil.i(String.format("getXX--->top_%d,left_%d,bottom_%d,right_%d", getTop(), getLeft(), getBottom(), getRight()));
     }
@@ -84,13 +120,20 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int width = getWidth();
-        int height = getHeight();
+        LjyLogUtil.i("onDraw");
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setColor(getResources().getColor(R.color.thin_red));
-        canvas.drawCircle(width / 2, height / 2, width / 6, paint);
-        LjyLogUtil.i("onDraw");
+        paint.setColor(mCircleColor);
+
+        //处理padding
+        int paddingLeft=getPaddingLeft();
+        int paddingRight=getPaddingRight();
+        int paddingTop=getPaddingTop();
+        int paddingBottom=getPaddingBottom();
+        int width = getWidth()-paddingLeft-paddingRight;
+        int height = getHeight()-paddingTop-paddingBottom;
+        int radius=Math.min(width,height)/2;
+        canvas.drawCircle(paddingLeft+width / 2, paddingTop+height / 2, radius, paint);
     }
 
     @Override
@@ -116,7 +159,7 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
         int deltaX = destX - scrollX;
         int deltaY = destY - scrollY;
 
-        scroller.startScroll(scrollX, scrollY, deltaX, deltaY,900);
+        scroller.startScroll(scrollX, scrollY, deltaX, deltaY, 900);
 
         invalidate();
     }
@@ -148,7 +191,7 @@ public class CustomView extends View implements GestureDetector.OnGestureListene
                 break;
             case MotionEvent.ACTION_MOVE:
                 LjyLogUtil.i("onTouchEvent.ACTION_MOVE");
-                scrollTo(firstX-lastX , firstY-lastY );
+                scrollTo(firstX - lastX, firstY - lastY);
                 lastX = (int) event.getX();
                 lastY = (int) event.getY();
                 break;
