@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
@@ -21,6 +22,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
@@ -318,6 +320,42 @@ public class WebViewTestActivity extends BaseActivity {
 
                 //这个api仅仅清除自动完成填充的表单数据，并不会清除WebView存储到本地的数据
                 mWebView.clearFormData();
+                break;
+            case R.id.btn_loadLocalJs:
+                //启用javascript
+                mWebView.getSettings().setJavaScriptEnabled(true);
+                //加载本地html文件
+                mWebView.loadUrl("file:///android_asset/test.html");
+                /**
+                 * 添加javascriptInterface
+                 * 第一个参数：这里需要一个与js映射的java对象
+                 * 第二个参数：该java对象被映射为js对象后在js里面的对象名，在js中要调用该对象的方法就是通过这个来调用
+                 * 多次添加同名的会覆盖
+                 */
+                mWebView.addJavascriptInterface(new Object(){
+                    @JavascriptInterface
+                    public void showToast1(String text){
+                        LjyToastUtil.toast(mContext,text);
+                    }
+                } , "anxin");
+                mWebView.addJavascriptInterface(new Object(){
+                    @JavascriptInterface
+                    public void showToast2(String text){
+                        LjyToastUtil.toast(mContext,text);
+                    }
+                } , "anxin2");
+                mWebView.addJavascriptInterface(new Object(){
+                    @JavascriptInterface
+                    public void showToast3(String text){
+                        LjyToastUtil.toast(mContext,text);
+                    }
+                } , "anxin");
+//                mWebView.addJavascriptInterface(new Object(){
+//                    @JavascriptInterface
+//                    public void showJsText(String text){
+//                        mWebView.loadUrl("javascript:jsText('"+text+"')");
+//                    }
+//                },"anxin");
                 break;
         }
     }

@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <title></title>
+        <script type="text/javascript">
+            //这个function是需要被java调用的
+            function jsText(text){
+                document.getElementById('ttt').innerHTML=text;
+            }
+        </script>
+    </head>
+    <body>
+        <input type="button" onclick="anxin.showToast1('android toast 111')" value="android_toast_111"/><br/>
+        <input type="button" onclick="anxin2.showToast2('android toast 222')" value="android_toast_222"/><br/>
+        <input type="button" onclick="anxin.showToast3('android toast 333')" value="android_toast_333"/><br/>
+        <!--<input type="button" onclick="anxin.showJsText('js text')" value="调用js方法"/>-->
+        <div id="ttt"></div>
+    </body>
+</html>
