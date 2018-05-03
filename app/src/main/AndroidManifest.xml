@@ -48,6 +48,16 @@
                 <action android:name="com.ljy.ljyutils.broadcast" />
             </intent-filter>
         </receiver>
+        <!--注册桌面小部件-->
+        <receiver android:name=".widget.MyAppWidgetProvider">
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_config"/>
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.ljy.ljyutils.action.CLICK"/>
+            </intent-filter>
+        </receiver>
         //注册service
         <service
             android:name=".service.MessengerService"

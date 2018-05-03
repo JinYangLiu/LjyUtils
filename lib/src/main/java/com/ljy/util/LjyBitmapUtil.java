@@ -1,5 +1,6 @@
 package com.ljy.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -425,4 +426,10 @@ public class LjyBitmapUtil {
     }
 
 
+    public static Bitmap rotateBidmap( Bitmap bitmap, float degree) {
+        Matrix matrix=new Matrix();
+        matrix.reset();
+        matrix.setRotate(degree);
+        return Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+    }
 }
