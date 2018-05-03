@@ -45,6 +45,7 @@ import com.ljy.ljyutils.activity.ProcessActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
 import com.ljy.ljyutils.activity.RefreshRecyclerViewActivity;
+import com.ljy.ljyutils.activity.RemoteViewsActivity;
 import com.ljy.ljyutils.activity.RetrofitActivity;
 import com.ljy.ljyutils.activity.RxJavaTestActivity;
 import com.ljy.ljyutils.activity.ServiceActivity;
@@ -167,7 +168,7 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射", "多进程通信"};
+                "注解与反射", "多进程通信","RemoteViews"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -181,7 +182,7 @@ public class MainActivity extends BaseActivity {
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
-                AnnotationActivity.class, ProcessActivity.class};
+                AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
