@@ -7,22 +7,36 @@
     android:orientation="vertical"
     tools:context=".activity.RemoteViewsActivity">
     <Button
-        android:id="@+id/btn_notification1"
-        android:text="notification1"
+        android:id="@+id/btn_notification_1"
+        android:text="notification_FLAG_ONE_SHOT"
+        android:onClick="btnClick"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn_notification_2"
+        android:text="notification_FLAG_CANCEL_CURRENT"
+        android:onClick="btnClick"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn_notification_3"
+        android:text="notification_FLAG_UPDATE_CURRENT"
         android:onClick="btnClick"
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btn_notification2"
-        android:text="notification2"
+        android:text="notification_相同id时"
         android:onClick="btnClick"
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btn_notification3"
-        android:text="自定义notification"
+        android:text="notification_自定义布局"
         android:onClick="btnClick"
         android:textAllCaps="false"
         android:layout_width="match_parent"
