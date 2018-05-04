@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.os.Bundle;
@@ -22,9 +23,12 @@ import com.ljy.util.LjySystemUtil;
 import java.util.Random;
 
 /**
- *  A. RemoteViews:
+ * A. RemoteViews:
  * 顾名思义,远程View,在其他进程中显示,可跨进程更新界面
  * 使用场景:通知栏和桌面小部件(实现:NotificationManager和AppWidgetProvider)
+ * 支持的类型:
+ * 1. layout:FrameLayout,LinearLayout,RelativeLayout,GridLayout
+ * 2. view:Button,ImageView,ImageButton,TextView,ProcessBar,ListView,GridView,ViewStub,ViewFlipper...
  * <p>
  * B. PendingIntent:
  * 1. 与Intent的区别是在将来的某个不确定的时刻发生
@@ -57,7 +61,8 @@ public class RemoteViewsActivity extends BaseActivity {
     }
 
     Intent intent = new Intent(mContext, CustomViewActivity.class);
-    int num=1;
+    int num = 1;
+
     public void btnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_notification_1:
@@ -70,19 +75,49 @@ public class RemoteViewsActivity extends BaseActivity {
                 showNotification(PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
             case R.id.btn_notification2:
-                num=1;
+                num = 1;
                 Intent intent2 = new Intent(mContext, DesignPatternActivity.class);
-                showNotification(2, R.drawable.ic_music, "人民日报", "hello Android", intent2, 2,PendingIntent.FLAG_UPDATE_CURRENT);
+                showNotification(2, R.drawable.ic_music, "人民日报", "hello Android", intent2, 2, PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
             case R.id.btn_notification3:
                 Intent intent3 = new Intent(mContext, BallActivity.class);
                 showRemoteNotification(3, R.drawable.ic_notification, "东京日报", "open", intent3, 1);
                 break;
+            case R.id.btn_notification4:
+                startActivity(new Intent(mContext,RemoteViewsTestActivity.class));
+                view.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        toOtherProcessAct();
+                    }
+                },3000);
+                break;
         }
     }
-    private void showNotification(int flag){
-        showNotification(1, R.drawable.ic_notification, "王者日报_"+num++, "hello world", intent, 1,flag);
+
+    public static final String REMOTE_ACTION="com.ljy.REMOTE_ACTION";
+    public static final String EXTRA_REMOTE_VIEWS="EXTRA_REMOTE_VIEWS";
+    private void toOtherProcessAct() {
+        RemoteViews remoteViews=new RemoteViews(getPackageName(),R.layout.layout_notification);
+        remoteViews.setTextViewText(R.id.tv_msg, "上市在即的小米");
+        remoteViews.setTextColor(R.id.tv_msg, Color.WHITE);
+        remoteViews.setTextViewText(R.id.tv_open, "5%，既是小米的价值观，也是小米的方法论");
+        remoteViews.setTextColor(R.id.tv_open, Color.WHITE);
+        remoteViews.setImageViewResource(R.id.iv_icon, R.drawable.cat);
+        PendingIntent openBallPendingIntent= PendingIntent.getActivity(mContext,0,new Intent(mContext,BallActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent openFishPendingIntent=PendingIntent.getActivity(mContext,0,new Intent(mContext,FishActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.rootView,openBallPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.tv_open,openFishPendingIntent);
+        Intent intent=new Intent(REMOTE_ACTION);
+        intent.putExtra(EXTRA_REMOTE_VIEWS,remoteViews);
+        sendBroadcast(intent);
+        LjyLogUtil.i("toOtherProcessAct");
     }
+
+    private void showNotification(int flag) {
+        showNotification(1, R.drawable.ic_notification, "王者日报_" + num++, "hello world", intent, 1, flag);
+    }
+
     private void showRemoteNotification(int id, int icon, String title, String content, Intent intent, int requestCode) {
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, requestCode, new Intent(mContext, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -106,7 +141,7 @@ public class RemoteViewsActivity extends BaseActivity {
     }
 
 
-    private void showNotification(int id, int icon, String title, String content, Intent intent, int requestCode,int flag) {
+    private void showNotification(int id, int icon, String title, String content, Intent intent, int requestCode, int flag) {
         PendingIntent pendingIntent = intent == null ? null : PendingIntent.getActivity(mContext, requestCode, intent, flag);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         setNotificationChannel(id, manager);

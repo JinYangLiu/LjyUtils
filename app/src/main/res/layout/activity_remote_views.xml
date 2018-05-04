@@ -41,5 +41,12 @@
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn_notification4"
+        android:text="模拟通知栏,跨进程传递RemoteViews"
+        android:onClick="btnClick"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

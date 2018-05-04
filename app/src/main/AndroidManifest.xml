@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
     //8.0安装未知来源权限
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -48,14 +49,15 @@
                 <action android:name="com.ljy.ljyutils.broadcast" />
             </intent-filter>
         </receiver>
-        <!--注册桌面小部件-->
+        <!-- 注册桌面小部件 -->
         <receiver android:name=".widget.MyAppWidgetProvider">
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_config"/>
+                android:resource="@xml/widget_config" />
+
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="com.ljy.ljyutils.action.CLICK"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.ljy.ljyutils.action.CLICK" />
             </intent-filter>
         </receiver>
         //注册service
@@ -83,7 +85,7 @@
         <service
             android:name=".service.BinderPoolService"
             android:exported="true"
-            android:process=":binderPoolService"></service>
+            android:process=":binderPoolService" />
         //注册并声明intentService
         <service android:name=".service.MyIntentService">
             <intent-filter>
@@ -350,16 +352,18 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.XmlParserTestActivity"></activity>
-        <activity android:name=".activity.DesignPatternActivity"></activity>
-        <activity android:name=".activity.CustomViewActivity"></activity>
-        <activity android:name=".activity.RxJavaTestActivity"></activity>
-        <activity android:name=".activity.AspectJTestActivity"></activity>
-        <activity android:name=".activity.AnnotationActivity"></activity>
+        <activity android:name=".activity.XmlParserTestActivity" />
+        <activity android:name=".activity.DesignPatternActivity" />
+        <activity android:name=".activity.CustomViewActivity" />
+        <activity android:name=".activity.RxJavaTestActivity" />
+        <activity android:name=".activity.AspectJTestActivity" />
+        <activity android:name=".activity.AnnotationActivity" />
         <activity
             android:name=".activity.ProcessActivity"
-            android:process=":process"></activity>
-        <activity android:name=".activity.RemoteViewsActivity"></activity>
+            android:process=":process" />
+        <activity android:name=".activity.RemoteViewsActivity" />
+        <activity android:name=".activity.RemoteViewsTestActivity"
+            android:process=":remoteViewsTest" />
     </application>
 
 </manifest>
