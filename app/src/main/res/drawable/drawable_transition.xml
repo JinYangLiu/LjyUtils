@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--实现亮哥drawable之间淡入淡出的效果-->
+    <item
+        android:drawable="@drawable/cat"/>
+    <item
+        android:drawable="@mipmap/mountain"/>
+
+
+</transition>

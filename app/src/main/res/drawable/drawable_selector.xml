@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:constantSize="true"
+    android:dither="true"
+    android:variablePadding="true"
+    >
+    <!--constantSize true表示StateListDrawable的固有大小保持不变,即所有item中的最大值-->
+    <!--variablePadding true表示padding保持固定不变,即所以item padding的最大值-->
+
+    <!--每个item对应着view的一种状态,主要用于可单击view的背景-->
+    <!--按下未松开-->
+    <item
+        android:drawable="@color/thin_blue"
+        android:state_pressed="true"
+        />
+    <!--已经获取了焦点-->
+    <item
+        android:drawable="@color/thin_green"
+        android:state_focused="true"
+        />
+    <!--用户选择了View-->
+    <item
+        android:drawable="@color/thin_red"
+        android:state_selected="true"
+        />
+    <!--用户选中了View-->
+    <item
+        android:drawable="@color/black"
+        android:state_checked="true"
+        />
+    <!--view当前处于可用状态-->
+    <item
+        android:drawable="@color/colorAccent"
+        android:state_enabled="true"
+        />
+
+
+</selector>

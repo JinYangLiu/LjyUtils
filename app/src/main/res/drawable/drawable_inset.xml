@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="5dp"
+    android:insetTop="20dp"
+    android:insetBottom="20dp"
+    android:insetLeft="20dp"
+    android:insetRight="20dp"
+    >
+    <!--当一个view希望自己的背景比自己的实际区域小时使用-->
+    <shape android:shape="rectangle">
+        <solid android:color="@color/thin_green"/>
+    </shape>
+</inset>

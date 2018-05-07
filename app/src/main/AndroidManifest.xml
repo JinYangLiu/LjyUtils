@@ -362,8 +362,10 @@
             android:name=".activity.ProcessActivity"
             android:process=":process" />
         <activity android:name=".activity.RemoteViewsActivity" />
-        <activity android:name=".activity.RemoteViewsTestActivity"
+        <activity
+            android:name=".activity.RemoteViewsTestActivity"
             android:process=":remoteViewsTest" />
+        <activity android:name=".activity.DrawableActivity"></activity>
     </application>
 
 </manifest>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:antialias="true"
+    android:dither="true"
+    android:filter="true"
+    android:gravity="center"
+    android:mipMap="false"
+    android:src="@mipmap/ic_launcher"
+    android:tileMode="clamp" />
+
+    <!--android:src="@drawable/cat" 图片资源id
+     * android:antialias="true"    开启抗锯齿
+     * android:dither="true"       开启抖动效果
+     * android:filter="true"       开启过滤
+     * android:gravity="center"    图片小于容器时对图片进行定位
+     * android:mipMap="true"       纹理映射
+     * android:tileMode=""   平铺模式 :disabled 关闭, repeat 平铺, mirror 镜像平铺, clamp 四周扩展-->

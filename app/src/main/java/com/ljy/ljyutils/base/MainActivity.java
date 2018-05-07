@@ -28,6 +28,7 @@ import com.ljy.ljyutils.activity.DemoDa2Activity;
 import com.ljy.ljyutils.activity.DesignPatternActivity;
 import com.ljy.ljyutils.activity.DialogDemoActivity;
 import com.ljy.ljyutils.activity.DoodleActivity;
+import com.ljy.ljyutils.activity.DrawableActivity;
 import com.ljy.ljyutils.activity.DrawerActivity;
 import com.ljy.ljyutils.activity.FishActivity;
 import com.ljy.ljyutils.activity.FragmentDemoActivity;
@@ -168,7 +169,7 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射", "多进程通信","RemoteViews"};
+                "注解与反射", "多进程通信","RemoteViews","Drawable"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -182,7 +183,7 @@ public class MainActivity extends BaseActivity {
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
-                AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class};
+                AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class};
 
         for (int i = 0; i < textArr.length; i++) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);

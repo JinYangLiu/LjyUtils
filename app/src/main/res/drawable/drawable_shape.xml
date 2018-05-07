@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!--android:shape="" rectangle 矩形(默认), oval 椭圆, line 横线, ring 圆环;line,ring要通过stroke指定线的宽度和颜色等-->
+
+    <!--corners 仅使用于rectangle时 , radius会被下面的四个覆盖-->
+    <corners
+        android:radius="9dp"
+        android:bottomLeftRadius="40dp"
+        android:bottomRightRadius="80dp"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="20dp" />
+    <!--solid(纯色填充)-->
+    <!--<solid-->
+    <!--android:color="@color/black"/>-->
+    <!--gradient 与solid(纯色填充)相排斥, 表示渐变效果-->
+    <!--angle:渐变角度,默认0,必须是45的倍数,0表从左到右,90表从下到上-->
+    <!--centerX/Y 渐变中心点的坐标-->
+    <!--gradientRadius 渐变半径,仅当 type="radial"时有效-->
+    <!--useLevel 一般为false,当作为StateListDrawable使用是为true-->
+    <!--type: 渐变类别,linear线性渐变,radial径向渐变,sweep扫描线渐变-->
+    <gradient
+        android:angle="90"
+        android:centerColor="@color/thin_red"
+        android:endColor="@color/thin_green"
+        android:startColor="@color/thin_blue"
+        android:type="linear"
+        android:useLevel="false" />
+    <!--包含此shape的view的留白-->
+    <padding
+        android:bottom="1dp"
+        android:left="10dp"
+        android:right="40dp"
+        android:top="20dp" />
+    <!--shapeDrawable的宽高-->
+    <!--<size-->
+    <!--android:width="200dp"-->
+    <!--android:height="300dp"/>-->
+    <!--
+    stroke: shape的描边
+    width 边宽
+    dashWidth 组成虚线的线段长度
+    dashGap 虚线线段的间隔
+    -->
+    <stroke
+        android:width="12dp"
+        android:color="@color/colorAccent"
+        android:dashGap="20dp"
+        android:dashWidth="50dp" />
+
+</shape>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/girl"
+    android:clipOrientation="vertical"
+    android:gravity="center"
+    >
+    <!--根据当前level裁剪另一个drawable,裁剪方向由clipOrientation和gravity控制-->
+
+</clip>

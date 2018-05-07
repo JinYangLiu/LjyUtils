@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.DrawableActivity">
+
+    <HorizontalScrollView
+        android:id="@+id/hs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn_bitmapDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="bitmapDrawable" />
+
+            <Button
+                android:id="@+id/btn_ninePatchDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="ninePatchDrawable" />
+
+            <Button
+                android:id="@+id/btn_shapeDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="shapeDrawable" />
+
+            <Button
+                android:id="@+id/btn_layerDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="layerDrawable" />
+
+            <Button
+                android:id="@+id/btn_selectorDrawable"
+                style="@style/btnStyle"
+                android:background="@drawable/drawable_selector"
+                android:onClick="btnClick"
+                android:text="selectorDrawable" />
+            <Button
+                android:id="@+id/btn_LevelListDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="LevelListDrawable" />
+            <Button
+                android:id="@+id/btn_TransitionDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="TransitionDrawable" />
+            <Button
+                android:id="@+id/btn_InsetDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="InsetDrawable" />
+            <Button
+                android:id="@+id/btn_scaleDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="scaleDrawable" />
+            <Button
+                android:id="@+id/btn_ClipDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="ClipDrawable" />
+            <Button
+                android:id="@+id/btn_CustomDrawable"
+                style="@style/btnStyle"
+                android:onClick="btnClick"
+                android:text="CustomDrawable" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ImageView
+        android:id="@+id/iv_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/hs"
+        android:background="@drawable/drawable_layer" />
+
+    <RelativeLayout
+        android:id="@+id/checkboxParent"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        android:background="@color/white"
+        android:layout_centerInParent="true">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/drawable_selector" />
+    </RelativeLayout>
+
+</RelativeLayout>

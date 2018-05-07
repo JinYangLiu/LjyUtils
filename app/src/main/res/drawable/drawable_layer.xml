@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--layer-list是有层次概念的,下面的item会覆盖上面的,通过合理的分层可以实现一些特殊的叠加效果-->
+    <item
+        android:id="@+id/icon_bg"
+        android:bottom="10dp"
+        android:drawable="@drawable/drawable_shape"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="10dp" />
+    <item android:gravity="center">
+        <shape android:shape="rectangle">
+            <solid android:color="#88ff0000" />
+            <corners android:radius="100dp" />
+            <size
+                android:width="200dp"
+                android:height="200dp" />
+        </shape>
+    </item>
+    <item
+        android:id="@+id/icon_music"
+        android:drawable="@drawable/ic_music"
+        android:gravity="center" />
+</layer-list>

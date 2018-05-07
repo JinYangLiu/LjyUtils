@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scale xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_music"
+    android:scaleGravity="center"
+    android:scaleWidth="5%"
+    android:scaleHeight="95%"
+    >
+    <!--根据自己的level将指定的drawable缩放到一定的比例-->
+    <!--实际显示的效果是原Drawable的100%-95%=5%-->
+
+
+</scale>
