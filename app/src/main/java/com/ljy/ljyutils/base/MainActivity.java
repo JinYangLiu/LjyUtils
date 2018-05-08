@@ -4,11 +4,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.ljy.adapter.LjyBaseAdapter;
+import com.ljy.adapter.LjyBaseFilterAdapter;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.AnimatorActivity;
 import com.ljy.ljyutils.activity.AnnotationActivity;
@@ -64,6 +74,7 @@ import com.ljy.ljyutils.service.TimerService;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyToastUtil;
+import com.ljy.view.LjyRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +86,10 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.recyclerView_main)
     RecyclerView mRecyclerView;
+    @BindView(R.id.searchView)
+    SearchView searchView;
+    EditText editTextSearch;
+    ImageView ivClear;
     private List<MainIntentBean> mList = new ArrayList<>();
     private String IS_NIGHT = "IS_NIGHT";
     private boolean isNight;
@@ -103,6 +118,7 @@ public class MainActivity extends BaseActivity {
         getSwipeBackLayout().setEnableGesture(false);
 
         initData();
+
         initView();
 
         //启动Android定时器，并且启动服务
@@ -115,32 +131,32 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     <!doctype html>
-     <html lang="en">
-     <head>
-     <meta charset="UTF-8">
-     <meta name="Generator" content="EditPlus®">
-     <meta name="Author" content="">
-     <meta name="Keywords" content="">
-     <meta name="Description" content="">
-     <title>Document</title>
-     </head>
-     <body>
-     <a href="anxindai://junanxin.app/openwith?url=www.baidu.com">启动应用程序</a>
-     </body>
-     </html>
+     * <!doctype html>
+     * <html lang="en">
+     * <head>
+     * <meta charset="UTF-8">
+     * <meta name="Generator" content="EditPlus®">
+     * <meta name="Author" content="">
+     * <meta name="Keywords" content="">
+     * <meta name="Description" content="">
+     * <title>Document</title>
+     * </head>
+     * <body>
+     * <a href="anxindai://junanxin.app/openwith?url=www.baidu.com">启动应用程序</a>
+     * </body>
+     * </html>
      */
     private void initWebJump() {
         Intent intent = getIntent();
         String action = intent.getAction();
 
-        if(Intent.ACTION_VIEW.equals(action)){
+        if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = intent.getData();
-            if(uri != null){
+            if (uri != null) {
                 String url = uri.getQueryParameter("url");
-                LjyLogUtil.i("url:"+url);
-                Intent intent1=new Intent(mActivity,WebViewTestActivity.class);
-                intent1.putExtra("url",url);
+                LjyLogUtil.i("url:" + url);
+                Intent intent1 = new Intent(mActivity, WebViewTestActivity.class);
+                intent1.putExtra("url", url);
                 startActivity(intent1);
             }
         }
@@ -169,7 +185,7 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射", "多进程通信","RemoteViews","Drawable"};
+                "注解与反射", "多进程通信", "RemoteViews", "Drawable"};
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -192,8 +208,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //当知道Adapter内Item的改变不会影响RecyclerView宽高的时候，可以设置为true让RecyclerView避免重新计算大小。
+//        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mRecyclerView.setAdapter(new LjyBaseAdapter<MainIntentBean>(mContext, mList, mRecyclerView, R.layout.layou_item_main) {
+        final LjyBaseFilterAdapter adapter = new LjyBaseFilterAdapter<MainIntentBean>(mContext, mList, R.layout.layou_item_main) {
 
             @Override
             public void convert(LjyViewHolder holder, final MainIntentBean item) {
@@ -210,8 +229,54 @@ public class MainActivity extends BaseActivity {
                 });
 
             }
+        };
+        mRecyclerView.setAdapter(adapter);
 
+        View headerView= LayoutInflater.from(mContext).inflate(R.layout.layout_main_search,mRecyclerView,false);
+        adapter.setHeaderView(headerView);
+        //搜索框输入监听
+        editTextSearch=headerView.findViewById(R.id.editText_search);
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+                ivClear.setVisibility(s.length() > 0 ? View.VISIBLE : View.INVISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
+        //清除按钮监听
+        ivClear=headerView.findViewById(R.id.imageView_clear);
+        ivClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextSearch.getText().clear();
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+
+
     }
 
     private void setNight() {
@@ -226,7 +291,7 @@ public class MainActivity extends BaseActivity {
         AppCompatDelegate.setDefaultNightMode(isNight ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
 
-    private static class MainIntentBean {
+    private static class MainIntentBean extends LjyBaseFilterAdapter.BaseFilterBean {
 
         String textInfo;
         Class intentClass;
@@ -234,6 +299,7 @@ public class MainActivity extends BaseActivity {
         MainIntentBean(String textInfo, Class intentClass) {
             this.textInfo = textInfo;
             this.intentClass = intentClass;
+            setFilterKey(textInfo);
         }
 
         public String getTextInfo() {
