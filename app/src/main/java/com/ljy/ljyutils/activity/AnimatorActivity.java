@@ -1,8 +1,11 @@
 package com.ljy.ljyutils.activity;
 
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.Camera;
+import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -64,10 +68,10 @@ public class AnimatorActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_animator);
         ButterKnife.bind(mActivity);
-        //1. 帧动画
+        //1. 帧动画(也属于View动画)
         initFrame();
 
-        //2 补间动画
+        //2 补间动画/View动画
         //加载xml中的补间动画
         initTweenXml();
         //java代码直接创建
@@ -92,7 +96,7 @@ public class AnimatorActivity extends BaseActivity {
         objAnimRotation.setDuration(2000);
         objAnimRotation.setStartDelay(3000);
         //平移
-        objAnimTrans = ObjectAnimator.ofFloat(ivFrame, "translationY",  0, 200, -200,0);
+        objAnimTrans = ObjectAnimator.ofFloat(ivFrame, "translationY", 0, 200, -200, 0);
         objAnimTrans.setDuration(2000);
         objAnimTrans.setStartDelay(6000);
         Interpolator interpolator = new BounceInterpolator();//最后阶段弹球效果
@@ -410,6 +414,16 @@ public class AnimatorActivity extends BaseActivity {
 //                ivFrame.startAnimation(alphaAnimation2);
                 ivFrame.startAnimation(setAnimation2);
                 break;
+            case R.id.btn_anim_tween_custom:
+                ivFrame.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Rotate3dAnimation rotate3dAnimation = new Rotate3dAnimation(0f, 360f,ivFrame.getWidth(),0,0,true );
+                        rotate3dAnimation.setDuration(3000);
+                        ivFrame.startAnimation(rotate3dAnimation);
+                    }
+                });
+                break;
             case R.id.btn_anim_value_ofInt:
                 // 启动动画
                 valueAnimOfInt.start();
@@ -425,8 +439,70 @@ public class AnimatorActivity extends BaseActivity {
                 objAnimTrans.start();
                 objAnimScale.start();
                 break;
+            case R.id.btn_anim_obj_set:
+                AnimatorSet set=new AnimatorSet();
+                set.playTogether(
+                        ObjectAnimator.ofFloat(ivFrame,"rotationX",0,360),
+                        ObjectAnimator.ofFloat(ivFrame,"rotationY",0,180),
+                        ObjectAnimator.ofFloat(ivFrame,"rotation",0,90),
+                        ObjectAnimator.ofFloat(ivFrame,"translationX",0,90),
+                        ObjectAnimator.ofFloat(ivFrame,"translationY",0,90),
+                        ObjectAnimator.ofFloat(ivFrame,"scaleX",1,1.5f),
+                        ObjectAnimator.ofFloat(ivFrame,"scaleY",1,0.5f),
+                        ObjectAnimator.ofFloat(ivFrame,"alpha",1,0.1f,1)
+                );
+                set.setDuration(5*1000).start();
+                break;
             default:
                 break;
+        }
+    }
+
+    public class Rotate3dAnimation extends Animation {
+        private float mFromDegrees;
+        private float mToDegrees;
+        private float mCenterX;
+        private float mCenterY;
+        private float mDepthZ;
+        private boolean mReverse;
+        private Camera mCamera;
+
+        public Rotate3dAnimation(float mFromDegrees, float mToDegrees, float mCenterX, float mCenterY, float mDepthZ, boolean mReverse) {
+            this.mFromDegrees = mFromDegrees;
+            this.mToDegrees = mToDegrees;
+            this.mCenterX = mCenterX;
+            this.mCenterY = mCenterY;
+            this.mDepthZ = mDepthZ;
+            this.mReverse = mReverse;
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth, int parentHeight) {
+            super.initialize(width, height, parentWidth, parentHeight);
+            mCamera = new Camera();
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+//            super.applyTransformation(interpolatedTime, t);
+            float fromDegrees = mFromDegrees;
+            float degrees = fromDegrees + ((mToDegrees - fromDegrees) * interpolatedTime);
+            float centerX = mCenterX;
+            float centerY = mCenterY;
+            Camera camera = mCamera;
+            Matrix matrix = t.getMatrix();
+            camera.save();
+            if (mReverse) {
+//                camera.translate，这个方法接受3个参数，分别是x,y,z三个轴的偏移量，我们这里只将z轴进行了偏移，
+                camera.translate(0.0f, 0.0f, mDepthZ * interpolatedTime);
+            } else {
+                camera.translate(0.0f, 0.0f, mDepthZ * (1.0f - interpolatedTime));
+            }
+            camera.rotateY(degrees);
+            camera.getMatrix(matrix);
+            camera.restore();
+            matrix.preTranslate(-centerX, -centerY);
+            matrix.postTranslate(centerX, centerY);
         }
     }
 }

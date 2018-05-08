@@ -37,6 +37,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
+                android:id="@+id/btn_anim_tween_custom"
+                android:text="自定义补间动画"
+                android:textAllCaps="false"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
                 android:id="@+id/btn_anim_value_ofInt"
                 android:text="属性ofInt"
                 android:textAllCaps="false"
@@ -53,6 +60,13 @@
             <Button
                 android:id="@+id/btn_anim_obj"
                 android:text="属性动画ObjectAnim"
+                android:textAllCaps="false"
+                android:onClick="onAnimBtnClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_anim_obj_set"
+                android:text="属性动画ObjectAnim Set"
                 android:textAllCaps="false"
                 android:onClick="onAnimBtnClick"
                 android:layout_width="wrap_content"
