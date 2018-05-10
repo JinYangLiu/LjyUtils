@@ -68,6 +68,7 @@ import com.ljy.ljyutils.activity.VideoPlayerActivity;
 import com.ljy.ljyutils.activity.ViewSizeActivity;
 import com.ljy.ljyutils.activity.VoteActivity;
 import com.ljy.ljyutils.activity.WebViewTestActivity;
+import com.ljy.ljyutils.activity.WindowActivity;
 import com.ljy.ljyutils.activity.XmlParserTestActivity;
 import com.ljy.ljyutils.bean.ProcessBean;
 import com.ljy.ljyutils.service.TimerService;
@@ -77,6 +78,7 @@ import com.ljy.util.LjyToastUtil;
 import com.ljy.view.LjyRecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -185,7 +187,9 @@ public class MainActivity extends BaseActivity {
                 "动画的使用", "ConstraintLayout的使用", "拼图view的使用", "pdf文件上传",
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
-                "注解与反射", "多进程通信", "RemoteViews", "Drawable"};
+                "注解与反射", "多进程通信", "RemoteViews", "Drawable",
+                "window"
+        };
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
                 GestureLockActivity.class, RadarViewActivity.class, ArgueProgressActivity.class, VoteActivity.class,
@@ -199,9 +203,12 @@ public class MainActivity extends BaseActivity {
                 AnimatorActivity.class, ConstraintLayoutActivity.class, JigsawActivity.class, PDFUploadActivity.class,
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
-                AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class};
+                AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class,
+                WindowActivity.class
+        };
 
-        for (int i = 0; i < textArr.length; i++) {
+
+        for (int i = textArr.length-1; i >=0; i--) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
             mList.add(bean);
         }
@@ -232,10 +239,10 @@ public class MainActivity extends BaseActivity {
         };
         mRecyclerView.setAdapter(adapter);
 
-        View headerView= LayoutInflater.from(mContext).inflate(R.layout.layout_main_search,mRecyclerView,false);
+        View headerView = LayoutInflater.from(mContext).inflate(R.layout.layout_main_search, mRecyclerView, false);
         adapter.setHeaderView(headerView);
         //搜索框输入监听
-        editTextSearch=headerView.findViewById(R.id.editText_search);
+        editTextSearch = headerView.findViewById(R.id.editText_search);
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -254,7 +261,7 @@ public class MainActivity extends BaseActivity {
             }
         });
         //清除按钮监听
-        ivClear=headerView.findViewById(R.id.imageView_clear);
+        ivClear = headerView.findViewById(R.id.imageView_clear);
         ivClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,7 +281,6 @@ public class MainActivity extends BaseActivity {
                 return false;
             }
         });
-
 
 
     }

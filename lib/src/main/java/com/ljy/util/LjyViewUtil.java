@@ -168,6 +168,29 @@ public class LjyViewUtil {
      */
     public static void touchMove(final View view) {
         final View parentView = ((View) view.getParent());
+        if (parentView == null) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                private int lastY;
+                private int lastX;
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int x = (int) event.getRawX();
+                    int y = (int) event.getRawY();
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_MOVE:
+                            int dx = x - lastX;
+                            int dy = y - lastY;
+                            v.setTranslationX(v.getTranslationX()+dx);
+                            v.setTranslationY(v.getTranslationY()+dy);
+                            break;
+                    }
+                    lastX = x;
+                    lastY = y;
+                    return true;
+                }
+            });
+            return;
+        }
 //        final int parentViewWidth = getViewWidth(parentView);
 //        final int parentViewHeight = getViewHeight(parentView);
         view.setOnTouchListener(new View.OnTouchListener() {

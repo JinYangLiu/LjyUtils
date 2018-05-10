@@ -20,6 +20,10 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+    <permission android:name="android.permission.INJECT_EVENTS"/>
 
     <application
         android:name=".base.MyApplication"
@@ -114,7 +118,28 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/livewallpaper" />
         </service>
-        //友盟推送 自定义service
+        <!--MyAccessibilityService-->
+        <service
+            android:name=".service.BaseAccessibilityService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:process=":baseAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility"/>
+        </service>
+        <service
+            android:name=".service.FloatingWindowService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":floatingWindowService" />
+
+        <!--//友盟推送 自定义service-->
         <!-- <service android:name="com.ljy.ljyutils.service.MyPushIntentService" /> -->
         <service
             android:name=".service.TimerService"
@@ -365,7 +390,8 @@
         <activity
             android:name=".activity.RemoteViewsTestActivity"
             android:process=":remoteViewsTest" />
-        <activity android:name=".activity.DrawableActivity"></activity>
+        <activity android:name=".activity.DrawableActivity" />
+        <activity android:name=".activity.WindowActivity" />
     </application>
 
 </manifest>
