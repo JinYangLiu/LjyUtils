@@ -160,9 +160,37 @@ public class ProcessActivity extends BaseActivity {
                     }
                 }.start();
                 break;
+            case R.id.btn_ThreadLocal:
+                threadLocalDemo();
+                break;
         }
         mTextViewInfo.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
+    }
+
+    private ThreadLocal<Boolean> booleanThreadLocal = new ThreadLocal<>();
+
+    private void threadLocalDemo() {
+        booleanThreadLocal.set(true);
+        LjyLogUtil.i(Thread.currentThread().getName() +
+                "__booleanThreadLocal=" + booleanThreadLocal.get());
+        new Thread("th_1") {
+            @Override
+            public void run() {
+                booleanThreadLocal.set(false);
+                LjyLogUtil.i(Thread.currentThread().getName() +
+                        "__booleanThreadLocal=" + booleanThreadLocal.get());
+            }
+        }.start();
+        new Thread("th_2") {
+            @Override
+            public void run() {
+                LjyLogUtil.i(Thread.currentThread().getName() +
+                        "__booleanThreadLocal=" + booleanThreadLocal.get());
+            }
+        }.start();
+        LjyLogUtil.i(Thread.currentThread().getName() +
+                "__booleanThreadLocal=" + booleanThreadLocal.get());
     }
 
     /**

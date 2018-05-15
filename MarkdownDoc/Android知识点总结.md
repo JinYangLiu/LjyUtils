@@ -274,8 +274,29 @@
                 正确传输,尤其是在网络拥塞的情况下
         - 具体使用参考TcpServerService.java && ProcessActivity.java
         
-        
+### Handler 消息机制
 
+- Handler: android消息机制的上层接口,其运行需要底层的MessageQueue和Looper支撑
+
+- MessageQueue: 消息队列,内部存储了一组消息,一队列的形式对外提供插入删除工作,
+(其实主要是包含插入(enqueueMessage)和读取(next)两个操作,读取操作本身会伴随着删除操作)     
+但其内部实现是采用单链表(插入和删除上比较有优势)的数据结构而非真正的队列;
+
+- Looper: MessageQueue只是存储消息,Looper以无限循环的形式去查找是否有新消息,有则处理,无则等待;
+线程是默认没有Looper的,如果要在线程中船舰handler就要为线程创建Looper,而UI线程(ActivityThread)是个例外,其创建时就会初始化Looper
+    - 注:Looper是运行在创建Handler所在的线程中的,这样一来handler中的业务逻辑就被切换到创建handler的线程中去执行了
+    
+- ThreadLocal: looper中使用到的数据存储类,可以在不同线程中互不干扰的存储并提供数据,通过它在指定的线程中存储数据,数据存储后只有
+指定线程中可以获取到存储的数据,如某些数据以线程为作用域,且不同线程有不同的数据副本时,可以考虑采用threadLocal,
+如Looper就是以线程为作用域,若不用ThreadLocal就要提供一个全局的哈希表供查找并封装一个LooperManager类
+(在不同线程中访问同一个ThreadLocal的get方法所得到的值是不同的,set方法是不相影响的)
+
+- Q: 系统为何不允许在子线程中访问UI?
+    - 因为Android中的UI控件不是线程安全的,如果在多线程中并发访问可能导致ui控件处于不可预期的状态
+    - 为什么不加锁机制?
+        1. 锁机制会让UI访问的逻辑变得复杂
+        2. 锁机制会降低UI的访问效率,因为锁机制会阻塞某些线程的执行
+        - 介于以上2点,最简单且高效额方法就是采用单线程模型处理UI操作
    
    
     

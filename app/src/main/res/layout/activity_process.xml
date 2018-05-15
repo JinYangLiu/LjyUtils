@@ -47,6 +47,11 @@
                 android:onClick="onBtnClick"
                 android:text="一个Service管理多个AIDL"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn_ThreadLocal"
+                android:onClick="onBtnClick"
+                android:text="ThreadLocal demo"
+                style="@style/btnStyle"/>
 
         </LinearLayout>
     </HorizontalScrollView>
