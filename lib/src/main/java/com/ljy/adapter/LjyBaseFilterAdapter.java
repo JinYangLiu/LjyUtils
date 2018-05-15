@@ -271,13 +271,13 @@ public abstract class LjyBaseFilterAdapter<T extends LjyBaseFilterAdapter.BaseFi
                     results.values = listCopy;
                     results.count = listCopy.size();
                 } else {
-                    String prefixString = constraint.toString();
+                    String prefixString = constraint.toString().toLowerCase();
                     final int count = list.size();
                     ArrayList<T> newValues = new ArrayList();
                     for (int i = 0; i < count; i++) {
                         T value = list.get(i);
                         String filterKey = value.getFilterKey();
-                        if (filterKey != null && filterKey.contains(prefixString)) {
+                        if (filterKey != null && filterKey.toLowerCase().contains(prefixString)) {
                             newValues.add(value);
                         }
 
