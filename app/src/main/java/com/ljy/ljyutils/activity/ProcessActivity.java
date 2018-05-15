@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -85,6 +87,7 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(mActivity);
         LjyLogUtil.i("ProcessBean.count=" + ProcessBean.count);
+        LjyLogUtil.i("onCreate_当前线程数量："+Thread.activeCount());
     }
 
     //Messenger
@@ -171,12 +174,46 @@ public class ProcessActivity extends BaseActivity {
     private ThreadLocal<Boolean> booleanThreadLocal = new ThreadLocal<>();
 
     private void threadLocalDemo() {
+        LjyLogUtil.i("1_当前线程数量："+Thread.activeCount());
         booleanThreadLocal.set(true);
         LjyLogUtil.i(Thread.currentThread().getName() +
                 "__booleanThreadLocal=" + booleanThreadLocal.get());
         new Thread("th_1") {
             @Override
             public void run() {
+                LjyLogUtil.i("2_当前线程数量："+Thread.activeCount());
+                Looper.prepare();//创建looper
+                Handler handler=new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        switch (msg.what){
+                            case 1:
+                                LjyLogUtil.i(Thread.currentThread().getName()+"_msg.what=1");
+                                break;
+                        }
+                    }
+                };
+
+                handler.sendEmptyMessageDelayed(1,1000);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        LjyLogUtil.i(Thread.currentThread().getName()+"_handler.postDelayed");
+                    }
+                },2000);
+
+                Looper.loop();//开启消息循环,要在发送消息的最后调用，否则post，send等方法都是无效的
+                //1：
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//                    handler.getLooper().quitSafely();//设定退出标记，将已有消息处理完毕后安全退出
+//                }
+                //2：
+                handler.getLooper().quit();//直接退出
+
+                //子线程中如果手动为其创建了looper，在处理完所有事情后要quit终止消息循环，否则这个子线程会一直处于等待状态
+
                 booleanThreadLocal.set(false);
                 LjyLogUtil.i(Thread.currentThread().getName() +
                         "__booleanThreadLocal=" + booleanThreadLocal.get());
@@ -185,12 +222,74 @@ public class ProcessActivity extends BaseActivity {
         new Thread("th_2") {
             @Override
             public void run() {
+                //报错：RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
+//                Handler handler2=new Handler(){
+//                    @Override
+//                    public void handleMessage(Message msg) {
+//                        super.handleMessage(msg);
+//                        switch (msg.what){
+//                            case 2:
+//                                LjyLogUtil.i("msg.what=2");
+//                                break;
+//                        }
+//                    }
+//                };
+//                handler2.sendEmptyMessageDelayed(2,3000);
+//                handler2.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        LjyLogUtil.i("handler2.postDelayed");
+//                    }
+//                },4000);
+//                Looper.loop();
+
                 LjyLogUtil.i(Thread.currentThread().getName() +
                         "__booleanThreadLocal=" + booleanThreadLocal.get());
             }
         }.start();
         LjyLogUtil.i(Thread.currentThread().getName() +
                 "__booleanThreadLocal=" + booleanThreadLocal.get());
+
+        Thread t3=new Thread(){
+            @Override
+            public void run() {
+                LjyLogUtil.i("3_当前线程数量："+Thread.activeCount());
+                Looper.prepare();
+                Handler handler3=new Handler(Looper.getMainLooper()){//getMainLooper可以在任何地方获取到主线程的Looper
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        switch (msg.what){
+                            case 3:
+                                LjyLogUtil.i(Thread.currentThread().getName()+"_msg.what=3");
+                                LjyLogUtil.i(Thread.currentThread().getName()+"_"+msg.getData().getString("key1"));
+                                break;
+                        }
+                    }
+                };
+                Message msg=new Message();
+                msg.what=3;
+                Bundle bundle=new Bundle();
+                bundle.putString("key1","value1");
+                msg.setData(bundle);
+                handler3.sendMessageDelayed(msg,5000);
+                handler3.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        LjyLogUtil.i(Thread.currentThread().getName()+"_handler3.postDelayed");
+                    }
+                },6000);
+                Looper.loop();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    handler3.getLooper().quitSafely();
+                }
+//                Looper.myLooper();
+
+            }
+        };
+        t3.start();
+
+
     }
 
     /**
@@ -372,5 +471,11 @@ public class ProcessActivity extends BaseActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LjyLogUtil.i("onDestroy_当前线程数量："+Thread.activeCount());
     }
 }

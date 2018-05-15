@@ -7,6 +7,7 @@
 - [什么情况下会导致内存泄露](#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2)
 - [AsyncTask的工作原理](#asynctask%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
 - [Android多进程通信](#android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1)
+- [Handler 消息机制](#handler-%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -279,11 +280,11 @@
 - Handler: android消息机制的上层接口,其运行需要底层的MessageQueue和Looper支撑
 
 - MessageQueue: 消息队列,内部存储了一组消息,一队列的形式对外提供插入删除工作,
-(其实主要是包含插入(enqueueMessage)和读取(next)两个操作,读取操作本身会伴随着删除操作)     
+(其实主要是包含插入(enqueueMessage)和读取(next(无限循环的，如果没有消息，next会一直阻塞在这里))两个操作,读取操作本身会伴随着删除操作)     
 但其内部实现是采用单链表(插入和删除上比较有优势)的数据结构而非真正的队列;
 
 - Looper: MessageQueue只是存储消息,Looper以无限循环的形式去查找是否有新消息,有则处理,无则等待;
-线程是默认没有Looper的,如果要在线程中船舰handler就要为线程创建Looper,而UI线程(ActivityThread)是个例外,其创建时就会初始化Looper
+线程是默认没有Looper的,如果要在线程中船舰handler就要为线程创建Looper（通过Looper.prepare()创建）,而UI线程(ActivityThread)是个例外,其创建时就会初始化Looper
     - 注:Looper是运行在创建Handler所在的线程中的,这样一来handler中的业务逻辑就被切换到创建handler的线程中去执行了
     
 - ThreadLocal: looper中使用到的数据存储类,可以在不同线程中互不干扰的存储并提供数据,通过它在指定的线程中存储数据,数据存储后只有
