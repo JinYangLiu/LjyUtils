@@ -185,7 +185,38 @@
   在Android 4.1以及以上版本则不存在这一限制，因为ActivityThread（代表了主线程）的main方法中会自动加载AsyncTask
   - AsyncTask对象必须在主线程中创建
   - AsyncTask对象的execute方法必须在主线程中调用
-  - 一个AsyncTask对象只能调用一次execute方法   
+  - 一个AsyncTask对象只能调用一次execute方法 
+  
+- 线程池
+    - 好处：
+        1. 重用线程池中的线程，避免线程的创建和销毁所带来的性能开销
+        2. 能有效控制线程池中的最大并发数，避免大量线程之间相互抢占系统资源而导致的阻塞现象
+        3. 能够对线程进行简单的管理，提供如定时执行，制定间隔循环等功能
+    - 起源：Android中的线程池概念源于java中的 Executor，具体实现是 ThreadPoolExecutor，
+    主要分为4类，可通过Executors(注意是s)的工厂方法获得；
+        - Executors.newFixedThreadPool():只有核心线程且没有超时机制，线程不会回收，可以快速相应外界请求，且任务队列大小没有限制
+        - Executors.newCachedThreadPool():只有非核心线程，最大线程数为Integer.MAX_VALUE，超时时长60s,且任务队列无法存储元素，适合执行大量耗时较少的任务
+        - Executors.newScheduledThreadPool():核心线程数固定，非核心数不限，且非核心线程闲置时会立即回收，主要用于执行定时任务和具有固定周期的重复任务
+        - Executors.newSingleThreadExecutor():只有一个核心线程，统一所有的外界任务到一个线程中，顺序执行，这使得这些任务之间不需要处理线程同步的问题
+    - 重要参数
+        - corePoolSize：线程池的核心线程数，默认情况下，核心线程会在线程池中一直存活，即使他们处于闲置状态；
+        但是若将allowsCoreThreadTimeOut=true，那么闲置的核心线程在等待新任务时会有超时策略，时长由keepAliveTime
+        控制，超时后核心线程会被终止
+        - maximumPoolSize：线程池所能容纳的最大线程数，当活动线程数达到这个数值后，后续的新任务将被阻塞
+        ````
+        如AsyncTask的线程池中
+        CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT - 1, 4));
+        MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
+        KEEP_ALIVE_SECONDS = 30;
+        BlockingQueue<Runnable> sPoolWorkQueue =
+                    new LinkedBlockingQueue<Runnable>(128);//任务队列size
+        ````
+    — 执行任务的大致规则：
+        1. 若线程池中的线程数量未达到核心线程数，则直接启动一个核心线程执行任务
+        2. 若已达到，则任务被插入到任务队列中排队等待执行
+        3. 若无法插入到任务队列，往往是由于任务队列已满，若此时线程数量未达到最大线程数，则立即启动一个非核心线程来执行任务
+        4. 若已达到，则拒绝执行此任务
+        
 
 ### Android多进程通信
 

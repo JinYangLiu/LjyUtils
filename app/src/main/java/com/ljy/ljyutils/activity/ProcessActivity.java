@@ -56,6 +56,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -187,7 +188,7 @@ public class ProcessActivity extends BaseActivity {
         new MyAsyncTask("asyncTask_3").execute("003");
         new MyAsyncTask("asyncTask_4").execute("004");
         new MyAsyncTask("asyncTask_5").execute("005");
-        //如果要并行执行
+        //如果要并行执行（可以并行的数量受线程池大小影响，线程池大小与cpu核心数有关）
         new MyAsyncTask("asyncTask_6")
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"006");
         new MyAsyncTask("asyncTask_7")
@@ -215,7 +216,7 @@ public class ProcessActivity extends BaseActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return "name="+name+",param"+strings;
+            return "name="+name+",param="+ Arrays.toString(strings);
         }
 
         @Override
