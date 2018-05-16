@@ -75,7 +75,29 @@ public class AspectTest {
     @Before("DebugToolMethod()")
     public void onDebugToolMethodBefore(JoinPoint joinPoint) {
         String key = joinPoint.getSignature().toString();
-        LjyLogUtil.i("onDebugToolMethodBefore:  to do...");
+        LjyLogUtil.i(Thread.currentThread().getName()+"_onDebugToolMethodBefore:  to do...");
+
+    }
+
+    /**
+     *
+     * 实现线程切换
+     */
+    @Around("DebugToolMethod()")
+    public Object onDebugToolMethodAround(final ProceedingJoinPoint proceedingJoinPoint) {
+        final Object[] result={null};
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    //执行原有业务
+                   result[0]= proceedingJoinPoint.proceed();
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            }
+        }.start();
+        return result[0];
     }
 
     //call和execution

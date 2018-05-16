@@ -38,7 +38,8 @@ public class AspectJTestActivity extends BaseActivity {
                 methodTest003(view);
                 break;
             case R.id.btnTestDebugTool:
-                methodTest004(view);
+               String result= methodTest004(view);
+               LjyLogUtil.i("result:"+result);
                 break;
             case R.id.btnTestAroundCall:
                 methodTest005();
@@ -124,8 +125,15 @@ public class AspectJTestActivity extends BaseActivity {
     }
 
     @DebugTool
-    private void methodTest004(View view) {
-        LjyLogUtil.i("methodTest004 to do...");
+    private String methodTest004(View view) {
+        LjyLogUtil.i(Thread.currentThread().getName()+"_methodTest004 to do...");
+        try {
+            Thread.sleep(10*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        LjyLogUtil.i(Thread.currentThread().getName()+"_methodTest004 to do end");
+        return "耗时操作的结果";
     }
 
     private void methodTest003(View view) {
