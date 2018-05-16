@@ -363,4 +363,44 @@ public class LjyTimeUtil {
             {"丙子", "戊子", "庚子", "壬子", "甲子"},
             {"丁丑", "己丑", "辛丑", "癸丑", "乙丑"}};
 
+    private static long lastTime;
+
+    /**
+     * 指定时间内，可以执行一次
+     * 如按钮点击，两秒内点击只生效一次，防止重复点击
+     * @param millis
+     * @return
+     */
+    public static boolean isOverSpaceMillis(long millis){
+        boolean canClick ;
+        long currentTime = System.currentTimeMillis();
+        if(currentTime - lastTime > millis){
+            canClick = true;
+            lastTime = currentTime;
+        }else{
+            canClick = false;
+        }
+
+        return canClick;
+    }
+
+    /**
+     * 间隔指定时间后，可以执行
+     * 如按钮点击，每隔两秒才生效一次，防止重复点击
+     * @param millis
+     * @return
+     */
+    public static boolean isEverySpaceMillis(long millis){
+        boolean canClick ;
+        long currentTime = System.currentTimeMillis();
+        if(currentTime - lastTime > millis){
+            canClick = true;
+        }else{
+            canClick = false;
+        }
+        lastTime = currentTime;
+
+        return canClick;
+    }
+
 }
