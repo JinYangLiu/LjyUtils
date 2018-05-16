@@ -52,6 +52,11 @@
                 android:onClick="onBtnClick"
                 android:text="ThreadLocal demo"
                 style="@style/btnStyle"/>
+            <Button
+                android:id="@+id/btn_AsyncTask"
+                android:onClick="onBtnClick"
+                android:text="AsyncTask demo"
+                style="@style/btnStyle"/>
 
         </LinearLayout>
     </HorizontalScrollView>

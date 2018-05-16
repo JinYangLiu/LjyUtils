@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +55,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,6 +74,8 @@ public class ProcessActivity extends BaseActivity {
     TextView mTextViewInfo;
     @BindView(R.id.btnSend)
     Button btnSend;
+    private List<Thread> threadList = new ArrayList<>();
+
 
     private static final int MESSAGE_RECEIVE_NEW_MSG = 1;
     private static final int MESSAGE_SOCKET_CONNECTED = 2;
@@ -87,7 +92,7 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(mActivity);
         LjyLogUtil.i("ProcessBean.count=" + ProcessBean.count);
-        LjyLogUtil.i("onCreate_当前线程数量："+Thread.activeCount());
+        LjyLogUtil.i("onCreate_当前线程数量：" + Thread.activeCount());
     }
 
     //Messenger
@@ -166,43 +171,92 @@ public class ProcessActivity extends BaseActivity {
             case R.id.btn_ThreadLocal:
                 threadLocalDemo();
                 break;
+            case R.id.btn_AsyncTask:
+                asyncTaskDemo();
+                break;
         }
         mTextViewInfo.append(LjyLogUtil.getAllLogMsg());
         LjyLogUtil.setAppendLogMsg(false);
     }
 
+    private void asyncTaskDemo() {
+        //测试AsyncTask是并行还是串行
+        //android 3.0 开始默认是串行的
+        new MyAsyncTask("asyncTask_1").execute("001");
+        new MyAsyncTask("asyncTask_2").execute("002");
+        new MyAsyncTask("asyncTask_3").execute("003");
+        new MyAsyncTask("asyncTask_4").execute("004");
+        new MyAsyncTask("asyncTask_5").execute("005");
+        //如果要并行执行
+        new MyAsyncTask("asyncTask_6")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"006");
+        new MyAsyncTask("asyncTask_7")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"007");
+        new MyAsyncTask("asyncTask_8")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"008");
+        new MyAsyncTask("asyncTask_9")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"009");
+        new MyAsyncTask("asyncTask_10")
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"0010");
+
+    }
+
+    private static class MyAsyncTask extends AsyncTask<String,Integer,String>{
+        String name="myAsyncTask";
+
+        public MyAsyncTask(String name) {
+            this.name = name;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "name="+name+",param"+strings;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            LjyLogUtil.i(s);
+        }
+    }
+
     private ThreadLocal<Boolean> booleanThreadLocal = new ThreadLocal<>();
 
     private void threadLocalDemo() {
-        LjyLogUtil.i("1_当前线程数量："+Thread.activeCount());
+        LjyLogUtil.i("1_当前线程数量：" + Thread.activeCount());
         booleanThreadLocal.set(true);
         LjyLogUtil.i(Thread.currentThread().getName() +
                 "__booleanThreadLocal=" + booleanThreadLocal.get());
-        new Thread("th_1") {
+        Thread t1 = new Thread("th_1") {
             @Override
             public void run() {
-                LjyLogUtil.i("2_当前线程数量："+Thread.activeCount());
+                LjyLogUtil.i("2_当前线程数量：" + Thread.activeCount());
                 Looper.prepare();//创建looper
-                Handler handler=new Handler(){
+                Handler handler = new Handler() {
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
-                        switch (msg.what){
+                        switch (msg.what) {
                             case 1:
-                                LjyLogUtil.i(Thread.currentThread().getName()+"_msg.what=1");
+                                LjyLogUtil.i(Thread.currentThread().getName() + "_msg.what=1");
                                 break;
                         }
                     }
                 };
 
-                handler.sendEmptyMessageDelayed(1,1000);
+                handler.sendEmptyMessageDelayed(1, 1000);
 
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        LjyLogUtil.i(Thread.currentThread().getName()+"_handler.postDelayed");
+                        LjyLogUtil.i(Thread.currentThread().getName() + "_handler.postDelayed");
                     }
-                },2000);
+                }, 2000);
 
                 Looper.loop();//开启消息循环,要在发送消息的最后调用，否则post，send等方法都是无效的
                 //1：
@@ -218,8 +272,10 @@ public class ProcessActivity extends BaseActivity {
                 LjyLogUtil.i(Thread.currentThread().getName() +
                         "__booleanThreadLocal=" + booleanThreadLocal.get());
             }
-        }.start();
-        new Thread("th_2") {
+        };
+        t1.start();
+        threadList.add(t1);
+        Thread t2 = new Thread("th_2") {
             @Override
             public void run() {
                 //报错：RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
@@ -246,48 +302,59 @@ public class ProcessActivity extends BaseActivity {
                 LjyLogUtil.i(Thread.currentThread().getName() +
                         "__booleanThreadLocal=" + booleanThreadLocal.get());
             }
-        }.start();
+        };
+        t2.start();
+        threadList.add(t2);
         LjyLogUtil.i(Thread.currentThread().getName() +
                 "__booleanThreadLocal=" + booleanThreadLocal.get());
 
-        Thread t3=new Thread(){
+        Thread t3 = new Thread() {
             @Override
             public void run() {
-                LjyLogUtil.i("3_当前线程数量："+Thread.activeCount());
+                LjyLogUtil.i("3_当前线程数量：" + Thread.activeCount());
                 Looper.prepare();
-                Handler handler3=new Handler(Looper.getMainLooper()){//getMainLooper可以在任何地方获取到主线程的Looper
+                Handler handler3 = new Handler(Looper.getMainLooper()) {//getMainLooper可以在任何地方获取到主线程的Looper
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
-                        switch (msg.what){
+                        switch (msg.what) {
                             case 3:
-                                LjyLogUtil.i(Thread.currentThread().getName()+"_msg.what=3");
-                                LjyLogUtil.i(Thread.currentThread().getName()+"_"+msg.getData().getString("key1"));
+                                LjyLogUtil.i(Thread.currentThread().getName() + "_msg.what=3");
+                                LjyLogUtil.i(Thread.currentThread().getName() + "_" + msg.getData().getString("key1"));
                                 break;
                         }
                     }
                 };
-                Message msg=new Message();
-                msg.what=3;
-                Bundle bundle=new Bundle();
-                bundle.putString("key1","value1");
+//                Message msg=new Message();
+//                msg.what=3;
+//                Bundle bundle=new Bundle();
+//                bundle.putString("key1","value1");
+//                msg.setData(bundle);
+//                handler3.sendMessageDelayed(msg,5000);
+                Message msg = handler3.obtainMessage();//从MessagePool 拿的,省去了创建对象申请内存的开销
+                msg.what = 3;
+                Bundle bundle = new Bundle();
+                bundle.putString("key1", "value1");
                 msg.setData(bundle);
-                handler3.sendMessageDelayed(msg,5000);
+//                msg.sendToTarget();
+                handler3.sendMessageDelayed(msg, 5000);
                 handler3.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        LjyLogUtil.i(Thread.currentThread().getName()+"_handler3.postDelayed");
+                        LjyLogUtil.i(Thread.currentThread().getName() + "_handler3.postDelayed");
                     }
-                },6000);
+                }, 6000);
                 Looper.loop();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     handler3.getLooper().quitSafely();
                 }
+//                handler3.removeCallbacksAndMessages(null);
 //                Looper.myLooper();
 
             }
         };
         t3.start();
+        threadList.add(t3);
 
 
     }
@@ -476,6 +543,12 @@ public class ProcessActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LjyLogUtil.i("onDestroy_当前线程数量："+Thread.activeCount());
+
+        LjyLogUtil.i("onDestroy_当前线程数量：" + Thread.activeCount());
+        for (Thread t : threadList) {
+            if (t != null && !t.isInterrupted())
+                t.interrupt();
+        }
+        LjyLogUtil.i("onDestroy_当前线程数量：" + Thread.activeCount());
     }
 }
