@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,18 +23,31 @@ import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyColorUtil;
+import com.ljy.util.LjyEncryptUtil;
+import com.ljy.util.LjyGlideUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
 import com.ljy.util.LjyPhotoUtil;
 import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyStringUtil;
+import com.ljy.util.LjySystemUtil;
 import com.ljy.util.LjyToastUtil;
 import com.ljy.util.LjyViewUtil;
+import com.ljy.util.disklrucache.LjyDiskLruCache;
 import com.ljy.view.LjyMDDialogManager;
 import com.ljy.view.LjyTagView;
 import com.zhihu.matisse.Matisse;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -56,6 +70,10 @@ public class PhotoActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String readInfo;
     private String steganographyPath;
+    private LruCache<String, Bitmap> memoryCache;
+    private static final long DISK_CACHE_SIZE = 1024 * 1024 * 50;//文件缓存50M
+    private LjyDiskLruCache ljyDiskLruCache;
+    private int DISK_CACHE_INDEX = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +114,7 @@ public class PhotoActivity extends BaseActivity {
                                     break;
                                 case inSampleSize:
                                     zipPath = getNewPicturePathByTimeStamp("inSampleSize");
-                                    LjyBitmapUtil.compressSample(filePath, zipPath, 720,1080,true);
+                                    LjyBitmapUtil.compressInSampleSize(filePath, zipPath, 720, 1080, true);
                                     break;
                                 case huffman:
                                     zipPath = getNewPicturePathByTimeStamp("huffman");
@@ -113,9 +131,9 @@ public class PhotoActivity extends BaseActivity {
                             mActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Bitmap bm=BitmapFactory.decodeFile(finalZipPath);
-                                    LjyLogUtil.i("bmWidth:"+bm.getWidth());
-                                    LjyLogUtil.i("bmHeight:"+bm.getHeight());
+                                    Bitmap bm = BitmapFactory.decodeFile(finalZipPath);
+                                    LjyLogUtil.i("bmWidth:" + bm.getWidth());
+                                    LjyLogUtil.i("bmHeight:" + bm.getHeight());
                                     mImageView1.setImageBitmap(bm);
                                 }
                             });
@@ -237,13 +255,13 @@ public class PhotoActivity extends BaseActivity {
                         public void positive(String text) {
                             if (TextUtils.isEmpty(text)) {
                                 text = "LJY是个码农哦，192.168.0.1";
-                                LjyToastUtil.toast(mContext,"没有输入则默认信息为: "+text);
+                                LjyToastUtil.toast(mContext, "没有输入则默认信息为: " + text);
                             }
-                            if (text.contains("#&#")){
-                                LjyToastUtil.toast(mContext,"需要写入的信息不能包含: #&#");
+                            if (text.contains("#&#")) {
+                                LjyToastUtil.toast(mContext, "需要写入的信息不能包含: #&#");
                                 return;
                             }
-                            text+="#&#";
+                            text += "#&#";
                             writeInfo(text);
                         }
                     }, null);
@@ -264,19 +282,109 @@ public class PhotoActivity extends BaseActivity {
     }
 
     /**
-     * //缓存策略是一个通用思想，可以用在很多场景，
-     * 实际开发中经常需要为bitmap做缓存
-     * 常用的缓存策略：
-     *  1。LruCache：Least Recently Used,最近最少使用算法：当缓存快满时，会淘汰最近最少使用的缓存目标
-     *  2。DiskLruCache
+     *
+     * 简单的实现一下图片的三级缓存
+     *
+     * 缓存策略是一个通用思想，可以用在很多场景，实际开发中经常需要为bitmap做缓存
+     *
+     * Lru：Least Recently Used,最近最少使用算法：当缓存快满时，会淘汰最近最少使用的缓存目标
+     * 在Android应用的开发中，为了防止内存溢出，在处理一些占用内存大而且生命周期较长的对象时候，可以尽量应用软引用和弱引用技术。
+     * 1。LruCache：用于内存缓存，内部使用LinkedHashMap以强引用的方式存储外界的缓存对象
+     * 2。DiskLruCache：用于存储设备缓存
      */
     private void bitmapCache() {
+        //测试图片的url，这里用的是我github的头像的url
+        String url = "https://avatars1.githubusercontent.com/u/19702574?s=460&v=4";
+        //LruCache初始化
+        if (memoryCache == null) {
+            int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+            int cacheSize = maxMemory / 8;//设置缓存大小为当前进程可用内存的的1/8，单位kb
+            memoryCache = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getRowBytes() * value.getHeight() / 1024;
+                }
+            };
+        }
+        //DiskLruCache初始化
+        if (ljyDiskLruCache == null) {
+            File diskCacheDir = new File(getCacheDir(), "ljyDiskLruCache");
+            if (!diskCacheDir.exists()) {
+                diskCacheDir.mkdirs();
+            }
+            try {
+                ljyDiskLruCache = LjyDiskLruCache.open(diskCacheDir, 1, 1, DISK_CACHE_SIZE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //三级缓存：
+        //1。获取内存缓存
+        Bitmap bitmap = memoryCache.get("userImg");
+        if (bitmap == null) {
+            //2。如果内存缓存中为null，获取磁盘缓存
+            try {
+                //将url取hash值，以防url直接使用时有特殊字符的情况
+                final String key = LjyEncryptUtil.getMD5(url);
+                LjyDiskLruCache.Snapshot snapshot = ljyDiskLruCache.get(key);
+                if (snapshot != null) {
+                    FileInputStream fileInputStream = (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
+                    FileDescriptor fileDescriptor = fileInputStream.getFD();
+                    bitmap = LjyBitmapUtil.compressInSampleSize(fileDescriptor, 720, 1080);
+                    if (bitmap != null) {
+                        LjyToastUtil.showSnackBar(mImageView1, "磁盘缓存中取得bitmap");
+                        //显示到UI界面
+                        mImageView1.setImageBitmap(bitmap);
+                        //存储内存缓存
+                        memoryCache.put("userImg", bitmap);
+                    }
+                }
 
+                if (bitmap==null){
+                    //3。如果磁盘缓存中为null，从网络加载
+                    //这里只是为例演示，其实Glide本身已经做了三级缓存
+                    LjyGlideUtil.getBitmap(mContext, url, new LjyGlideUtil.CallBack() {
+                        @Override
+                        public void onCall(Bitmap resource) {
+                            LjyToastUtil.showSnackBar(mImageView1, "（伪）从网络上取得bitmap");
+                            //显示到UI界面
+                            mImageView1.setImageBitmap(resource);
+                            //存储内存缓存
+                            memoryCache.put("userImg", resource);
+                            //存储磁盘缓存
+                            try {
+                                LjyDiskLruCache.Editor editor = ljyDiskLruCache.edit(key);
+                                if (editor != null) {
+                                    OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
+                                    if (LjyBitmapUtil.bitmap2Stream(resource,outputStream)){
+                                        editor.commit();
+                                    }else {
+                                        editor.abort();
+                                    }
+                                    ljyDiskLruCache.flush();
+                                }else{
+                                    LjyLogUtil.i("editor = null");
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            LjyToastUtil.showSnackBar(mImageView1, "从内存缓存中取得bitmap");
+            //显示到UI界面
+            mImageView1.setImageBitmap(bitmap);
+        }
     }
 
     private void readInfo() {
         final Bitmap bitmap = BitmapFactory.decodeFile(steganographyPath);
-        if (bitmap==null){
+        if (bitmap == null) {
             LjyToastUtil.toast(mContext, "请先写入文件哦");
             return;
         }

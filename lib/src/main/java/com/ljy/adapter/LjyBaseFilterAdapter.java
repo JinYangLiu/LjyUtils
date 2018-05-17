@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ljy.util.LjyChineseToPinyinUtil;
 import com.ljy.util.LjyLogUtil;
 
 import java.util.ArrayList;
@@ -277,7 +278,8 @@ public abstract class LjyBaseFilterAdapter<T extends LjyBaseFilterAdapter.BaseFi
                     for (int i = 0; i < count; i++) {
                         T value = list.get(i);
                         String filterKey = value.getFilterKey();
-                        if (filterKey != null && filterKey.toLowerCase().contains(prefixString)) {
+                        if (filterKey != null && (filterKey.toLowerCase().contains(prefixString)
+                                || LjyChineseToPinyinUtil.getInstance().getPinyin(filterKey).toLowerCase().contains(prefixString))) {
                             newValues.add(value);
                         }
 
