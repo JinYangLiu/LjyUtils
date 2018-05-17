@@ -128,10 +128,16 @@
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btn_bitmapCache"
-                android:text="图片缓存策略"
+                android:text="手写图片三级缓存"
                 android:onClick="onPhotoBtnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_imageloader"
+                android:text="自定义ImageLoader实现照片墙"
+                android:onClick="onPhotoBtnClick"
+                style="@style/btnStyle"
+                />
         </LinearLayout>
 
     </HorizontalScrollView>

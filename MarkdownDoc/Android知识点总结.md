@@ -205,7 +205,7 @@
         - maximumPoolSize：线程池所能容纳的最大线程数，当活动线程数达到这个数值后，后续的新任务将被阻塞
         ````
         如AsyncTask的线程池中
-        CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT - 1, 4));
+        CORE_POOL_SIZE = **Math.max(2, Math.min(CPU_COUNT - 1, 4));**
         MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
         KEEP_ALIVE_SECONDS = 30;
         BlockingQueue<Runnable> sPoolWorkQueue =

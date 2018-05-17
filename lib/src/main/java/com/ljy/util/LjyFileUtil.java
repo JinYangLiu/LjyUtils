@@ -234,4 +234,24 @@ public class LjyFileUtil {
         return Environment.getRootDirectory().getAbsolutePath();
     }
 
+    /**
+     * 获取磁盘缓存文件对象
+     * @param context
+     * @param uniqueName 文件名
+     * @return
+     */
+    public static File getDiskCacheDir(Context context, String uniqueName) {
+        boolean externalStorageAvailable= Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        final String cachePath;
+        if (externalStorageAvailable){
+            cachePath=context.getExternalCacheDir().getPath();
+        }else {
+            cachePath=context.getCacheDir().getPath();
+        }
+        File diskCacheDir= new File(cachePath+File.separator+uniqueName);
+        if (!diskCacheDir.exists())
+            diskCacheDir.mkdirs();
+        return diskCacheDir;
+    }
+
 }

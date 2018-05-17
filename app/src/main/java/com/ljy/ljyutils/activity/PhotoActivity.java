@@ -24,6 +24,7 @@ import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyBitmapUtil;
 import com.ljy.util.LjyColorUtil;
 import com.ljy.util.LjyEncryptUtil;
+import com.ljy.util.LjyFileUtil;
 import com.ljy.util.LjyGlideUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyPermissionUtil;
@@ -272,6 +273,8 @@ public class PhotoActivity extends BaseActivity {
                 case R.id.btn_bitmapCache:
                     bitmapCache();
                     break;
+                case R.id.btn_imageloader:
+                    startActivity(new Intent(mContext,ImageloaderActivity.class));
                 default:
                     break;
             }
@@ -282,11 +285,10 @@ public class PhotoActivity extends BaseActivity {
     }
 
     /**
-     *
      * 简单的实现一下图片的三级缓存
-     *
+     * <p>
      * 缓存策略是一个通用思想，可以用在很多场景，实际开发中经常需要为bitmap做缓存
-     *
+     * <p>
      * Lru：Least Recently Used,最近最少使用算法：当缓存快满时，会淘汰最近最少使用的缓存目标
      * 在Android应用的开发中，为了防止内存溢出，在处理一些占用内存大而且生命周期较长的对象时候，可以尽量应用软引用和弱引用技术。
      * 1。LruCache：用于内存缓存，内部使用LinkedHashMap以强引用的方式存储外界的缓存对象
@@ -308,10 +310,7 @@ public class PhotoActivity extends BaseActivity {
         }
         //DiskLruCache初始化
         if (ljyDiskLruCache == null) {
-            File diskCacheDir = new File(getCacheDir(), "ljyDiskLruCache");
-            if (!diskCacheDir.exists()) {
-                diskCacheDir.mkdirs();
-            }
+            File diskCacheDir = LjyFileUtil.getDiskCacheDir(mContext, "ljyDiskLruCache");
             try {
                 ljyDiskLruCache = LjyDiskLruCache.open(diskCacheDir, 1, 1, DISK_CACHE_SIZE);
             } catch (IOException e) {
@@ -340,7 +339,7 @@ public class PhotoActivity extends BaseActivity {
                     }
                 }
 
-                if (bitmap==null){
+                if (bitmap == null) {
                     //3。如果磁盘缓存中为null，从网络加载
                     //这里只是为例演示，其实Glide本身已经做了三级缓存
                     LjyGlideUtil.getBitmap(mContext, url, new LjyGlideUtil.CallBack() {
@@ -356,13 +355,13 @@ public class PhotoActivity extends BaseActivity {
                                 LjyDiskLruCache.Editor editor = ljyDiskLruCache.edit(key);
                                 if (editor != null) {
                                     OutputStream outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
-                                    if (LjyBitmapUtil.bitmap2Stream(resource,outputStream)){
+                                    if (LjyBitmapUtil.bitmap2Stream(resource, outputStream)) {
                                         editor.commit();
-                                    }else {
+                                    } else {
                                         editor.abort();
                                     }
                                     ljyDiskLruCache.flush();
-                                }else{
+                                } else {
                                     LjyLogUtil.i("editor = null");
                                 }
                             } catch (IOException e) {

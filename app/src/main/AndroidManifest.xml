@@ -119,7 +119,7 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/livewallpaper" />
         </service>
-        <!--MyAccessibilityService-->
+        <!-- MyAccessibilityService -->
         <service
             android:name=".service.BaseAccessibilityService"
             android:enabled="true"
@@ -130,6 +130,7 @@
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility" />
@@ -140,7 +141,7 @@
             android:exported="true"
             android:process=":floatingWindowService" />
 
-        <!--//友盟推送 自定义service-->
+        <!-- //友盟推送 自定义service -->
         <!-- <service android:name="com.ljy.ljyutils.service.MyPushIntentService" /> -->
         <service
             android:name=".service.TimerService"
@@ -191,34 +192,36 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!--自定义scheme-->
+            <!-- 自定义scheme -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:host="junanxin.app"
-                    android:scheme="anxindai"
-                    />
+                    android:scheme="anxindai" />
             </intent-filter>
-            <!--app links-->
+            <!-- app links -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="http"
-                    android:host="m1.anxin.com"/>
-                <data android:scheme="https"
-                    android:host="m1.anxin.com"/>
+                <data
+                    android:host="m1.anxin.com"
+                    android:scheme="http" />
+                <data
+                    android:host="m1.anxin.com"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -406,6 +409,9 @@
             android:process=":remoteViewsTest" />
         <activity android:name=".activity.DrawableActivity" />
         <activity android:name=".activity.WindowActivity" />
+        <activity android:name=".activity.ImageloaderActivity"
+            />
+        <!--android:hardwareAccelerated="true" 开启硬件加速，防止莫名卡顿 -->
     </application>
 
 </manifest>
