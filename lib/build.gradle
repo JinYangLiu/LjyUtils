@@ -18,6 +18,10 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi"
+        }
+
     }
 
     //Gradle编译禁用Lint报错

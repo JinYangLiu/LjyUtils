@@ -76,24 +76,59 @@ public class LjyBitmapUtil {
     }
 
     /**
-     * 3.采样率压缩
+     * 3.采样率压缩(二次采样)
      *
-     * @param filePath     原图片
-     * @param targetPath   要保存的指定目录
-     * @param inSampleSize 数值越高，图片像素越低
+     * @param filePath     原图片路径
+     * @param targetPath   压缩后保存的路径
+     *
+     * inSampleSize:采样率，1为原始大小，小于1时相当于1；大于1时，如4，则宽/4，高/4，像素数为原图的1/16；
+     * 官方文档指出其值应为2的指数，如1，2，4，8，16；当不是2的指数时，向下取整并选择一个最接近的2的指数来代替
+     * 但是实际开发中发现即使是3，5等数值也是有效的，不会转化
      */
-    public static void compressSample(String filePath, String targetPath, int inSampleSize) {
-        Bitmap compressBitmap = compressSample(filePath, inSampleSize);
+    public static void compressSample(String filePath, String targetPath, float newWidth, float newHeight ,boolean isArgb) {
+        Bitmap compressBitmap = compressSample(filePath, newWidth,newHeight,isArgb);
         compressQuality(compressBitmap, targetPath, 100);
     }
 
-    public static Bitmap compressSample(String filePath, int inSampleSize) {
+    public static Bitmap compressSample(String filePath, float newWidth, float newHeight,boolean isArgb) {
         BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(filePath, options);
+
+        int oldWidth = options.outWidth;
+        int oldHeight = options.outHeight;
+        LjyLogUtil.i("oldWidth:"+oldWidth);
+        LjyLogUtil.i("oldHeight:"+oldHeight);
+
+        int ratioWidth = (int) (oldWidth / newWidth+0.5);
+        int ratioHeight = (int) (oldHeight / newHeight+0.5);
+
+        int inSampleSize = Math.max(ratioWidth,ratioHeight);
+        options.inSampleSize=Math.max(1,inSampleSize);
+        LjyLogUtil.i("inSampleSize:"+options.inSampleSize);
+
+        //然而在模拟器上试了一下，压缩后的图片文件大小一样的
+        //从Android4.0开始，RGB_565选项无效。即使设置为该值，系统任然会采用 ARGB_8888来构造图片。
+        //而在我的华为p20 pro上面两种模式下压缩文件的大小还是有差别的，
+        //实验来两张图片，ARGB_8888的文件大小反而要小一些
+        if (isArgb)
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        else
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+        //Bitmap.Config.ALPHA_8 :此时图片只有alpha值，没有RGB值，一个像素占用一个字节
+        //Bitmap.Config.ARGB_4444 : 一个像素占用2个字节，alpha(A)值，Red（R）值，Green(G)值，Blue（B）值各占4个bites,共16bites，即2个字节。
+        // 这种格式的图片，看起来质量太差，已经不推荐使用。 而强烈推荐使用ARGB_8888来代替
+        //Bitmap.Config ARGB_8888:一个像素占用4个字节，alpha(A)值，Red（R）值，Green(G)值，Blue（B）值各占8个bites ， 共32bites , 即4个字节。
+        // 这是一种高质量的图片格式，电脑上普通采用的格式。它也是Android手机上一个BitMap的默认格式
+        //Bitmap.Config RGB_565:一个像素占用2个字节，没有alpha(A)值，即不支持透明和半透明，
+        // Red（R）值占5个bites ，Green(G)值占6个bites ，Blue（B）值占5个bites,共16bites,即2个字节
+        //该格式的图片能够达到比较好的呈现效果，相对于ARGB_8888来说也能减少一半的内存开销，因此它是一个不错的选择
+
         options.inJustDecodeBounds = false;
-        options.inSampleSize = inSampleSize;
+
         return BitmapFactory.decodeFile(filePath, options);
-
-
     }
 
     /**

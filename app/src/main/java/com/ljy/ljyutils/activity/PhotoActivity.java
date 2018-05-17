@@ -96,7 +96,7 @@ public class PhotoActivity extends BaseActivity {
                                     break;
                                 case inSampleSize:
                                     zipPath = getNewPicturePathByTimeStamp("inSampleSize");
-                                    LjyBitmapUtil.compressSample(filePath, zipPath, 4);
+                                    LjyBitmapUtil.compressSample(filePath, zipPath, 720,1080,true);
                                     break;
                                 case huffman:
                                     zipPath = getNewPicturePathByTimeStamp("huffman");
@@ -113,7 +113,10 @@ public class PhotoActivity extends BaseActivity {
                             mActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mImageView1.setImageBitmap(BitmapFactory.decodeFile(finalZipPath));
+                                    Bitmap bm=BitmapFactory.decodeFile(finalZipPath);
+                                    LjyLogUtil.i("bmWidth:"+bm.getWidth());
+                                    LjyLogUtil.i("bmHeight:"+bm.getHeight());
+                                    mImageView1.setImageBitmap(bm);
                                 }
                             });
                         }
@@ -248,6 +251,9 @@ public class PhotoActivity extends BaseActivity {
                 case R.id.btn_readInfo:
                     readInfo();
                     break;
+                case R.id.btn_bitmapCache:
+                    bitmapCache();
+                    break;
                 default:
                     break;
             }
@@ -255,6 +261,17 @@ public class PhotoActivity extends BaseActivity {
             LjyPermissionUtil.requestPermission(mActivity, new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCodeCamera);
         }
+    }
+
+    /**
+     * //缓存策略是一个通用思想，可以用在很多场景，
+     * 实际开发中经常需要为bitmap做缓存
+     * 常用的缓存策略：
+     *  1。LruCache：Least Recently Used,最近最少使用算法：当缓存快满时，会淘汰最近最少使用的缓存目标
+     *  2。DiskLruCache
+     */
+    private void bitmapCache() {
+
     }
 
     private void readInfo() {
