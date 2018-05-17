@@ -61,14 +61,14 @@ public class LjyStringUtil {
     public static String byte2hex(byte[] b) {
         StringBuffer hs = new StringBuffer();
         for (int n = 0; n < b.length; n++) {
-            String stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
+            String stmp = (Integer.toHexString(b[n] & 0XFF));
             if (stmp.length() == 1) {
                 hs.append("0" + stmp);
             } else {
                 hs.append(stmp);
             }
         }
-        return hs.toString().toUpperCase();
+        return hs.toString().toLowerCase();
     }
 
     /**

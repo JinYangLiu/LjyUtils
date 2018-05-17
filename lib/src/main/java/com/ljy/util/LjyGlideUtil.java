@@ -45,7 +45,7 @@ public class LjyGlideUtil {
 
     /**
      * 根据imgUrl获取返回bitmap
-     *
+     * 需要在子线程中使用
      * @param mContext
      * @param imgUrl
      * @return

@@ -1,6 +1,5 @@
 package com.ljy.util;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,12 +13,17 @@ import android.util.Base64;
 
 import net.bither.util.NativeUtil;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -85,28 +89,19 @@ public class LjyBitmapUtil {
      * 官方文档指出其值应为2的指数，如1，2，4，8，16；当不是2的指数时，向下取整并选择一个最接近的2的指数来代替
      * 但是实际开发中发现即使是3，5等数值也是有效的，不会转化
      */
-    public static void compressSample(String filePath, String targetPath, float newWidth, float newHeight ,boolean isArgb) {
-        Bitmap compressBitmap = compressSample(filePath, newWidth,newHeight,isArgb);
+    public static void compressInSampleSize(String filePath, String targetPath, float newWidth, float newHeight , boolean isArgb) {
+        Bitmap compressBitmap = compressInSampleSize(filePath, newWidth,newHeight,isArgb);
         compressQuality(compressBitmap, targetPath, 100);
     }
 
-    public static Bitmap compressSample(String filePath, float newWidth, float newHeight,boolean isArgb) {
+    public static Bitmap compressInSampleSize(String filePath, float newWidth, float newHeight, boolean isArgb) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         options.inJustDecodeBounds = true;
 
         BitmapFactory.decodeFile(filePath, options);
 
-        int oldWidth = options.outWidth;
-        int oldHeight = options.outHeight;
-        LjyLogUtil.i("oldWidth:"+oldWidth);
-        LjyLogUtil.i("oldHeight:"+oldHeight);
-
-        int ratioWidth = (int) (oldWidth / newWidth+0.5);
-        int ratioHeight = (int) (oldHeight / newHeight+0.5);
-
-        int inSampleSize = Math.max(ratioWidth,ratioHeight);
-        options.inSampleSize=Math.max(1,inSampleSize);
+        options.inSampleSize=calculateInSampleSize(options,newWidth, newHeight);
         LjyLogUtil.i("inSampleSize:"+options.inSampleSize);
 
         //然而在模拟器上试了一下，压缩后的图片文件大小一样的
@@ -129,6 +124,34 @@ public class LjyBitmapUtil {
         options.inJustDecodeBounds = false;
 
         return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    /**
+     * 对于FileInputStream，其为有序的文件流，如果两次decodeStream会影响文件流的位置属性，
+     * 导致第二次decodeStream时得到null，故而有以下方法，通过文件描述符加载并压缩图片
+     *
+     *
+     */
+    public static Bitmap compressInSampleSize(FileDescriptor fd, int reqWidth, int reqHeight){
+        final BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inJustDecodeBounds=true;
+        BitmapFactory.decodeFileDescriptor(fd,null,options);
+        options.inSampleSize=calculateInSampleSize(options,reqWidth,reqHeight);
+        options.inJustDecodeBounds=false;
+        return BitmapFactory.decodeFileDescriptor(fd,null,options);
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options,float newWidth, float newHeight) {
+        int oldWidth = options.outWidth;
+        int oldHeight = options.outHeight;
+        LjyLogUtil.i("oldWidth:"+oldWidth);
+        LjyLogUtil.i("oldHeight:"+oldHeight);
+
+        int ratioWidth = (int) (oldWidth / newWidth+0.5);
+        int ratioHeight = (int) (oldHeight / newHeight+0.5);
+
+        int inSampleSize = Math.max(ratioWidth,ratioHeight);
+        return Math.max(1,inSampleSize);
     }
 
     /**
@@ -460,11 +483,48 @@ public class LjyBitmapUtil {
         }
     }
 
-
+    /**
+     * 旋转bitmap
+     * @param bitmap
+     * @param degree
+     * @return
+     */
     public static Bitmap rotateBidmap( Bitmap bitmap, float degree) {
         Matrix matrix=new Matrix();
         matrix.reset();
         matrix.setRotate(degree);
         return Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+    }
+
+    /**
+     * 将参数bitmap转化成流，写入到参数outputStream中
+     * @param bitmap
+     * @param outputStream
+     * @return 是否成功
+     */
+    public static boolean bitmap2Stream(Bitmap bitmap, OutputStream outputStream) {
+
+        ByteArrayInputStream in = null;
+        BufferedInputStream bufferIn = null;
+        BufferedOutputStream bufferOut = null;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            in = new ByteArrayInputStream(baos.toByteArray());
+            bufferIn = new BufferedInputStream(in);
+            bufferOut = new BufferedOutputStream(outputStream);
+            int b;
+            while ((b = bufferIn.read()) != -1) {
+                bufferOut.write(b);
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            LjySystemUtil.clostStream(bufferOut);
+            LjySystemUtil.clostStream(bufferIn);
+            LjySystemUtil.clostStream(in);
+        }
+        return false;
     }
 }
