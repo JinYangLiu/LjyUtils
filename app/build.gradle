@@ -73,7 +73,17 @@ android {
         javaMaxHeapSize "4g"//java虚拟机堆内存最大值设为4g，避免oom
 //        additionalParameters = ['--multi-dex', '--main-dex-list=' + project.rootDir.absolutePath +
 //                '/app/maindexlist.txt', '--minimal-main-dex','--set-max-idx-number=65000']
-        additionalParameters = ['--multi-dex', '--minimal-main-dex', '--set-max-idx-number=65000']
+        additionalParameters = ['--multi-dex',  '--set-max-idx-number=65000']
+        //--multi-dex：表示当方法数越界时则生成多个dex文件
+        //--main-dex-list：指定来要在主dex中打包的类的列表，注意 multidex 的jar包中的9个类也必须
+        //打包到主dex，否则会报错，无法找到multidex相关类
+        //--minimal-main-dex：表明只有main-dex-list所指定导入类才能打包到主dex中
+        //multidex所带来的问题：
+        //1。app启动速度降低，甚至出现ANR异常，应避免较大的dex
+        //2。由于Dalvik linearAlloc的bug，可能导致使用multidex的app无法在Android4.0以前的手机运行，
+        // 可能出现产生大量内存消耗情况，需要做大量兼容性测试
+        //因此最好使用插件化方案来代替multidex
+
     }
 
     //导入dataBinding支持
