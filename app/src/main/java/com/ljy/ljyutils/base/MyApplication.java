@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ljy.crash.LjyCrashHandler;
 import com.ljy.ljyutils.BuildConfig;
 import com.ljy.util.LjyDatabaseUtil;
 import com.ljy.util.LjyLogUtil;
@@ -39,8 +40,8 @@ import java.util.Locale;
  */
 
 public class MyApplication extends Application {
-    private static Context applicationContext;
     private List<Activity> actList;
+    private static MyApplication sInstance;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -53,20 +54,20 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        applicationContext = getApplicationContext();
+        sInstance=this;
         actList = new ArrayList<>();
         initMyUtil();
         initBugly();
         initUmengPush();
         initDB();
         //当前进程名称:
-        LjyLogUtil.i("当前进程名称:"+ LjySystemUtil.getProcessName(applicationContext));
-
-
+        LjyLogUtil.i("当前进程名称:"+ LjySystemUtil.getProcessName(getApplicationContext()));
+        //crashHandler使用
+        LjyCrashHandler.getInstance().init(this);
     }
 
     private void initDB() {
-        LjyDatabaseUtil.initHelper(applicationContext,"ljyUtilData");
+        LjyDatabaseUtil.initHelper(getApplicationContext(),"ljyUtilData");
     }
 
     private void initUmengPush() {
@@ -162,7 +163,7 @@ public class MyApplication extends Application {
     }
 
     public static Context getMyApplicationContext() {
-        return applicationContext;
+        return sInstance.getApplicationContext();
     }
 
     @TargetApi(9)

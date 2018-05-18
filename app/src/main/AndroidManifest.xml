@@ -409,9 +409,9 @@
             android:process=":remoteViewsTest" />
         <activity android:name=".activity.DrawableActivity" />
         <activity android:name=".activity.WindowActivity" />
-        <activity android:name=".activity.ImageloaderActivity"
-            />
-        <!--android:hardwareAccelerated="true" 开启硬件加速，防止莫名卡顿 -->
+        <activity android:name=".activity.ImageloaderActivity" />
+        <!-- android:hardwareAccelerated="true" 开启硬件加速，防止莫名卡顿 -->
+        <activity android:name=".activity.CrashHandlerTestActivity"></activity>
     </application>
 
 </manifest>
