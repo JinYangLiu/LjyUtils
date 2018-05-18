@@ -2,6 +2,12 @@
 
 buildscript {
 
+    //防止如下问题：
+    // Gradle version 2.10 is required. Current version is 2.5.
+    // If using the gradle wrapper, try editing the distributionUrl
+    // in xxx/gradle/wrapper/gradle-wrapper.properties to gradle-2.10-all.zip
+    System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
+
     repositories {
         maven { url 'https://maven.google.com' }
         jcenter()
@@ -21,6 +27,16 @@ buildscript {
         //apt
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
+}
+
+ext {
+    VERSION_COMPILE_SDK = 26
+    VERSION_BUILD_TOOLS = "26.0.2"
+
+    VERSION_MIN_SDK = 16
+    VERSION_TARGET_SDK = 26
+
+    SOURCE_COMPATIBILITY = JavaVersion.VERSION_1_7
 }
 
 allprojects {

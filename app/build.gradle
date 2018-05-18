@@ -11,19 +11,24 @@ apply plugin: 'android-aspectjx'
 android {
 //    compileSdkVersion 'android-P'
 //    compileSdkVersion 28
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion VERSION_COMPILE_SDK
+    buildToolsVersion VERSION_BUILD_TOOLS
+
     defaultConfig {
-        applicationId "com.ljy.ljyutils"
-        minSdkVersion 16
+        minSdkVersion VERSION_MIN_SDK
+        targetSdkVersion VERSION_TARGET_SDK
 //        targetSdkVersion 'P'
 //        targetSdkVersion 28
-        targetSdkVersion 26
+        applicationId "com.ljy.ljyutils"
         versionCode 115
         versionName "1.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // 开启multidex
         multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
+    }
+
+    compileOptions {
+        sourceCompatibility SOURCE_COMPATIBILITY
     }
 
     //Gradle编译禁用Lint报错
@@ -73,7 +78,7 @@ android {
         javaMaxHeapSize "4g"//java虚拟机堆内存最大值设为4g，避免oom
 //        additionalParameters = ['--multi-dex', '--main-dex-list=' + project.rootDir.absolutePath +
 //                '/app/maindexlist.txt', '--minimal-main-dex','--set-max-idx-number=65000']
-        additionalParameters = ['--multi-dex',  '--set-max-idx-number=65000']
+        additionalParameters = ['--multi-dex', '--set-max-idx-number=65000']
         //--multi-dex：表示当方法数越界时则生成多个dex文件
         //--main-dex-list：指定来要在主dex中打包的类的列表，注意 multidex 的jar包中的9个类也必须
         //打包到主dex，否则会报错，无法找到multidex相关类
@@ -130,7 +135,7 @@ dependencies {
     //lottie
     compile 'com.airbnb.android:lottie:2.1.0'
     // 远程依赖集成方式（推荐）
-    compile "com.tencent.bugly:crashreport_upgrade:1.3.4"
+    compile 'com.tencent.bugly:crashreport_upgrade:1.3.4'
     //walle
     compile 'com.meituan.android.walle:library:1.1.6'
     compile 'com.android.support:design:26.1.0'
@@ -144,6 +149,7 @@ dependencies {
     compile project(':processor')
     //recycleView的万能适配器
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    compile project(':pluginapk')
 }
 
 // 依赖插件脚本

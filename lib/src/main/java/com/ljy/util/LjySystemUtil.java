@@ -1,5 +1,6 @@
 package com.ljy.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -10,6 +11,13 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.text.util.Linkify;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -235,27 +243,109 @@ public class LjySystemUtil {
         }
     }
 
-    public static String getProcessName(Context context){
+    public static String getProcessName(Context context) {
         int pid = android.os.Process.myPid();
-        String processName =null;
+        String processName = null;
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo process: manager.getRunningAppProcesses()) {
-            if(process.pid == pid)
-            {
+        for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
+            if (process.pid == pid) {
                 processName = process.processName;
             }
         }
         return processName;
     }
 
-    public static void clostStream(Closeable closeable){
-        if (closeable!=null){
+    public static void clostStream(Closeable closeable) {
+        if (closeable != null) {
             try {
                 closeable.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 判断当前 Activity 是否为 Activity 堆栈的根。
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean isTaskRoot(Activity activity) {
+        return activity.isTaskRoot();
+    }
+
+    /**
+     * 该方法可以实现类似 Home 键的功能，让应用退到后台。
+     *
+     * @param nonRoot 如果是 false，则只有当前 Activity 是 Task 的根时才会退到后台
+     *                如果是 true，不管当前 Activity 是否为 Task 的根都会退到后台
+     * @return 如果该 Activity 已经移动到后台则返回 true，否则返回 false
+     */
+    public static boolean moveTaskToBack(Activity activity, boolean nonRoot) {
+        return activity.moveTaskToBack(nonRoot);
+    }
+
+    /**
+     * TextView 自动判断内容是电话、Email、URL
+     * <p>
+     * 相当于
+     * <TextView
+     * android:autoLink="all"
+     * ... />
+     *
+     * @param textView
+     * @param mask     Linkify.WEB_URLS：判断是否是网址
+     *                 Linkify.EMAIL_ADDRESSES：判断是否是 Email 地址
+     *                 Linkify.PHONE_NUMBERS：判断是否是电话
+     *                 Linkify.MAP_ADDRESSES：判断是否是地图的地址
+     *                 Linkify.ALL：WEB_URLS | EMAIL_ADDRESSES | PHONE_NUMBERS | MAP_ADDRESSES
+     * @return
+     */
+    public static boolean addLinks(TextView textView, int mask) {
+        return Linkify.addLinks(textView, mask);
+    }
+
+    /**
+     * EditText 长按禁止弹出复制、粘贴
+     *
+     * @param editText
+     */
+    public static void notCopy(EditText editText) {
+        editText.setLongClickable(false);
+        editText.setTextIsSelectable(false);
+
+        editText.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+        });
+
+        //对于某些系统的手机，只设置以上的方法还是会显示复制、粘贴的弹出框，还需要重写 OnLongClickListener：
+        editText.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View view) {
+                return true;
+            }
+        });
+
     }
 
 }
