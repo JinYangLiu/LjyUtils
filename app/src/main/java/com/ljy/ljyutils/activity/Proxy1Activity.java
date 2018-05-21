@@ -7,10 +7,13 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.base.BaseActivity;
 import com.ljy.util.LjyLogUtil;
+import com.ljy.util.LjyToastUtil;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -19,7 +22,7 @@ import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
 
-public class Proxy1Activity extends BaseActivity {
+public class Proxy1Activity extends Activity {
 
     private AssetManager mAssetManager;
     private Resources mResources;
@@ -36,11 +39,15 @@ public class Proxy1Activity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_proxy1);
         mDexPath=getIntent().getStringExtra(EXTRA_DEX_PATH);
+        loadResources(mDexPath);
         File apkFile = new File(mDexPath);
         LjyLogUtil.i("mDexPath:"+mDexPath);
         LjyLogUtil.i("apkFile:"+apkFile.exists());
+        if (!apkFile.exists()){
+            LjyToastUtil.toast(this,"请先下载插件到如下路径："+mDexPath);
+            return;
+        }
         mClass=getIntent().getStringExtra(EXTRA_CLASS);
         if (mClass==null){
             launchTargetActivity();
@@ -96,7 +103,7 @@ public class Proxy1Activity extends BaseActivity {
 
 
     //加载插件中的资源
-    private void loadResources() {
+    private void loadResources(String mDexPath) {
         try {
             AssetManager assetManager=AssetManager.class.newInstance();
             Method addAssetPath=assetManager.getClass().

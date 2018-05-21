@@ -2,6 +2,8 @@ package com.ljy.demoplugin1;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -15,7 +17,7 @@ import java.io.File;
  */
 
 public class BaseActivity extends Activity {
-    protected Activity mProxyActivity;
+    protected Activity mProxyActivity=this;
     public static final String FROM="extra_from";
     public static final int FROM_EXTERNAL=0;
     public static final int FROM_INTERNAL=1;
@@ -61,6 +63,33 @@ public class BaseActivity extends Activity {
             super.setContentView(layoutResID);
         }else {
             mProxyActivity.setContentView(layoutResID);
+        }
+    }
+
+    @Override
+    public <T extends View> T findViewById(int id) {
+        if (mProxyActivity==this) {
+            return super.findViewById(id);
+        }else {
+            return mProxyActivity.findViewById(id);
+        }
+    }
+
+    @Override
+    public Resources getResources() {
+        if (mProxyActivity==this) {
+            return super.getResources();
+        } else {
+            return mProxyActivity.getResources();
+        }
+    }
+
+    @Override
+    public AssetManager getAssets() {
+        if (mProxyActivity==this) {
+            return super.getAssets();
+        }else {
+            return mProxyActivity.getAssets();
         }
     }
 

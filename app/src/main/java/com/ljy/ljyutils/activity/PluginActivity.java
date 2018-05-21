@@ -33,7 +33,7 @@ public class PluginActivity extends BaseActivity {
         switch (view.getId()){
             case R.id.btn_demo1:
                 if (checkPremission(android.Manifest.permission.READ_EXTERNAL_STORAGE,222))
-                toPluginDemo1();
+                    toPluginDemo1();
                 break;
         }
     }
