@@ -53,6 +53,7 @@ import com.ljy.ljyutils.activity.MusicActivity;
 import com.ljy.ljyutils.activity.PDFUploadActivity;
 import com.ljy.ljyutils.activity.PhotoActivity;
 import com.ljy.ljyutils.activity.PicUploadActivity;
+import com.ljy.ljyutils.activity.PluginActivity;
 import com.ljy.ljyutils.activity.ProcessActivity;
 import com.ljy.ljyutils.activity.RadarViewActivity;
 import com.ljy.ljyutils.activity.RefreshListViewActivity;
@@ -189,7 +190,7 @@ public class MainActivity extends BaseActivity {
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
                 "注解与反射", "多进程通信", "RemoteViews", "Drawable",
-                "window","测试CrashHandler"
+                "window","测试CrashHandler","插件化"
         };
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
@@ -205,7 +206,7 @@ public class MainActivity extends BaseActivity {
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
                 AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class,
-                WindowActivity.class, CrashHandlerTestActivity.class
+                WindowActivity.class, CrashHandlerTestActivity.class, PluginActivity.class
         };
 
 
