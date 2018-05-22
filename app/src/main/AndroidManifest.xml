@@ -416,9 +416,11 @@
         <activity android:name="com.ljy.plugincorelib.ProxyActivity">
             <intent-filter>
                 <action android:name="com.ljy.Action.Proxy1Activity" />
-                <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.LayoutBetterActivity"></activity>
     </application>
 
 </manifest>

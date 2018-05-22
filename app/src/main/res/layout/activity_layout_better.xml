@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/thin_red"
+    android:orientation="vertical"
+    tools:context="com.ljy.ljyutils.activity.LayoutBetterActivity">
+
+    <include
+        android:id="@+id/include_1"
+        layout="@layout/layout_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:background="@color/thin_green"
+        android:layout_height="1dp"/>
+
+    <include
+        android:id="@+id/include_2"
+        layout="@layout/layout_test"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:id="@+id/button_viewStub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnClick"
+        android:text="加载viewStub" />
+    <ViewStub
+        android:id="@+id/viewStub"
+        android:inflatedId="@+id/test_root"
+        android:layout="@layout/layout_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         />
+
+    <include
+        android:id="@+id/include_3"
+        layout="@layout/layout_test2"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp" />
+
+</LinearLayout>
