@@ -331,9 +331,15 @@
         - 介于以上2点,最简单且高效额方法就是采用单线程模型处理UI操作
 ### 插件化
 - 动态加载技术/插件化技术，减轻应用的内存和cpu占用，实现热拔插，即在不发布新版本的情况下更新某些模块
-- 要解决三个基础的问题：
+- 要解决三个基础的问题：（具体实现可参考 PluginCoreLib）
     - 资源访问
+        - 插件apk中的资源（即R.xxx），宿主apk是无法直接访问的
+        - 解决方案：参照ContextImpl中的getAccess和getResources方法，自行实现资源加载方法；
+        详见PluginActivity.java的loadResources();
     - Activity生命周期管理
+        - 反射方式：利用反射，在代理Activity的生命周期方法中，调用插件Activity的生命周期方法（代码复杂+性能开销，不推荐使用）
+        - 接口方式：
+        - 使用Fragment代替Activity
     - ClassLoader的管理
 - 插件一般是dex或警告特殊处理的apk，一般都要用到代理Activity，用以启动插件Activity   
     

@@ -1,1 +1,1 @@
-include ':app', ':lib', ':push', ':processor', ':AndroidStub', ':demoplugin1', ':plugincorelib'
+include ':app', ':lib', ':push', ':processor', ':AndroidStub', ':demoplugin1', ':PluginCoreLib'
