@@ -413,7 +413,7 @@
         <!-- android:hardwareAccelerated="true" 开启硬件加速，防止莫名卡顿 -->
         <activity android:name=".activity.CrashHandlerTestActivity" />
         <activity android:name=".activity.PluginActivity" />
-        <activity android:name=".activity.Proxy1Activity">
+        <activity android:name="com.ljy.plugincorelib.ProxyActivity">
             <intent-filter>
                 <action android:name="com.ljy.Action.Proxy1Activity" />
                 <category android:name="android.intent.category.DEFAULT"/>

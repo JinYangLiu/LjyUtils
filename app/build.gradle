@@ -149,7 +149,7 @@ dependencies {
     compile project(':processor')
     //recycleView的万能适配器
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
-    compile project(':pluginapk')
+    compile project(':plugincorelib')
 }
 
 // 依赖插件脚本

@@ -1,4 +1,4 @@
-package com.ljy.pluginapk;
+package com.ljy.plugincorelib;
 
 import org.junit.Test;
 
