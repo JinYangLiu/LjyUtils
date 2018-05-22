@@ -329,7 +329,9 @@
         1. 锁机制会让UI访问的逻辑变得复杂
         2. 锁机制会降低UI的访问效率,因为锁机制会阻塞某些线程的执行
         - 介于以上2点,最简单且高效额方法就是采用单线程模型处理UI操作
+        
 ### 插件化
+
 - 动态加载技术/插件化技术，减轻应用的内存和cpu占用，实现热拔插，即在不发布新版本的情况下更新某些模块
 - 要解决三个基础的问题：（具体实现可参考 PluginCoreLib）
     - 资源访问
@@ -341,5 +343,110 @@
         - 接口方式：
         - 使用Fragment代替Activity
     - ClassLoader的管理
-- 插件一般是dex或警告特殊处理的apk，一般都要用到代理Activity，用以启动插件Activity   
+- 插件一般是dex或经过特殊处理的apk；一般都要用到代理Activity，用以启动插件Activity   
+
+### 性能优化
+
+- 布局优化：
+    - 单层布局：尽量选择LinearLayout或FrameLayout，而少用 RelativeLayout，应为RelativeLayout功能较复杂，更耗性能；
+        但从程序扩展性的角度看，更倾向于RelativeLayout
+    - 多层布局：布局较复杂时，RelativeLayout能够有效的减少布局层级
+    - <include/>标签：实现布局文件的复用，如app自定义的TitleBar
+        只支持 layout_xx 和id属性，当include和被包含布局的根标签都指定了id时，以include为准；指定layout_xx属性时，
+        必须也要指定layout_width和layout_height，否则无法生效
+    - <merge/>标签：在UI的结构优化中起着非常重要的作用，它可以删减多余的层级，优化UI。
+        <merge/>多用于替换FrameLayout或者当一个布局包含另一个时，<merge/>标签消除视图层次结构中多余的视图组。
+        例如你的主布局文件是垂直布局，引入了一个垂直布局的include，这是如果include布局使用的LinearLayout就没意义了，
+        使用的话反而减慢你的UI表现。这时可以使用<merge/>标签优化。
+    - <ViewStub/>标签：懒加载，不会影响UI初始化时的性能；
+        各种不常用的布局，如进度条、显示错误消息等可以使用ViewStub标签，以减少内存使用量，加快渲染速度
+    - 使用 style 来定义通用的属性，从而重复利用代码，减少代码量
+    - 封装组合view实现view复用
+    - 使用 LinearLayoutCompat 组件来实现线性布局元素之间的分割线，从而减少了使用View来实现分割线效果
     
+- 绘制优化：
+    - 在自定义View的onDraw方法中要避免进行大量操作
+        - 不要创建新的布局对象，因为onDraw可能会被频繁调用
+        - 不要做耗时任务，也尽量不要执行循环操作
+        
+- 内存泄漏：
+    - 静态变量导致：
+        - 如： private static Context mContext;
+        - 又如：
+            ````
+                private static View view;
+                
+                private void initView(){
+                    view=new View(this);
+                }
+            ````
+            
+    - 单例模式导致：单例对象持有当前activity的引用
+        - 如xxx.getInstance().init(this) ,init方法需要传入当前上下文对象，最好这样写：
+            xxx.getInstance().init(this.getApplicationContext())
+            
+    - 属性动画导致：当通过animator.setRepeatCount(ValueAnimator.INFINITE);设置为无限循环时
+        应在onDestroy()方法中停止动画 animator.cancel()
+        
+    - 集合类导致：集合类如果仅仅有添加元素的方法，而没有相应的删除机制，导致内存被占用。 
+        特别是如果这个集合类是全局性的变量
+        
+    - 匿名内部类或非静态内部类导致（非静态内部类持有外部类引用）
+        - 当在activity中创建其非静态内部类的静态实例时，该实例的生命周期和应用一样长，而且持有外部类即activity的引用，
+         导致activity的内存资源不能正常回收；（应当设为静态内部内或抽成独立类并用单例模式访问）
+        - 当匿名内部类的实例被异步线程持有时，如常见的Runable r=new Runable(){...}
+        - handler:若handler发送的message未被处理，则该message和发送它的handler将被线程messageQueue一直持有；
+            那么如果时直接new Handler(){...},会默认持有activity的引用，导致activity无法回收；
+            所以应该使用静态的private static MyHandler extends Handler ；如果需要引入当前activity，
+            那么使用弱引用的方式:
+            ````
+            private static class MyHandler extends Handler {
+                private final WeakReference<Activity> mInstance;
+            
+                public MyHandler(Activity activity) {
+                    mInstance = new WeakReference<>(activity);
+                }
+            
+                @Override
+                public void handleMessage(Message msg) {
+                    Activity activity = mInstance==null?null:mInstance.get();
+                    if (activity == null||activity.isFinishing()) {
+                        return;
+                    }
+                    ...
+                }
+            }
+            ````
+            如上就可以成功的避免activity泄漏，但looper线程的消息队列还是持有未处理的消息，
+            so,退出activity时还是应该移除未处理的消息
+            ````
+            onDestroy(){
+                handler.removeCallbacks/removeMessages/removeCallbacksAndMessages
+            }
+            ````
+            
+    - 资源未关闭造成的内存泄漏
+        - 对于使用了BraodcastReceiver，ContentObserver，File，游标 Cursor，Stream，Bitmap等资源的使用，
+            应该在Activity销毁时及时关闭或者注销，否则这些资源将不会被回收，造成内存泄漏。
+            
+    - 使用Android系统服务不当容易导致
+    ````
+        //如：为了Activity与服务交互，我们把Activity作为监听器
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ALL);
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        //应在onDestroy中：
+        sensorManager.unregisterListener(this, sensor);
+        
+        
+    ````
+  
+    - 尽量避免使用static成员变量
+        - 其生命周期将与整个app进程生命周期一样。 这会导致一系列问题，如果你的app进程设计上是长驻内存的，
+        那即使app切到后台，这部分内存也不会被释放；按照现在手机app内存管理机制，占内存较大的后台进程将优先回收    
+        - 修复的方法是：
+            不要在类初始时初始化静态成员。可以考虑lazy初始化（懒加载）。
+            架构设计上要思考是否真的有必要这样做，尽量避免。
+            如果架构需要这么设计，那么此对象的生命周期你有责任管理起来。
+
+        
