@@ -10,6 +10,12 @@ apply plugin: 'android-aspectjx'
 //fir plugin 必填
 apply plugin: 'im.fir.plugin.gradle'
 
+// 依赖插件脚本
+apply from: 'tinker-support.gradle'
+// 多渠道使用walle
+apply from: 'multiple-channel.gradle'
+//多渠道打包命令：gradle assembleReleaseChannels
+
 android {
 //    compileSdkVersion 'android-P'
 //    compileSdkVersion 28
@@ -52,11 +58,13 @@ android {
 //        apiToken '�替换为你的 BugHD API_TOKEN'
 //    }
 
+    //指定java的编译版本
     compileOptions {
         sourceCompatibility SOURCE_COMPATIBILITY
+        targetCompatibility TARGET_COMPATIBILITY
     }
 
-    //Gradle编译禁用Lint报错
+    //Gradle编译禁用Lint报错，link check到error时会继续编译
     lintOptions {
         abortOnError false
     }
@@ -97,10 +105,18 @@ android {
         }
         debug {
             buildConfigField("boolean", "isDebug", "true")
-            minifyEnabled false
+            minifyEnabled true
             debuggable true
             signingConfig signingConfigs.config
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        //自定义构建类型还可以继承已有的构建类型
+        ljy.initWith(buildTypes.debug)
+        //自定义构建类型
+        ljy{
+            applicationIdSuffix ".jinyang"//可以给应用的包名添加后缀，以区分不同的构建类型
+            //MyApplication中打印的进程名果然添加来后缀com.ljy.ljyutils.jinyang
         }
     }
 
@@ -153,6 +169,22 @@ android {
     aspectjx {
         excludeJarFilter '.jar'
     }
+
+    //android原生多渠道打包配置, 实际开发中也可以使用美团walle打包
+    //但是原生的配置不仅可以打出渠道信息，还可以通过占位符为不同渠道设置不同的appName，appIcon等
+    //命令行执行gradle assemble，就会打出所有渠道的所有构建类型的apk
+    //也可以只打指定的构建类型的apk-->gradle assembleRelease/assembleDebug
+    productFlavors{
+        ljyUtilsForBaiduAppStore{
+            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_baidu",APP_NAME:"@string/app_name"]
+        }
+        ljyUtilsFor360AppStore{
+            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_360",APP_NAME:"@string/app_name"]
+        }
+        ljyUtilsForTencentAppStore{
+            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_tencent",APP_NAME:"@string/app_name"]
+        }
+    }
 }
 
 dependencies {
@@ -193,9 +225,3 @@ dependencies {
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     compile project(':PluginCoreLib')
 }
-
-// 依赖插件脚本
-apply from: 'tinker-support.gradle'
-// 多渠道使用walle
-apply from: 'multiple-channel.gradle'
-//多渠道打包命令：gradle assembleReleaseChannels

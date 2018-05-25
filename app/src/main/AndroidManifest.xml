@@ -30,7 +30,7 @@
         android:name=".base.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${APP_NAME}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -157,6 +157,10 @@
             android:name="UMENG_MESSAGE_SECRET"
             android:value="9b9048088c76f49a591774c52f57c3a2" />
         //meta-data end
+
+        //android原生多渠道打包的meta-data
+        <meta-data android:name="PRODUCT"
+            android:value="${CHANNEL_VALUE}"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.ljy.ljyutils.fileProvider"

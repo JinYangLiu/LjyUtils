@@ -44,6 +44,7 @@ ext {
     VERSION_TARGET_SDK = 26
 
     SOURCE_COMPATIBILITY = JavaVersion.VERSION_1_7
+    TARGET_COMPATIBILITY = JavaVersion.VERSION_1_7
 }
 
 allprojects {
@@ -61,4 +62,16 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+//自定义task
+task printProperties << {
+    println 'project标识='+project
+    println 'project名字='+project.name
+    println 'project构建目录='+project.buildDir
+    println 'project构建文件='+project.buildFile
+    println 'project版本信息='+project.version
+    println 'task名字='+name
+    println 'project构建文件存放目录='+buildDir
+    println 'task的全限定路径名='+path
 }
