@@ -5,8 +5,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="25" />
+        android:minSdkVersion="16"
+        android:targetSdkVersion="26" />
 
     <permission
         android:name="${applicationId}.permission.MIPUSH_RECEIVE"

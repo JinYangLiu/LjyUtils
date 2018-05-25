@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="E:\AndroidStudioWork\LjyUtils\push\assets"/><source path="E:\AndroidStudioWork\LjyUtils\push\build\generated\assets\shaders\release"/></dataSet><dataSet config="release"><source path="E:\AndroidStudioWork\LjyUtils\push\build-types\release\assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/ljy/AndroidStudioProjects/LjyUtils/push/assets"/><source path="/Users/ljy/AndroidStudioProjects/LjyUtils/push/build/generated/assets/shaders/release"/></dataSet><dataSet config="release"><source path="/Users/ljy/AndroidStudioProjects/LjyUtils/push/build-types/release/assets"/></dataSet></merger>
