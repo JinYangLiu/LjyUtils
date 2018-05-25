@@ -12,7 +12,7 @@ import com.ljy.util.LjyLogUtil;
 /**
  * Created by LJY on 2018/4/28 15:41
  */
-public class MyView extends Button {
+public class MyView extends android.support.v7.widget.AppCompatButton {
     public MyView(Context context) {
         super(context);
     }

@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.adapter.LjyBaseFilterAdapter;
 import com.ljy.ljyutils.R;
@@ -191,7 +193,7 @@ public class MainActivity extends BaseActivity {
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
                 "注解与反射", "多进程通信", "RemoteViews", "Drawable",
-                "window","测试CrashHandler","插件化","布局优化"
+                "window", "测试CrashHandler", "插件化", "布局优化"
         };
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
@@ -210,22 +212,41 @@ public class MainActivity extends BaseActivity {
                 WindowActivity.class, CrashHandlerTestActivity.class, PluginActivity.class, LayoutBetterActivity.class
         };
 
-
-        for (int i = textArr.length-1; i >=0; i--) {
+        for (int i = textArr.length - 1; i >= 0; i--) {
             MainIntentBean bean = new MainIntentBean(textArr[i], classArr[i]);
             mList.add(bean);
         }
     }
 
     private void initView() {
-//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //当知道Adapter内Item的改变不会影响RecyclerView宽高的时候，可以设置为true让RecyclerView避免重新计算大小。
 //        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+//        //试用BaseQuickAdapter
+//        final BaseQuickAdapter adapter = new BaseQuickAdapter<MainIntentBean, BaseViewHolder>(R.layout.layou_item_main, mList) {
+//            @Override
+//            protected void convert(BaseViewHolder holder, final MainIntentBean item) {
+//                holder.setText(R.id.textViewItem, item.getTextInfo());
+//                holder.setOnClickListener(R.id.itemRoot, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (item.getTextInfo().equals("夜间模式")) {
+//                            setNight();
+//                        } else {
+//                            startActivity(new Intent(mContext, item.getIntentClass()));
+//                        }
+//                    }
+//                });
+//            }
+//        };
+
+
         final LjyBaseFilterAdapter adapter = new LjyBaseFilterAdapter<MainIntentBean>(mContext, mList, R.layout.layou_item_main) {
 
             @Override
-            public void convert(LjyViewHolder holder, final MainIntentBean item) {
+            public void convert(LjyBaseFilterAdapter.LjyViewHolder holder, final MainIntentBean item) {
                 holder.setText(R.id.textViewItem, item.getTextInfo());
                 holder.setOnClickListener(R.id.itemRoot, new View.OnClickListener() {
                     @Override

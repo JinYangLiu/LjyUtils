@@ -32,6 +32,7 @@
         android:id="@+id/button_viewStub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAllCaps="false"
         android:onClick="btnClick"
         android:text="加载viewStub" />
     <ViewStub

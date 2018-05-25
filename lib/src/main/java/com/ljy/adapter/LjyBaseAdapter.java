@@ -19,38 +19,33 @@ import java.util.List;
  */
 
 public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdapter.LjyViewHolder> {
-    private RecyclerView recyclerView;
     private Context mContext;
     public List<T> list;
     private int mItemLayoutId;
 
-    public LjyBaseAdapter(Context context, RecyclerView recyclerView) {
+    public LjyBaseAdapter(Context context) {
         this.mContext = context;
-        this.recyclerView = recyclerView;
         this.mItemLayoutId = new LinearLayout(mContext).getId();
         this.list = new ArrayList<T>();
 
     }
 
-    public LjyBaseAdapter(Context context, List<T> list, RecyclerView recyclerView) {
+    public LjyBaseAdapter(Context context, List<T> list) {
         this.mContext = context;
-        this.recyclerView = recyclerView;
         this.mItemLayoutId = new LinearLayout(mContext).getId();
         this.list = list;
 
     }
 
-    public LjyBaseAdapter(Context context, List<T> list, RecyclerView recyclerView, int itemLayoutId) {
+    public LjyBaseAdapter(Context context, List<T> list, int itemLayoutId) {
         this.mContext = context;
-        this.recyclerView = recyclerView;
         this.mItemLayoutId = itemLayoutId;
         this.list = list;
 
     }
 
-    public LjyBaseAdapter(Context context, int itemLayoutId, RecyclerView recyclerView) {
+    public LjyBaseAdapter(Context context, int itemLayoutId) {
         this.mContext = context;
-        this.recyclerView = recyclerView;
         this.mItemLayoutId = itemLayoutId;
         this.list = new ArrayList<T>();
 
@@ -65,8 +60,6 @@ public abstract class LjyBaseAdapter<T> extends RecyclerView.Adapter<LjyBaseAdap
     }
 
     public void setNewList(List<T> newList) {
-        if (recyclerView != null)
-            recyclerView.removeAllViews();
         this.list=newList == null ? new ArrayList<T>() : newList;
         notifyDataSetChanged();
     }

@@ -121,10 +121,10 @@ public abstract class LjyBaseFilterAdapter<T extends LjyBaseFilterAdapter.BaseFi
     }
 
     @Override
-    public LjyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-        if (getItemViewType(position) == TYPE_HEADER)
+    public LjyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER)
             return new LjyViewHolder(headerView);
-        return LjyViewHolder.get(mContext, parent, mItemLayoutId, position);
+        return LjyViewHolder.get(mContext, parent, mItemLayoutId);
     }
 
     @Override
@@ -166,7 +166,7 @@ public abstract class LjyBaseFilterAdapter<T extends LjyBaseFilterAdapter.BaseFi
             this.mViews = new SparseArray<>();
         }
 
-        public static LjyViewHolder get(Context context, ViewGroup parent, int layoutId, int position) {
+        public static LjyViewHolder get(Context context, ViewGroup parent, int layoutId) {
             View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
             return new LjyViewHolder(view);
         }

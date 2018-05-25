@@ -54,7 +54,7 @@ public class RefreshRecyclerViewActivity extends BaseActivity {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         List<SwipeCardBean> listData=SwipeCardBean.initData(pageCount++*pageSize,pageCount*pageSize);
-        mRecyclerView.setAdapter(mAdapter=new LjyBaseAdapter<SwipeCardBean>(mContext,listData,mRecyclerView , R.layout.layout_item_list) {
+        mRecyclerView.setAdapter(mAdapter=new LjyBaseAdapter<SwipeCardBean>(mContext,listData , R.layout.layout_item_list) {
             @Override
             public void convert(LjyViewHolder holder, SwipeCardBean item) {
                 holder.setBackgroundColor(R.id.itemRoot, item.getCardColor());

@@ -12,21 +12,15 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.ScaleDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -75,7 +69,7 @@ public class DrawableActivity extends BaseActivity {
     }
 
 
-    int count = 0;
+    private int count = 0;
 
     public void btnClick(View view) {
         switch (view.getId()) {
@@ -97,7 +91,7 @@ public class DrawableActivity extends BaseActivity {
                 byte[] chunk = bitmap2.getNinePatchChunk();
                 boolean isNinePatchChunk = NinePatch.isNinePatchChunk(chunk);
                 LjyLogUtil.i("isNinePatchChunk" + isNinePatchChunk);
-                NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(bitmap2, chunk, new Rect(), null);
+                NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(getResources(),bitmap2, chunk, new Rect(), null);
                 ninePatchDrawable.setDither(true);
                 imageViewContent.setBackground(ninePatchDrawable);
                 break;
@@ -156,7 +150,7 @@ public class DrawableActivity extends BaseActivity {
 
     public class CustomDrawable extends Drawable{
 
-        private Paint mPaint;
+        private final Paint mPaint;
 
         public CustomDrawable(int color) {
             mPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
