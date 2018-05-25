@@ -10,12 +10,17 @@ buildscript {
 
     repositories {
         maven { url 'https://maven.google.com' }
+        //添加fir maven源
+        maven {
+            //url "http://maven.bughd.com/public"
+            url uri('./localmaven')//改为本地，远程仓库关闭
+        }
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.0'
         //这里配置 apt 供butterknife使用
-       // classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        // classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //GreenDao3依赖
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
         // tinkersupport插件(1.0.3以上无须再配置tinker插件）
@@ -26,6 +31,8 @@ buildscript {
         classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.8'
         //apt
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        //添加fir插件依赖
+        classpath 'im.fir:gradle-fir-publisher:1.0.7'
     }
 }
 
@@ -44,6 +51,11 @@ allprojects {
         jcenter()
         maven { url 'https://maven.google.com' }
         maven { url "https://jitpack.io" }
+        //添加fir maven源
+        maven {
+            //url "http://maven.bughd.com/public"
+            url uri('./localmaven')//改为本地，远程仓库关闭
+        }
     }
 }
 

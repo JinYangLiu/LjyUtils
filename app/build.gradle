@@ -7,6 +7,8 @@ apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'android-aspectjx'
 //apt
 //apply plugin: 'com.neenbedankt.android-apt'
+//fir plugin 必填
+apply plugin: 'im.fir.plugin.gradle'
 
 android {
 //    compileSdkVersion 'android-P'
@@ -25,7 +27,30 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // 开启multidex
         multiDexEnabled true//解决method ID not in [0, 0xffff]: 65536 这个问题
+        //下面一行用来解决以下问题
+//         Error:Execution failed for task ':app:javaPreCompileDebug'.
+//        > Annotation processors must be explicitly declared now.  The following dependencies on the compile classpath are found to contain annotation processor.  Please add them to the annotationProcessor configuration.
+//        - processor.jar (project :processor)
+//        Alternatively, set android.defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true to continue with previous behavior.  Note that this option is deprecated and will be removed in the future.
+//                See https://developer.android.com/r/tools/annotation-processor-error-message.html for more details.
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
     }
+
+    fir {
+
+        //必填 上传 fir.im apk token 字段，否则无法上传 APP 到 fir.im
+//        apiToken '0eb90076384aaab473d52a4f003774b3'
+        apiToken '0a4ed25d1426bd7bc6d147a3504cc3e7'
+
+        //可选 上传fir.im 中显示的changelog
+        changeLog '第一次上传fir'
+    }
+
+    //fir可选 如需实现自动上传符号表到 BugHD 功能，为必填项
+//    bughd {
+//        projectId '�替换为你的 BugHD PROJECT_ID'
+//        apiToken '�替换为你的 BugHD API_TOKEN'
+//    }
 
     compileOptions {
         sourceCompatibility SOURCE_COMPATIBILITY
@@ -43,6 +68,12 @@ android {
         useNewCruncher = false
     }
 
+//    //解决与module中v4,v7包冲突问题
+//    configurations {
+//        all*.exclude group: 'com.android.support', module: 'support-v4'
+//        all*.exclude group: 'com.android.support', module: 'support-annotations'
+//    }
+
     signingConfigs {
         config {
             keyAlias 'key'
@@ -59,6 +90,8 @@ android {
             minifyEnabled true
             debuggable false
             shrinkResources true // 是否去除无效的资源文件
+            //对齐优化设置为true，否则找不到该task (默认不写也是true)
+            zipAlignEnabled true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -96,12 +129,21 @@ android {
         enabled true
     }
 
+    //通过sourceSets的配置可以自定义as项目的结构,只需把调整后的结构对应的写入即可
+    //src/main/xxx直接写为src即可，另外本项目是Android studio默认的结构，可以不用配置这些的，
+    //这里只是为来功能演示，以作记录
     sourceSets {
         main {
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res/']
+            assets.srcDirs = ['src/main/assets']
+            jni.srcDirs = ['jni']
             jniLibs.srcDirs = ['libs']
+            aidl.srcDirs = ['src/main/aidl']
+            renderscript.srcDirs = ['src']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
         }
     }
-
     repositories {
         flatDir {
             dirs 'libs'
@@ -120,7 +162,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.1.0'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.1.1'
     //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -138,7 +180,7 @@ dependencies {
     compile 'com.tencent.bugly:crashreport_upgrade:1.3.4'
     //walle
     compile 'com.meituan.android.walle:library:1.1.6'
-    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:design:27.1.1'
     //AspectJ
     compile 'org.aspectj:aspectjrt:1.8.13'
     //友盟推送

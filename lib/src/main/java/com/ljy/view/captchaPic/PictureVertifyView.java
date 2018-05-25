@@ -16,7 +16,7 @@ import android.view.View;
  * Created by ljy on 2018/1/31.
  */
 
-class PictureVertifyView extends AppCompatImageView {
+public class PictureVertifyView extends AppCompatImageView {
 
     private static final int STATE_DOWN = 1;
     private static final int STATE_MOVE = 2;

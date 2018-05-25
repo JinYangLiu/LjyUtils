@@ -14,7 +14,7 @@ import com.ljy.util.LjyDensityUtil;
  * Created by luozhanming on 2018/1/17.
  */
 
-class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
+public class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
 
 
     private Paint textPaint;
