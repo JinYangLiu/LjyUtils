@@ -4,17 +4,17 @@ version = '0.0.5'
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion VERSION_COMPILE_SDK
-    buildToolsVersion VERSION_BUILD_TOOLS
+    compileSdkVersion rootProject.ext.android.VERSION_COMPILE_SDK
+    buildToolsVersion rootProject.ext.android.VERSION_BUILD_TOOLS
 
     defaultConfig {
-        minSdkVersion VERSION_MIN_SDK
-        targetSdkVersion VERSION_TARGET_SDK
+        minSdkVersion rootProject.ext.android.VERSION_MIN_SDK
+        targetSdkVersion rootProject.ext.android.VERSION_TARGET_SDK
         versionCode 1
         versionName "1.0"
     }
     compileOptions {
-        sourceCompatibility SOURCE_COMPATIBILITY
+        sourceCompatibility rootProject.ext.android.SOURCE_COMPATIBILITY
     }
     buildTypes {
         release {

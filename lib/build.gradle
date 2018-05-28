@@ -4,12 +4,12 @@ apply plugin: 'com.android.library'
 android {
 //    compileSdkVersion 'android-P'
 //    compileSdkVersion 28
-    compileSdkVersion VERSION_COMPILE_SDK
-    buildToolsVersion VERSION_BUILD_TOOLS
+    compileSdkVersion rootProject.ext.android.VERSION_COMPILE_SDK
+    buildToolsVersion rootProject.ext.android.VERSION_BUILD_TOOLS
 
     defaultConfig {
-        minSdkVersion VERSION_MIN_SDK
-        targetSdkVersion VERSION_TARGET_SDK
+        minSdkVersion rootProject.ext.android.VERSION_MIN_SDK
+        targetSdkVersion rootProject.ext.android.VERSION_TARGET_SDK
 //        targetSdkVersion 'P'
 //        targetSdkVersion 28
         versionCode 1
@@ -42,10 +42,6 @@ android {
     }
 }
 
-ext {
-    libSupportVersion = '26.0.2'
-}
-
 dependencies {
     //glide
     compile  'com.github.bumptech.glide:glide:3.5.0'
@@ -74,9 +70,9 @@ dependencies {
     //video
     compile 'com.shuyu:GSYVideoPlayer:2.1.3'
     //recyclerview
-    compile "com.android.support:recyclerview-v7:${libSupportVersion}"
+    compile rootProject.ext.dependencies.recyclerview
     //design
-    compile "com.android.support:design:${libSupportVersion}"
+    compile rootProject.ext.dependencies.design
     //xml
     compile ('com.squareup.retrofit2:converter-simplexml:2.1.0'){
         exclude group: 'xpp3', module: 'xpp3'

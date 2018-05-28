@@ -1,4 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply from:'config.gradle'
 
 buildscript {
 
@@ -36,17 +37,6 @@ buildscript {
     }
 }
 
-ext {
-    VERSION_COMPILE_SDK = 26
-    VERSION_BUILD_TOOLS = "26.0.2"
-
-    VERSION_MIN_SDK = 16
-    VERSION_TARGET_SDK = 26
-
-    SOURCE_COMPATIBILITY = JavaVersion.VERSION_1_7
-    TARGET_COMPATIBILITY = JavaVersion.VERSION_1_7
-}
-
 allprojects {
     repositories {
         jcenter()
@@ -66,12 +56,48 @@ task clean(type: Delete) {
 
 //自定义task
 task printProperties << {
-    println 'project标识='+project
-    println 'project名字='+project.name
-    println 'project构建目录='+project.buildDir
-    println 'project构建文件='+project.buildFile
-    println 'project版本信息='+project.version
-    println 'task名字='+name
-    println 'project构建文件存放目录='+buildDir
-    println 'task的全限定路径名='+path
+    println 'project标识=' + project
+    println 'project名字=' + project.name
+    println 'project构建目录=' + project.buildDir
+    println 'project构建文件=' + project.buildFile
+    println 'project版本信息=' + project.version
+    println 'task名字=' + name
+    println 'project构建文件存放目录=' + buildDir
+    println 'task的全限定路径名=' + path
 }
+
+//导出jar,注意makeJar依赖于build生成的class文件，so，也可以这样写：makeJar.dependsOn(build)
+task makeJar(type: Jar) {
+    //清空已存在的jar
+    delete 'libs/ljyU.jar'
+    //指定生成的jar文件名
+    baseName "./app/libs/ljyU"
+    //从class文件生成jar宝
+    from "./lib/build/intermediates/classes/release/com/ljy/util"
+    into "com/ljy/util"
+    //去掉不需要打包的目录和文件
+    exclude "db", "disklrucache", "R.class"
+    //去掉R文件
+    exclude { it.name.startsWith('R$') }
+}
+
+task helloW{
+    println('hello world')
+    doFirst{
+        println('do first')
+    }
+    doLast{
+        println('do last')
+    }
+}
+
+task test0{
+    println("I'm test 0")
+}
+
+task test1{
+    println("I'm test 1")
+}
+
+//使test0依赖于test1，即要执行test0会先执行test1
+test0.dependsOn test1

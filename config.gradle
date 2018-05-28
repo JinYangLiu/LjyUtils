@@ -1,0 +1,19 @@
+ext {
+    android = [
+            VERSION_COMPILE_SDK : 26,
+            VERSION_BUILD_TOOLS : "26.0.2",
+            VERSION_MIN_SDK     : 16,
+            VERSION_TARGET_SDK  : 26,
+            SOURCE_COMPATIBILITY: JavaVersion.VERSION_1_7,
+            TARGET_COMPATIBILITY: JavaVersion.VERSION_1_7
+    ]
+
+    libSupportVersion = '26.0.2'
+    dependencies=[
+            support_v7:'com.android.support:appcompat-v7:26.0.2',
+            recyclerview:'com.android.support:recyclerview-v7:26.0.2',
+            design:'com.android.support:design:26.0.2'
+    ]
+
+
+}

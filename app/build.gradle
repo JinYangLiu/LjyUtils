@@ -16,15 +16,17 @@ apply from: 'tinker-support.gradle'
 apply from: 'multiple-channel.gradle'
 //多渠道打包命令：gradle assembleReleaseChannels
 
+
+
 android {
 //    compileSdkVersion 'android-P'
 //    compileSdkVersion 28
-    compileSdkVersion VERSION_COMPILE_SDK
-    buildToolsVersion VERSION_BUILD_TOOLS
+    compileSdkVersion rootProject.ext.android.VERSION_COMPILE_SDK
+    buildToolsVersion rootProject.ext.android.VERSION_BUILD_TOOLS
 
     defaultConfig {
-        minSdkVersion VERSION_MIN_SDK
-        targetSdkVersion VERSION_TARGET_SDK
+        minSdkVersion rootProject.ext.android.VERSION_MIN_SDK
+        targetSdkVersion rootProject.ext.android.VERSION_TARGET_SDK
 //        targetSdkVersion 'P'
 //        targetSdkVersion 28
         applicationId "com.ljy.ljyutils"
@@ -40,6 +42,11 @@ android {
 //        Alternatively, set android.defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true to continue with previous behavior.  Note that this option is deprecated and will be removed in the future.
 //                See https://developer.android.com/r/tools/annotation-processor-error-message.html for more details.
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        resValue("string","app_name","LjyDemo")
+        //resValue还可以这样
+        resValue("string","build_time",buildTime())
+        //java类中调用上面创建的resValue
+        //L.d(tag,getString(R.string.build_time));
     }
 
     fir {
@@ -60,8 +67,8 @@ android {
 
     //指定java的编译版本
     compileOptions {
-        sourceCompatibility SOURCE_COMPATIBILITY
-        targetCompatibility TARGET_COMPATIBILITY
+        sourceCompatibility rootProject.ext.android.SOURCE_COMPATIBILITY
+        targetCompatibility rootProject.ext.android.TARGET_COMPATIBILITY
     }
 
     //Gradle编译禁用Lint报错，link check到error时会继续编译
@@ -72,7 +79,7 @@ android {
     //用来关闭Android Studio的PNG合法性检查的，直接不让它检查
     //（添加这一行的原因是girl.png并不是一个合法的png图片，其本质是个jpeg图片）
     aaptOptions {
-        cruncherEnabled = false
+        cruncherEnabled = false//AAPT检查，关上会快，但是release版本建议打开
         useNewCruncher = false
     }
 
@@ -95,13 +102,15 @@ android {
     buildTypes {
         release {
             buildConfigField("boolean", "isDebug", "false")
-            minifyEnabled true
             debuggable false
-            shrinkResources true // 是否去除无效的资源文件
+            minifyEnabled true//开启代码混淆优化
+            shrinkResources true // 是否去除无效的资源文件，依赖于minifyEnabled
             //对齐优化设置为true，否则找不到该task (默认不写也是true)
             zipAlignEnabled true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //下面一行，可以增加变量到R文件中，但R中不能有相同key的变量，此处用来为不同的buildType设置不同的appName
+            resValue("string","app_name","LjyDemoR")
         }
         debug {
             buildConfigField("boolean", "isDebug", "true")
@@ -109,6 +118,7 @@ android {
             debuggable true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue("string","app_name","LjyDemoD")
         }
 
         //自定义构建类型还可以继承已有的构建类型
@@ -122,9 +132,9 @@ android {
 
     dexOptions {
         jumboMode = true//Cannot merge new index 65562 into a non-jumbo instruction! 这个问题的解决
-        //incremental true
+        incremental true//开启增量编译
+        javaMaxHeapSize "4g"//增加编译的内存资源到4g
         preDexLibraries = false //设置对第三方lib不做preDex处理
-        javaMaxHeapSize "4g"//java虚拟机堆内存最大值设为4g，避免oom
 //        additionalParameters = ['--multi-dex', '--main-dex-list=' + project.rootDir.absolutePath +
 //                '/app/maindexlist.txt', '--minimal-main-dex','--set-max-idx-number=65000']
         additionalParameters = ['--multi-dex', '--set-max-idx-number=65000']
@@ -153,8 +163,7 @@ android {
             java.srcDirs = ['src/main/java']
             res.srcDirs = ['src/main/res/']
             assets.srcDirs = ['src/main/assets']
-            jni.srcDirs = ['jni']
-            jniLibs.srcDirs = ['libs']
+            jniLibs.srcDirs = ['src/main/jniLibs']
             aidl.srcDirs = ['src/main/aidl']
             renderscript.srcDirs = ['src']
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -174,17 +183,58 @@ android {
     //但是原生的配置不仅可以打出渠道信息，还可以通过占位符为不同渠道设置不同的appName，appIcon等
     //命令行执行gradle assemble，就会打出所有渠道的所有构建类型的apk
     //也可以只打指定的构建类型的apk-->gradle assembleRelease/assembleDebug
+    //方式1：
+//    productFlavors{
+//        ljyUtilsForBaidu{
+//            manifestPlaceholders=[CHANNEL_VALUE:"baidu",APP_NAME:"@string/app_name"]
+//        }
+//        ljyUtilsFor360{
+//            manifestPlaceholders=[CHANNEL_VALUE:"360",APP_NAME:"@string/app_name"]
+//        }
+//        ljyUtilsForTencent{
+//            manifestPlaceholders=[CHANNEL_VALUE:"tencent",APP_NAME:"@string/app_name"]
+//        }
+//    }
+    //方式2：
     productFlavors{
-        ljyUtilsForBaiduAppStore{
-            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_baidu",APP_NAME:"@string/app_name"]
+        baidu{}
+        tencent{}
+    }
+    productFlavors.all{ flavor->
+        flavor.manifestPlaceholders=[CHANNEL_VALUE:name,APP_NAME:"@string/app_name"]
+    }
+
+    //打包的apk命名规则默认为app-渠道名-buildType.apk,保存路径为app/build/outputs/apk
+    //下面对release版apk的命名和存放位置进行自定义
+    applicationVariants.all{variant ->
+        variant.outputs.each{ output ->
+            if(output.outputFile!=null&&
+                    output.outputFile.name.endsWith('.apk')&&
+                    'release'.equals(variant.buildType.name)){
+                //修改保存的路径和文件名
+                def apkFile=new File(output.outputFile.getParent()+"/release",
+                        "ljyUtils_${variant.flavorName}_v${variant.versionName}.apk")
+                output.outputFile=apkFile
+            }
         }
-        ljyUtilsFor360AppStore{
-            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_360",APP_NAME:"@string/app_name"]
-        }
-        ljyUtilsForTencentAppStore{
-            manifestPlaceholders=[CHANNEL_VALUE:"ljyUtils_tencent",APP_NAME:"@string/app_name"]
+        tasks.all{
+            if(it.name.startsWith("assemble")){
+                //复制到指定路径,并重命名
+                it.doLast {
+                    copy {
+                        from variant.outputs.outputFile+"/release"
+                        into "./build/apkRelease"
+                        rename { String fileName ->
+                            fileName.replace("ljyUtils", "LJYUtil")
+                        }
+                    }
+                }
+            }
         }
     }
+}
+def buildTime(){
+    return new Date().format("yyyy-MM-dd HH:mm:ss")
 }
 
 dependencies {
@@ -194,7 +244,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.1.0'
-    compile 'com.android.support:appcompat-v7:27.1.1'
+    compile rootProject.ext.dependencies.support_v7
     //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -208,6 +258,22 @@ dependencies {
     compile 'com.android.support:multidex:1.0.3'
     //lottie
     compile 'com.airbnb.android:lottie:2.1.0'
+
+    //+@aar可以关闭依赖传递，即值依赖该项目，而不依赖该项目所依赖的项目(只aar，jar不受影响)
+//    compile 'com.airbnb.android:lottie:2.1.0@aar'
+
+    //强制刷新远程库，避免远程库更新后，并蒂为刷新问题
+//    compile ('com.airbnb.android:lottie:2.1.0'){
+//        transitive=true
+//    }
+    //排除一个库中引用的某些库
+//    compile ('com.airbnb.android:lottie:2.1.0'){
+//        exclude module:'com.android.support:appcompat-v7:27.1.1'
+//        exclude module:'com.android.support:appcompat-v4:27.1.1'
+//    }
+    //依赖本地的aar（依赖aar可以省去对module的编译，使项目更整洁，隐藏内部实现，只是不易修改）
+//    compile name:"aaa",ext:'aar'
+
     // 远程依赖集成方式（推荐）
     compile 'com.tencent.bugly:crashreport_upgrade:1.3.4'
     //walle
