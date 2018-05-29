@@ -12,10 +12,10 @@ buildscript {
     repositories {
         maven { url 'https://maven.google.com' }
         //添加fir maven源
-        maven {
+        //maven {
             //url "http://maven.bughd.com/public"
-            url uri('./localmaven')//改为本地，远程仓库关闭
-        }
+            //url uri('./localmaven')//改为本地，远程仓库关闭
+        //}
         jcenter()
     }
     dependencies {
@@ -33,7 +33,7 @@ buildscript {
         //apt
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //添加fir插件依赖
-        classpath 'im.fir:gradle-fir-publisher:1.0.7'
+//        classpath 'im.fir:gradle-fir-publisher:1.0.7'
     }
 }
 
@@ -41,12 +41,12 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://maven.google.com' }
-        maven { url "https://jitpack.io" }
+        maven { url 'https://jitpack.io' }
         //添加fir maven源
-        maven {
+        //maven {
             //url "http://maven.bughd.com/public"
-            url uri('./localmaven')//改为本地，远程仓库关闭
-        }
+           // url uri('./localmaven')//改为本地，远程仓库关闭
+        //}
     }
 }
 
@@ -101,3 +101,28 @@ task test1{
 
 //使test0依赖于test1，即要执行test0会先执行test1
 test0.dependsOn test1
+
+task test2{
+    println("I'm test 2")
+}
+
+task test3{
+    println("I'm test 3")
+}
+
+//test2结束后执行其所依赖的test3
+test2.finalizedBy test3
+
+task test4{
+    println("I'm test 4")
+}
+
+//禁用任务test4
+//test4.enabled=false
+
+//禁用某些任务
+tasks.whenTaskAdded {task->
+    if(task.name.contains('test')){
+        task.enabled=false
+    }
+}

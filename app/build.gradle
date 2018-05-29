@@ -8,7 +8,7 @@ apply plugin: 'android-aspectjx'
 //apt
 //apply plugin: 'com.neenbedankt.android-apt'
 //fir plugin 必填
-apply plugin: 'im.fir.plugin.gradle'
+//apply plugin: 'im.fir.plugin.gradle'
 
 // 依赖插件脚本
 apply from: 'tinker-support.gradle'
@@ -49,15 +49,15 @@ android {
         //L.d(tag,getString(R.string.build_time));
     }
 
-    fir {
-
-        //必填 上传 fir.im apk token 字段，否则无法上传 APP 到 fir.im
-//        apiToken '0eb90076384aaab473d52a4f003774b3'
-        apiToken '0a4ed25d1426bd7bc6d147a3504cc3e7'
-
-        //可选 上传fir.im 中显示的changelog
-        changeLog '第一次上传fir'
-    }
+//    fir {
+//
+//        //必填 上传 fir.im apk token 字段，否则无法上传 APP 到 fir.im
+////        apiToken '0eb90076384aaab473d52a4f003774b3'
+//        apiToken '0a4ed25d1426bd7bc6d147a3504cc3e7'
+//
+//        //可选 上传fir.im 中显示的changelog
+//        changeLog '第一次上传fir'
+//    }
 
     //fir可选 如需实现自动上传符号表到 BugHD 功能，为必填项
 //    bughd {
@@ -207,6 +207,7 @@ android {
     //打包的apk命名规则默认为app-渠道名-buildType.apk,保存路径为app/build/outputs/apk
     //下面对release版apk的命名和存放位置进行自定义
     applicationVariants.all{variant ->
+        //gradle升级到4.x后，outputFile变成类只读属性,可以用 variant.outputs.all 代替
         variant.outputs.each{ output ->
             if(output.outputFile!=null&&
                     output.outputFile.name.endsWith('.apk')&&
@@ -217,6 +218,9 @@ android {
                 output.outputFile=apkFile
             }
         }
+//        variant.outputs.all {
+//            outputFileName = "ljyUtils_${variant.flavorName}_v${variant.versionName}.apk"
+//        }
         tasks.all{
             if(it.name.startsWith("assemble")){
                 //复制到指定路径,并重命名
@@ -255,7 +259,7 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'org.greenrobot:greendao-generator:3.2.0'
     //multidex，解决method ID not in [0, 0xffff]: 65536 这个问题
-    compile 'com.android.support:multidex:1.0.3'
+    compile 'com.android.support:multidex:1.0.1'
     //lottie
     compile 'com.airbnb.android:lottie:2.1.0'
 

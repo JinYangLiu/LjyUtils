@@ -8,7 +8,6 @@ ext {
             TARGET_COMPATIBILITY: JavaVersion.VERSION_1_7
     ]
 
-    libSupportVersion = '26.0.2'
     dependencies=[
             support_v7:'com.android.support:appcompat-v7:26.0.2',
             recyclerview:'com.android.support:recyclerview-v7:26.0.2',
