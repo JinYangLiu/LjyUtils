@@ -181,36 +181,34 @@ public class DesignPatternActivity extends BaseActivity {
      * 1.CheckBox,Button,TextView,等View的绘制都是由与View相关的功能实现类DisplayList,HardwareLayer,Canvas负责
      * 2.Adapter和AdapterView(AbsListView的父类)
      * 3.Window和WindowManager
-     *
-     *
      */
     private void methodBridgePattern() {
         //以咖啡大小杯和是否加糖为例,不管是coffee变化(大小杯),还是CoffeeAdditives变化(风味)
         //其相对于对方而言都是独立的,两者唯一的联系就是coffee中保持对coffeeAdditives的引用,为二者间的纽带,这就是桥接模式
         //原味
-        Ordinary ordinary=new Ordinary();
+        Ordinary ordinary = new Ordinary();
         //加糖
-        Sugar sugar=new Sugar();
+        Sugar sugar = new Sugar();
         //大杯原味
-        LargeCoffee largeCoffeeOrdinary=new LargeCoffee(ordinary);
+        LargeCoffee largeCoffeeOrdinary = new LargeCoffee(ordinary);
         largeCoffeeOrdinary.makeCoffee();
         //大杯加糖
-        LargeCoffee largeCoffeeSugar=new LargeCoffee(sugar);
+        LargeCoffee largeCoffeeSugar = new LargeCoffee(sugar);
         largeCoffeeSugar.makeCoffee();
         //小杯原味
-        SmallCoffee smallCoffeeOrdinary=new SmallCoffee(ordinary);
+        SmallCoffee smallCoffeeOrdinary = new SmallCoffee(ordinary);
         smallCoffeeOrdinary.makeCoffee();
         //小杯加糖
-        SmallCoffee smallCoffeeSugar=new SmallCoffee(sugar);
+        SmallCoffee smallCoffeeSugar = new SmallCoffee(sugar);
         smallCoffeeSugar.makeCoffee();
     }
 
     //咖啡中添加调味
-    public abstract class CoffeeAdditives{
+    public abstract class CoffeeAdditives {
         public abstract String addSomething();
     }
 
-    public class Sugar extends CoffeeAdditives{
+    public class Sugar extends CoffeeAdditives {
 
         @Override
         public String addSomething() {
@@ -218,7 +216,7 @@ public class DesignPatternActivity extends BaseActivity {
         }
     }
 
-    public class Ordinary extends CoffeeAdditives{
+    public class Ordinary extends CoffeeAdditives {
 
         @Override
         public String addSomething() {
@@ -226,7 +224,7 @@ public class DesignPatternActivity extends BaseActivity {
         }
     }
 
-    public abstract class Coffee{
+    public abstract class Coffee {
         protected CoffeeAdditives impl;
 
         public Coffee(CoffeeAdditives impl) {
@@ -237,25 +235,26 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //大杯
-    public class LargeCoffee extends Coffee{
+    public class LargeCoffee extends Coffee {
         public LargeCoffee(CoffeeAdditives impl) {
             super(impl);
         }
 
         @Override
         public void makeCoffee() {
-            LjyLogUtil.i("大杯的"+impl.addSomething()+"咖啡");
+            LjyLogUtil.i("大杯的" + impl.addSomething() + "咖啡");
         }
     }
+
     //小杯
-    public class SmallCoffee extends Coffee{
+    public class SmallCoffee extends Coffee {
         public SmallCoffee(CoffeeAdditives impl) {
             super(impl);
         }
 
         @Override
         public void makeCoffee() {
-            LjyLogUtil.i("小杯的"+impl.addSomething()+"咖啡");
+            LjyLogUtil.i("小杯的" + impl.addSomething() + "咖啡");
         }
     }
 
@@ -300,8 +299,8 @@ public class DesignPatternActivity extends BaseActivity {
             public void run() {
                 //子线程中创建handler
                 Looper.prepare();//创建Looper,并且会绑定到ThreadLocal中
-                Handler handler=new Handler();
-                Handler handler2=new Handler(Looper.getMainLooper());
+                Handler handler = new Handler();
+                Handler handler2 = new Handler(Looper.getMainLooper());
                 Looper.loop();//启动消息循环
                 try {
                     //to do something
@@ -321,29 +320,29 @@ public class DesignPatternActivity extends BaseActivity {
                     });
                     /**
                      * 源码:
-                         public final boolean post(Runnable r){
-                            return  sendMessageDelayed(getPostMessage(r), 0);
-                         }
+                     public final boolean post(Runnable r){
+                     return  sendMessageDelayed(getPostMessage(r), 0);
+                     }
 
-                         private static Message getPostMessage(Runnable r) {
-                             Message m = Message.obtain();
-                             m.callback = r;
-                             return m;
-                         }
+                     private static Message getPostMessage(Runnable r) {
+                     Message m = Message.obtain();
+                     m.callback = r;
+                     return m;
+                     }
 
                      // 可以看到Message对象并不是通过new去大量构建的,而是通过一个默认大小为50的对象池
                      public static Message obtain() {
-                         synchronized (sPoolSync) {
-                             if (sPool != null) {
-                                 Message m = sPool;
-                                 sPool = m.next;
-                                 m.next = null;
-                                 m.flags = 0; // clear in-use flag
-                                 sPoolSize--;
-                                 return m;
-                             }
-                         }
-                         return new Message();
+                     synchronized (sPoolSync) {
+                     if (sPool != null) {
+                     Message m = sPool;
+                     sPool = m.next;
+                     m.next = null;
+                     m.flags = 0; // clear in-use flag
+                     sPoolSize--;
+                     return m;
+                     }
+                     }
+                     return new Message();
                      }
 
 
