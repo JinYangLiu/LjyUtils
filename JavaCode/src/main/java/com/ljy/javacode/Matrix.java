@@ -1,4 +1,4 @@
-package com.ljy.ljyutils.bean;
+package com.ljy.javacode;
 
 /**
  * Created by Mr.LJY on 2018/2/11.
@@ -6,9 +6,8 @@ package com.ljy.ljyutils.bean;
  * 邻接矩阵的可达矩阵
  */
 
-public class JuZhen {
+public class Matrix {
     public static void main(String args[]) {
-        int[][] result = new int[100][100];
 
         int[][] arr={
                 {0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
@@ -25,23 +24,51 @@ public class JuZhen {
                 {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
-        int len = arr[0].length;
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                result[i][j] = i==j?1:arr[i][j];
-            }
-        }
-        for (int k = 0; k < len; k++)
-            for (int i = 0; i < len; i++)
-                for (int j = 0; j < len; j++)
-                    result[i][j] |= (result[i][k] & result[k][j]);
+        ReachableMatrix reachableMatrix = new ReachableMatrix(arr).invoke();
+        reachableMatrix.printResult();
 
-        System.out.println("--->");
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                System.out.print( result[i][j]+"\t");
+    }
+
+    private static class ReachableMatrix {
+        private int[][] arr;
+        private int[][] result;
+        private int len;
+
+        public ReachableMatrix(int[]... arr) {
+            this.arr = arr;
+        }
+
+        public int[][] getResult() {
+            return result;
+        }
+
+        public int getLen() {
+            return len;
+        }
+
+        public ReachableMatrix invoke() {
+            len = arr.length;
+            result = new int[len][len];
+            for (int i = 0; i < len; i++) {
+                for (int j = 0; j < len; j++) {
+                    result[i][j] = i==j?1:arr[i][j];
+                }
             }
-            System.out.print("\n");
+            for (int k = 0; k < len; k++)
+                for (int i = 0; i < len; i++)
+                    for (int j = 0; j < len; j++)
+                        result[i][j] |= (result[i][k] & result[k][j]);
+            return this;
+        }
+
+        public void printResult(){
+            System.out.println("--->");
+            for (int i = 0; i < len; i++) {
+                for (int j = 0; j < len; j++) {
+                    System.out.print( result[i][j]+"\t");
+                }
+                System.out.print("\n");
+            }
         }
     }
 }
