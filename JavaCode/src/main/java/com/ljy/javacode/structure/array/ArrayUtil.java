@@ -1,4 +1,4 @@
-package com.ljy.javacode.structure;
+package com.ljy.javacode.structure.array;
 
 /**
  * Created by ljy on 2018/5/30.

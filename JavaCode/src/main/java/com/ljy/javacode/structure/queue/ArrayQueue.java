@@ -1,4 +1,4 @@
-package com.ljy.javacode.structure;
+package com.ljy.javacode.structure.queue;
 
 /**
  * Created by ljy on 2018/5/31.
@@ -20,37 +20,39 @@ package com.ljy.javacode.structure;
  *  优先级队列的实现见：PriorityQueue.java
  */
 
-public class Queue {
+public class ArrayQueue extends Queue {
     private int maxSize;
-    private long[] queArray;
+    private String[] queArray;
     private int front;//队列首
     private int rear;//队列尾
     private int nItems;
 
-    public Queue(int maxSize){
+    public ArrayQueue(int maxSize){
         this.maxSize=maxSize;
-        queArray=new long[maxSize];
+        queArray=new String[maxSize];
         front=0;
         rear=-1;
         nItems=0;
     }
 
-    public void insert(long value){
+    @Override
+    public void insert(String value){
         if (rear==maxSize-1)
             rear=-1;
         queArray[++rear]=value;
         nItems++;
     }
 
-    public long remove(){
-        long temp=queArray[front++];
+    @Override
+    public String remove(){
+        String temp=queArray[front++];
         if (front==maxSize)
             front=0;
         nItems--;
         return temp;
     }
 
-    public long peekFront(){
+    public String peekFront(){
         return queArray[front];
     }
 
@@ -58,6 +60,7 @@ public class Queue {
         return nItems;
     }
 
+    @Override
     public boolean isEmpty(){
         return nItems==0;
     }
@@ -69,9 +72,10 @@ public class Queue {
     /**
      * 打印数组
      */
+    @Override
     public void display() {
-        System.out.println("Stacker.size: "+size());
-        System.out.print("Stacker: ");
+        System.out.println("ArrayQueue.size: "+size());
+        System.out.print("ArrayQueue: ");
         if (size()!=0) {
             for (int i = front; i <= rear; i++) {
                 System.out.print("[" + i + "]-->" + queArray[i] + "  ");

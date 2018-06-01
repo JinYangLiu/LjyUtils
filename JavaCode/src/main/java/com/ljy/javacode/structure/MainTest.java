@@ -1,5 +1,13 @@
 package com.ljy.javacode.structure;
 
+import com.ljy.javacode.structure.array.ArrayUtil;
+import com.ljy.javacode.structure.array.OrderedArray;
+import com.ljy.javacode.structure.link.FirstLastLinkList;
+import com.ljy.javacode.structure.link.LinkList;
+import com.ljy.javacode.structure.queue.PriorityArrayQueue;
+import com.ljy.javacode.structure.queue.ArrayQueue;
+import com.ljy.javacode.structure.stack.ArrayStacker;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -32,8 +40,15 @@ public class MainTest {
                     testQueue();
                     break;
                 case "priorityQueue":
+                    //测试优先级队列
                     testPriorityQueue();
                     break;
+                case "linkList":
+                    //测试单链表
+                    testLinkList();
+                    break;
+                case "fllist":
+                    testFirstLastLinkList();
                 default:
                     break;
 
@@ -43,8 +58,49 @@ public class MainTest {
 
     }
 
+    private static void testFirstLastLinkList() {
+        FirstLastLinkList linkList = new FirstLastLinkList();
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0)
+                linkList.insertFirst("data_" + i);
+            else
+                linkList.insertLast("data_"+i);
+            linkList.display();
+        }
+
+        linkList.deleteFirst();
+        linkList.deleteFirst();
+        System.out.println(">>执行两次deleteFirst<<");
+        linkList.display();
+
+    }
+
+    private static void testLinkList() {
+        LinkList linkList = new LinkList();
+        for (int i = 0; i < 10; i++) {
+            linkList.insertFirst("data_" + i);
+            linkList.display();
+        }
+
+//        while (!linkList.isEmpty()){
+//            linkList.deleteFirst();
+//            linkList.display();
+//        }
+
+        System.out.println();
+        linkList.find("data_3").display();
+        System.out.println();
+        linkList.delete("data_5").display();
+        System.out.println();
+        linkList.delete("data_7").display();
+        System.out.println();
+        linkList.delete("data_8").display();
+        System.out.println();
+        linkList.display();
+    }
+
     private static void testPriorityQueue() {
-        PriorityQueue priorityQueue=new PriorityQueue(10);
+        PriorityArrayQueue priorityQueue = new PriorityArrayQueue(10);
         priorityQueue.insert(3);
         priorityQueue.display();
         priorityQueue.insert(9);
@@ -57,7 +113,7 @@ public class MainTest {
         priorityQueue.display();
         priorityQueue.insert(2);
         priorityQueue.display();
-        while (!priorityQueue.isEmpty()){
+        while (!priorityQueue.isEmpty()) {
             priorityQueue.remove();
             priorityQueue.display();
         }
@@ -71,10 +127,10 @@ public class MainTest {
     }
 
     private static void testQueue() {
-        Queue queue = new Queue(10);
+        ArrayQueue queue = new ArrayQueue(10);
         for (int i = 100; i < 120; i++) {
             if (!queue.isFull()) {
-                queue.insert(i);
+                queue.insert("data—"+i);
                 queue.display();
             }
         }
@@ -89,7 +145,7 @@ public class MainTest {
         }
         for (int i = 120; i < 140; i++) {
             if (!queue.isFull()) {
-                queue.insert(i);
+                queue.insert("data-"+i);
                 queue.display();
             }
         }
@@ -97,7 +153,7 @@ public class MainTest {
     }
 
     private static void testStack() {
-        Stacker stacker = new Stacker(10);
+        ArrayStacker stacker = new ArrayStacker(10);
         for (int i = 100; i < 120; i++) {
             if (!stacker.isFull()) {
                 stacker.push("" + i);

@@ -1,17 +1,19 @@
-package com.ljy.javacode.structure;
+package com.ljy.javacode.structure.queue;
 
 /**
  * Created by ljy on 2018/5/31.
  *
- * 优先级队列
+ * 使用数组实现优先级队列
+ *
+ * 也可以用一种特别的树--堆 来实现
  */
 
-public class PriorityQueue {
+public class PriorityArrayQueue {
     private int maxSize;
     private long[] queArray;
     private int nItems;
 
-    public PriorityQueue(int maxSize){
+    public PriorityArrayQueue(int maxSize){
         this.maxSize=maxSize;
         queArray=new long[maxSize];
         nItems=0;
