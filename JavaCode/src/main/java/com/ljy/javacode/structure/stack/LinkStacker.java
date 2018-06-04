@@ -10,7 +10,7 @@ import com.ljy.javacode.structure.link.LinkList;
 
 public class LinkStacker extends Stacker {
 
-    private LinkList linkList;
+    private LinkList<String> linkList;
 
     public LinkStacker() {
         linkList =new LinkList();

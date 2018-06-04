@@ -10,7 +10,7 @@ import com.ljy.javacode.structure.link.FirstLastLinkList;
 
 public class LinkQueue extends Queue {
 
-    private FirstLastLinkList linkList;
+    private FirstLastLinkList<String> linkList;
 
     public LinkQueue() {
         linkList=new FirstLastLinkList();

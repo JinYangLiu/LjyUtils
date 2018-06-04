@@ -49,6 +49,17 @@ public class MainTest {
                     break;
                 case "fllist":
                     testFirstLastLinkList();
+                case "str":
+                    String a="abc";
+                    String b=a;
+                    String c=new String(a);
+                    String d=a+"";
+                    a=a.toUpperCase();
+                    System.out.println("a:"+a.hashCode());
+                    System.out.println("b:"+b.hashCode());
+                    System.out.println("c:"+c.hashCode());
+                    System.out.println("d:"+d.hashCode());
+                    break;
                 default:
                     break;
 

@@ -12,24 +12,24 @@ package com.ljy.javacode.structure.link;
  *
  */
 
-public class FirstLastLinkList {
-    private Link<String> first;
-    private Link<String> last;
+public class FirstLastLinkList<T> {
+    private Link<T> first;
+    private Link<T> last;
 
     public boolean isEmpty(){
         return first==null;
     }
 
-    public void insertFirst(String value){
-        Link<String> newLink=new Link<>(value);
+    public void insertFirst(T value){
+        Link<T> newLink=new Link<>(value);
         if (isEmpty())
             last=newLink;
         newLink.next=first;
         first=newLink;
     }
 
-    public void insertLast(String value){
-        Link<String> newLink=new Link<>(value);
+    public void insertLast(T value){
+        Link<T> newLink=new Link<>(value);
         if (isEmpty())
             first=newLink;
         else
@@ -37,7 +37,7 @@ public class FirstLastLinkList {
         last=newLink;
     }
 
-    public Link<String> deleteFirst(){
+    public Link<T> deleteFirst(){
         Link temp=first;
         if (first.next==null)
             last=null;
