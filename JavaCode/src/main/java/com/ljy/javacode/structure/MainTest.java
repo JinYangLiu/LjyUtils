@@ -2,6 +2,7 @@ package com.ljy.javacode.structure;
 
 import com.ljy.javacode.structure.array.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
+import com.ljy.javacode.structure.link.DoublyLinkList;
 import com.ljy.javacode.structure.link.FirstLastLinkList;
 import com.ljy.javacode.structure.link.LinkList;
 import com.ljy.javacode.structure.queue.PriorityArrayQueue;
@@ -48,18 +49,11 @@ public class MainTest {
                     testLinkList();
                     break;
                 case "fllist":
+                    //测试双端链表
                     testFirstLastLinkList();
-                case "str":
-                    String a="abc";
-                    String b=a;
-                    String c=new String(a);
-                    String d=a+"";
-                    a=a.toUpperCase();
-                    System.out.println("a:"+a.hashCode());
-                    System.out.println("b:"+b.hashCode());
-                    System.out.println("c:"+c.hashCode());
-                    System.out.println("d:"+d.hashCode());
-                    break;
+                case "doublyLinkList":
+                    //测试双向链表
+                    testDoublyLinkList();
                 default:
                     break;
 
@@ -67,6 +61,31 @@ public class MainTest {
         }
 
 
+    }
+
+    private static void testDoublyLinkList() {
+        DoublyLinkList<String> linkList=new DoublyLinkList<>();
+
+        linkList.insertFirst("v_3");
+        linkList.insertFirst("v_2");
+        linkList.insertFirst("v_1");
+        linkList.displayForward();
+        linkList.displayBackground();
+
+        linkList.insterLast("v_101");
+        linkList.insterLast("v_102");
+        linkList.insterLast("v_103");
+        linkList.insertAfter("v_3","v_6");
+        linkList.insertAfter("v_3","v_5");
+        linkList.insertAfter("v_3","v_4");
+        linkList.displayForward();
+        linkList.displayBackground();
+
+        linkList.deleteFirst();
+        linkList.deleteLast();
+        linkList.delete("v_6");
+        linkList.displayForward();
+        linkList.displayBackground();
     }
 
     private static void testFirstLastLinkList() {

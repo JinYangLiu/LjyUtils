@@ -25,9 +25,8 @@ package com.ljy.javacode.structure.link;
 //此类为链结点
 public class Link<T> {
     public T data;//数据域
-    public Link next;//指针域
+    public Link<T> next;//指针域, 指向下一个链结点
     //此处next为一个和自己类型相同的字段，因此也叫"自引用"式
-
 
     public Link(T data) {
         this.data = data;
