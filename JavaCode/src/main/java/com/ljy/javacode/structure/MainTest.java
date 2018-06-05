@@ -4,12 +4,16 @@ import com.ljy.javacode.structure.array.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
 import com.ljy.javacode.structure.link.DoublyLinkList;
 import com.ljy.javacode.structure.link.FirstLastLinkList;
+import com.ljy.javacode.structure.link.Link;
+import com.ljy.javacode.structure.link.LinkIterator;
 import com.ljy.javacode.structure.link.LinkList;
 import com.ljy.javacode.structure.queue.PriorityArrayQueue;
 import com.ljy.javacode.structure.queue.ArrayQueue;
 import com.ljy.javacode.structure.stack.ArrayStacker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -54,6 +58,10 @@ public class MainTest {
                 case "doublyLinkList":
                     //测试双向链表
                     testDoublyLinkList();
+                    break;
+                case "linkIterator":
+                    testLinkIterator();
+                    break;
                 default:
                     break;
 
@@ -61,6 +69,26 @@ public class MainTest {
         }
 
 
+    }
+
+    private static void testLinkIterator() {
+        LinkList<String> linkList = new LinkList<>();
+        for (int i = 0; i < 10; i++) {
+            linkList.insertFirst("data_" + i);
+            linkList.display();
+        }
+        System.out.println("----> iterator:");
+        LinkIterator<String> iterator=linkList.iterator();
+        while (iterator.hasNext()){
+            Link<String> link=iterator.getCurrent();
+            link.display();
+            System.out.println();
+            if (link.data.equals("data_6")){
+                iterator.remove();
+            }
+            iterator.next();
+        }
+        linkList.display();
     }
 
     private static void testDoublyLinkList() {

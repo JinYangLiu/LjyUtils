@@ -1,5 +1,9 @@
 package com.ljy.javacode.structure.link;
 
+import android.widget.ListView;
+
+import java.util.ArrayList;
+
 /**
  * Created by ljy on 2018/5/31.
  * <p>
@@ -82,6 +86,9 @@ public class LinkList<T> {
     }
 
 
+    public LinkIterator<T> iterator(){
+        return new LinkIterator<>(this);
+    }
 
     public Link<T> getFirst() {
         return first;
