@@ -132,7 +132,7 @@ android {
 
     dexOptions {
         jumboMode = true//Cannot merge new index 65562 into a non-jumbo instruction! 这个问题的解决
-        incremental true//开启增量编译
+//        incremental true//开启增量编译
         javaMaxHeapSize "4g"//增加编译的内存资源到4g
         preDexLibraries = false //设置对第三方lib不做preDex处理
 //        additionalParameters = ['--multi-dex', '--main-dex-list=' + project.rootDir.absolutePath +

@@ -18,6 +18,9 @@ import android.widget.TextView;
 import com.ljy.lib.R;
 import com.ljy.util.LjyDensityUtil;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Created by ljy on 2018/1/31.
  */
@@ -57,6 +60,7 @@ public class LjyCaptchaPictureView extends LinearLayout {
     private boolean isShowText=true;
 
     @IntDef(value = {MODE_BAR, MODE_NONBAR})
+    @Retention(RetentionPolicy.SOURCE)
     public @interface Mode {
     }
 
