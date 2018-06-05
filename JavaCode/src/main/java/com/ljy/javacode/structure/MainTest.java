@@ -62,6 +62,22 @@ public class MainTest {
                 case "linkIterator":
                     testLinkIterator();
                     break;
+                case "trangle":
+                    //用循环和递归两种方法实现获取三角数字第n项的算法
+                    testTrangle();
+                    break;
+                case "factorial":
+                    //用递归实现阶乘计算
+                    testFactorial();
+                    break;
+                case "hanoi":
+                    //用递归解决汉诺塔问题
+                    testHanoiTower();
+                    break;
+                case "mergerSort":
+                    //测试归并排序
+                    testMergerSort();
+                    break;
                 default:
                     break;
 
@@ -71,6 +87,82 @@ public class MainTest {
 
     }
 
+    private static void testMergerSort() {
+        int[] arr = {
+                9, 2, 5,
+                3, 8, 6,
+                7, 4, 5
+        };
+        ArrayUtil.getInstance().mergerSort(arr);
+    }
+
+    private static void testHanoiTower() {
+        System.out.print("请输入要计算第几层：");
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNext()) {
+            String param = sc.next();
+            int n = Integer.parseInt(param);
+            hanoiTower(n, 'A', 'B', 'C');
+            System.out.println(n + "层汉诺塔需要移动" + count + "次");
+        }
+    }
+
+    private static int count = 0;
+
+    private static void hanoiTower(int n, char from, char inter, char to) {
+        //inter 中介塔
+        if (n == 1) {
+            System.out.println("hanoiTower >>>> n=" + n + ", from=" + from + ", to=" + to);
+        } else {
+            hanoiTower(n - 1, from, to, inter);
+            System.out.println("hanoiTower >>>> n=" + n + ", from=" + from + ", to=" + to);
+            hanoiTower(n - 1, inter, from, to);
+        }
+        count++;
+    }
+
+    private static void testFactorial() {
+        System.out.print("请输入要计算第几项：");
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNext()) {
+            String param = sc.next();
+            int result = factorial(Integer.parseInt(param));
+            System.out.print("result: " + result);
+        }
+    }
+
+    private static int factorial(int n) {
+        if (n == 1)
+            return 1;
+        else
+            return n * factorial(n - 1);
+    }
+
+    private static void testTrangle() {
+        System.out.print("请输入要计算第几项：");
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNext()) {
+            String param = sc.next();
+            int result = trangle(Integer.parseInt(param));
+            System.out.print("result: " + result);
+        }
+    }
+
+    private static int trangle(int n) {
+        //1. 循环
+//        int total = 0;
+//        while (n > 0) {
+//            total = total + n;
+//            --n;
+//        }
+//        return total;
+        //2. 递归
+        if (n == 1)
+            return 1;
+        else
+            return n + trangle(n - 1);
+    }
+
     private static void testLinkIterator() {
         LinkList<String> linkList = new LinkList<>();
         for (int i = 0; i < 10; i++) {
@@ -78,12 +170,12 @@ public class MainTest {
             linkList.display();
         }
         System.out.println("----> iterator:");
-        LinkIterator<String> iterator=linkList.iterator();
-        while (iterator.hasNext()){
-            Link<String> link=iterator.getCurrent();
+        LinkIterator<String> iterator = linkList.iterator();
+        while (iterator.hasNext()) {
+            Link<String> link = iterator.getCurrent();
             link.display();
             System.out.println();
-            if (link.data.equals("data_6")){
+            if (link.data.equals("data_6")) {
                 iterator.remove();
             }
             iterator.next();
@@ -92,7 +184,7 @@ public class MainTest {
     }
 
     private static void testDoublyLinkList() {
-        DoublyLinkList<String> linkList=new DoublyLinkList<>();
+        DoublyLinkList<String> linkList = new DoublyLinkList<>();
 
         linkList.insertFirst("v_3");
         linkList.insertFirst("v_2");
@@ -103,9 +195,9 @@ public class MainTest {
         linkList.insterLast("v_101");
         linkList.insterLast("v_102");
         linkList.insterLast("v_103");
-        linkList.insertAfter("v_3","v_6");
-        linkList.insertAfter("v_3","v_5");
-        linkList.insertAfter("v_3","v_4");
+        linkList.insertAfter("v_3", "v_6");
+        linkList.insertAfter("v_3", "v_5");
+        linkList.insertAfter("v_3", "v_4");
         linkList.displayForward();
         linkList.displayBackground();
 
@@ -122,7 +214,7 @@ public class MainTest {
             if (i % 2 == 0)
                 linkList.insertFirst("data_" + i);
             else
-                linkList.insertLast("data_"+i);
+                linkList.insertLast("data_" + i);
             linkList.display();
         }
 
@@ -188,7 +280,7 @@ public class MainTest {
         ArrayQueue queue = new ArrayQueue(10);
         for (int i = 100; i < 120; i++) {
             if (!queue.isFull()) {
-                queue.insert("data—"+i);
+                queue.insert("data—" + i);
                 queue.display();
             }
         }
@@ -203,7 +295,7 @@ public class MainTest {
         }
         for (int i = 120; i < 140; i++) {
             if (!queue.isFull()) {
-                queue.insert("data-"+i);
+                queue.insert("data-" + i);
                 queue.display();
             }
         }
@@ -256,10 +348,12 @@ public class MainTest {
     }
 
     private static void testOrderedArray() {
-        int[] arr = {1, 3, 5, 7, 9,
+        int[] arr = {
+                31, 33, 35, 37, 39, 41,
                 11, 13, 15, 17, 19,
+                1, 3, 5, 7, 9,
                 21, 23, 25, 27, 29,
-                31, 33, 35, 37, 39, 41};
+        };
         //初始化数组
         OrderedArray orderedArray = new OrderedArray(100);
         //插入
@@ -275,7 +369,8 @@ public class MainTest {
         Scanner sc = new Scanner(System.in);
         if (sc.hasNext()) {
             String param = sc.next();
-            int resultIndex = orderedArray.find(Long.parseLong(param));
+//            int resultIndex = orderedArray.find(Long.parseLong(param));
+            int resultIndex = orderedArray.find(Long.parseLong(param), 0, orderedArray.size() - 1);
             System.out.println("resultIndex:" + resultIndex);
         }
 

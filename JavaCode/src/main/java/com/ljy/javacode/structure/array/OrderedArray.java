@@ -48,6 +48,24 @@ public class OrderedArray {
     }
 
     /**
+     * 使用递归实现二分法查找
+     *
+     * 代码更简洁,但效率稍差
+     */
+    public int find(long searchValue, int fromIndex, int toIndex) {
+        System.out.println("searchValue:" + searchValue + "_fromIndex:" + fromIndex + "_toIndex:" + toIndex);
+        int currentIndex = (fromIndex + toIndex) / 2;
+        if (array[currentIndex] == searchValue)
+            return currentIndex;
+        else if (fromIndex > toIndex)
+            return -1;
+        else if (array[currentIndex] < searchValue)
+            return find(searchValue, currentIndex + 1, toIndex);
+        else
+            return find(searchValue, fromIndex, currentIndex - 1);
+    }
+
+    /**
      * 插入数据
      *
      * @param value
@@ -58,7 +76,7 @@ public class OrderedArray {
             if (array[i] > value)
                 break;
         }
-        for (int j = mElems; j < i; j--) {
+        for (int j = mElems; j > i; j--) {
             array[j] = array[j - 1];
         }
         array[i] = value;
