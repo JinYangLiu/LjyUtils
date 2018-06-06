@@ -1,5 +1,7 @@
 package com.ljy.javacode.structure.array;
 
+import java.util.Arrays;
+
 /**
  * Created by ljy on 2018/5/30.
  */
@@ -40,7 +42,8 @@ public class ArrayUtil {
 
 
     /**
-     * 直接选择排序
+     *
+     * 1. 直接选择排序
      * 每一趟从待排序的数据元素中选出最小（或最大）的一个元素，顺序放在已排好序的数列的最后，
      * 直到全部待排序的数据元素排完，它需要经过n-1趟比较。
      *
@@ -110,6 +113,39 @@ public class ArrayUtil {
                     j--;
                 }
                 array[j + 1] = temp;
+                print(array);
+            }
+        }
+    }
+
+    /**
+     * 折半插入排序
+     * 又叫二分插入排序
+     */
+    public  void binaryInsertSort(int[] array) {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < array[i - 1]) {
+                // 缓存i处的元素值
+                int tmp = array[i];
+                // 记录搜索范围的左边界
+                int low = 0;
+                // 记录搜索范围的右边界
+                int high = i - 1;
+                while (low <= high) {
+                    // 记录中间位置
+                    int mid = (low + high) / 2;
+                    // 比较中间位置数据和i处数据大小，以缩小搜索范围
+                    if (array[mid] < tmp) {
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
+                    }
+                }
+                //将low~i处数据整体向后移动1位
+                for (int j = i; j > low; j--) {
+                    array[j] = array[j - 1];
+                }
+                array[low] = tmp;
                 print(array);
             }
         }
@@ -237,36 +273,36 @@ public class ArrayUtil {
         print(array);
     }
 
-    public void quickSort(int[] data, int start, int end) {
+    public void quickSort(int[] array, int start, int end) {
         if (start >= end)
             return;
         //以起始索引为分界点
-        int pivot = data[start];
+        int pivot = array[start];
         int i = start + 1;
         int j = end;
         while (true) {
-            while (i <= end && data[i] < pivot) {
+            while (i <= end && array[i] < pivot) {
                 i++;
             }
-            while (j > start && data[j] > pivot) {
+            while (j > start && array[j] > pivot) {
                 j--;
             }
             if (i < j) {
-                swap(data, i, j);
+                swap(array, i, j);
             } else {
                 break;
             }
         }
         //交换 j和分界点的值
-        swap(data, start, j);
-        print(data);
+        swap(array, start, j);
+        print(array);
         //递归左子序列
-        quickSort(data, start, j - 1);
+        quickSort(array, start, j - 1);
         //递归右子序列
-        quickSort(data, j + 1, end);
+        quickSort(array, j + 1, end);
     }
 
-    // ---------- 三项数据取中 写法 ------------
+    // ----------快速排序 三项数据取中 写法 ------------
     public void quickSort3(int[] array) {
         print(array);
         quickSort3(array, 0, array.length - 1);
@@ -349,6 +385,50 @@ public class ArrayUtil {
                 swap(array, end - 1, end);
         }
     }
+
+    //----------  快速排序 end ---------------
+
+    /**
+     * 基数排序
+     * - 基数:一个数字系统的基,10是十进制系统的激素,2是二进制系统的基数
+     * - 把数值拆分2为数字位,对每一位进行排序
+     * - 缺点:以空间换时间
+     *  使用: radixSort(data, 10, 4);
+     */
+    public void radixSort(int[] data, int radix, int d) {
+        // 缓存数组
+        int[] tmp = new int[data.length];
+        // buckets用于记录待排序元素的信息
+        // buckets数组定义了max-min个桶
+        int[] buckets = new int[radix];
+
+        for (int i = 0, rate = 1; i < d; i++) {
+
+            // 重置count数组，开始统计下一个关键字
+            Arrays.fill(buckets, 0);
+            // 将data中的元素完全复制到tmp数组中
+            System.arraycopy(data, 0, tmp, 0, data.length);
+
+            // 计算每个待排序数据的子关键字
+            for (int j = 0; j < data.length; j++) {
+                int subKey = (tmp[j] / rate) % radix;
+                buckets[subKey]++;
+            }
+
+            for (int j = 1; j < radix; j++) {
+                buckets[j] = buckets[j] + buckets[j - 1];
+            }
+
+            // 按子关键字对指定的数据进行排序
+            for (int m = data.length - 1; m >= 0; m--) {
+                int subKey = (tmp[m] / rate) % radix;
+                data[--buckets[subKey]] = tmp[m];
+            }
+            rate *= radix;
+        }
+
+    }
+
 
 
 }
