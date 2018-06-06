@@ -47,6 +47,8 @@ public class ArrayUtil {
      * @param array
      */
     public void selectSort(int[] array) {
+        if (array == null || array.length <= 1)
+            return;
         for (int i = 0; i < array.length - 1; i++) {
             int minIndex = i;
             for (int j = i + 1; j < array.length; j++) {
@@ -67,6 +69,8 @@ public class ArrayUtil {
      * @param array
      */
     public void bubbleSort(int[] array) {
+        if (array == null || array.length <= 1)
+            return;
         for (int i = 0; i < array.length - 1; i++) {
             //记录某趟是否发生交换，若为false表示数组已处于有序状态
             boolean isSort = false;
@@ -89,7 +93,13 @@ public class ArrayUtil {
      * 将待排序的数据元素按其关键字值的大小插入到前面的有序序列中
      */
     public void insertSort(int[] array) {
-        for (int i = 1; i < array.length; i++) {
+        insertSort(array, 0, array.length - 1);
+    }
+
+    public void insertSort(int[] array, int start, int end) {
+        if (array == null || end < 1)
+            return;
+        for (int i = start + 1; i <= end; i++) {
             int temp = array[i];
             if (array[i] < array[i - 1]) {
                 int j = i - 1;
@@ -105,6 +115,8 @@ public class ArrayUtil {
         }
     }
 
+    //------------------- 归并排序 start --------------------
+
     /**
      * 归并排序
      * <p>
@@ -119,6 +131,8 @@ public class ArrayUtil {
      * 核心: 归并两个有序数组
      */
     public void mergerSort(int[] array) {
+        if (array == null || array.length <= 1)
+            return;
         int[] tempArr = new int[array.length];
         mergerSort(array, tempArr, 0, array.length - 1);
 //        print(array);
@@ -140,7 +154,7 @@ public class ArrayUtil {
         int lowerIndex = lowPtr;
         int mid = highPtr - 1;
         int n = upperIndex - lowerIndex + 1;
-        System.out.println("lowPtr = " + lowPtr + ", highPtr = " + highPtr+",lowerIndex = " + lowerIndex + ", upperIndex = " + upperIndex);
+        System.out.println("lowPtr = " + lowPtr + ", highPtr = " + highPtr + ",lowerIndex = " + lowerIndex + ", upperIndex = " + upperIndex);
 
         while (lowPtr <= mid && highPtr <= upperIndex) {
             if (array[lowPtr] < array[highPtr])
@@ -160,4 +174,181 @@ public class ArrayUtil {
         }
         print(array);
     }
+    //------------------- 归并排序 end --------------------
+
+    /**
+     * 希尔排序:
+     * 又叫最小增量排序,基于插入排序,时间复杂度O(N*(logN)2),
+     * 效率不算太高,适于中等大小数组,
+     * 但是非常容易实现,代码既简单又短
+     * <p>
+     * 它通过加大插入排序中元素之间的间隔，并在这些有间隔的元素中进行插入排序，从而使数据项大跨度地移动，
+     * 当这些数据项排过一趟序之后，希尔排序算法减小数据项的间隔再进行排序，依次进行下去，进行这些排序时
+     * 的数据项之间的间隔被称为增量，习惯上用字母h来表示这个增量。
+     * <p>
+     * Shell排序是不稳定的，它的空间开销是O(1),时间开销估计在O(N3/2)~O(N7/6)之间
+     * <p>
+     * shell原稿中建议初始间距为N/2,但这被证明不是最好的数列,会使时间复杂度降低到O(N2)
+     * 后又衍生出N/2.2
+     * 其中的关键点在于间隔数列元素的互质性,这使得每一趟排序更有可能保持前一趟排序已排好的效果
+     */
+    public void shellSort(int[] array) {
+        if (array == null || array.length <= 1)
+            return;
+        print(array);
+        //增量h
+        int h = (int) (array.length / 2.2);
+        while (h > 0) {
+            System.out.println("增量h:" + h);
+            for (int i = h; i < array.length; i++) {
+                int tmp = array[i];
+                int j = i - h;
+                while (j >= 0 && array[j] > tmp) {
+                    array[j + h] = array[j];
+                    j -= h;
+                }
+                array[j + h] = tmp;
+            }
+            //设置新的增量
+            h /= 2;
+        }
+        print(array);
+    }
+
+    /**
+     * 快速排序:
+     * - 划分:快速排序的根本机制, 把数据分为两组,使所有关键字大于特定值的数据项在一组,小于的在另一组,
+     * 如全班学生的考试成绩以及格线60划分
+     * - 时间复杂度: O(N*logN)
+     * - 把一个数组分为两个子数组(划分), 然后递归的调用自身,为每个子数组进行快速排序
+     * - 效率: 影响效率的关键点在于枢纽的选择(即上面划分中的关键字,例子中的60分),
+     * 应尽量保证两个子数组的大小接近
+     * - 通常来说关键字可以选择任意一项数据,一般选择头尾arr[0]或arr[arr.length-1],
+     * 但是这样做算法的性能是不稳定的,因为待排序的数组可能是有序的,会使时间复杂度降到O(N*N),
+     * 理想中的枢纽应为待排序数组的中值数据项, 但是选取中间值比较麻烦,所以一个折中的办法就是
+     * '三项数据取中'划分,即数组头,尾,中,三个数据项的中值作为枢纽, 这样既简单又可以避免选择到最大
+     * 或最小值作为枢纽的情况.
+     */
+
+    //------- 常规写法 ----------
+    public void quickSort(int[] array) {
+        print(array);
+        quickSort(array, 0, array.length - 1);
+        print(array);
+    }
+
+    public void quickSort(int[] data, int start, int end) {
+        if (start >= end)
+            return;
+        //以起始索引为分界点
+        int pivot = data[start];
+        int i = start + 1;
+        int j = end;
+        while (true) {
+            while (i <= end && data[i] < pivot) {
+                i++;
+            }
+            while (j > start && data[j] > pivot) {
+                j--;
+            }
+            if (i < j) {
+                swap(data, i, j);
+            } else {
+                break;
+            }
+        }
+        //交换 j和分界点的值
+        swap(data, start, j);
+        print(data);
+        //递归左子序列
+        quickSort(data, start, j - 1);
+        //递归右子序列
+        quickSort(data, j + 1, end);
+    }
+
+    // ---------- 三项数据取中 写法 ------------
+    public void quickSort3(int[] array) {
+        print(array);
+        quickSort3(array, 0, array.length - 1);
+        print(array);
+    }
+
+    private void quickSort3(int[] array, int start, int end) {
+
+        int size = end - start + 1;
+//        if (size <= 3)
+//            manualSort(array, start, end);
+        //对于小划分的处理,上面是限制为3, 手动比较, 下面的没有限制, 使用插入排序,
+        // 下面的更方便试用出不同的切割点, 以找到更好的执行效率,这一点很有意义
+        if (size < 10)
+            insertSort(array, start, end);
+        else {
+            //3项取中
+            int median = medianOf3(array, start, end);
+            //划分
+            int pivotIndex = partitionIt(array, start, end, median);
+            //递归左右子列
+            quickSort3(array, start, pivotIndex - 1);
+            quickSort3(array, pivotIndex + 1, end);
+        }
+
+    }
+
+    //划分
+    private int partitionIt(int[] array, int start, int end, int pivot) {
+        int leftPtr = start;
+        int rightPtr = end - 1;
+        while (true) {
+            while (array[++leftPtr] < pivot)
+                ;
+            while (array[--rightPtr] > pivot)
+                ;
+            if (leftPtr >= rightPtr)
+                break;
+            else
+                swap(array, leftPtr, rightPtr);
+        }
+        swap(array, leftPtr, end - 1);
+        return leftPtr;
+    }
+
+    //三项数据取中
+    private int medianOf3(int[] array, int start, int end) {
+        int center = (start + end) / 2;
+
+        if (array[start] > array[center])
+            swap(array, start, center);
+
+        if (array[start] > array[end])
+            swap(array, start, end);
+
+        if (array[center] > array[end])
+            swap(array, center, end);
+
+        swap(array, center, end - 1);// put pivot on right
+
+        return array[end - 1];
+    }
+
+    //当数组/子数组长度<=3时,进行手动排序
+    private void manualSort(int[] array, int start, int end) {
+        int size = end - start + 1;
+        if (size <= 1)
+            return;
+        if (size == 2) {
+            if (array[start] > array[end])
+                swap(array, start, end);
+            return;
+        }
+        if (size == 3) {
+            if (array[start] > array[end - 1])
+                swap(array, start, end - 1);
+            if (array[start] > array[end])
+                swap(array, start, end);
+            if (array[end - 1] > array[end])
+                swap(array, end - 1, end);
+        }
+    }
+
+
 }

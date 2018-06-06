@@ -78,6 +78,12 @@ public class MainTest {
                     //测试归并排序
                     testMergerSort();
                     break;
+                case "shellSort":
+                    testShellSort();
+                    break;
+                case "quickSort":
+                    testQuickSort();
+                    break;
                 default:
                     break;
 
@@ -85,6 +91,25 @@ public class MainTest {
         }
 
 
+    }
+
+    private static void testQuickSort() {
+        int[] arr=new int[20];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]= (int) (Math.random()*128);
+        }
+        //常规
+//        ArrayUtil.getInstance().quickSort(arr);
+        //三项取中划分
+        ArrayUtil.getInstance().quickSort3(arr);
+    }
+
+    private static void testShellSort() {
+        int[] arr=new int[100];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]=100-i;
+        }
+        ArrayUtil.getInstance().shellSort(arr);
     }
 
     private static void testMergerSort() {
