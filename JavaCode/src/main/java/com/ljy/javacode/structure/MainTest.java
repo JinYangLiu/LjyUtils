@@ -10,6 +10,8 @@ import com.ljy.javacode.structure.link.LinkList;
 import com.ljy.javacode.structure.queue.PriorityArrayQueue;
 import com.ljy.javacode.structure.queue.ArrayQueue;
 import com.ljy.javacode.structure.stack.ArrayStacker;
+import com.ljy.javacode.structure.tree.BinaryTree;
+import com.ljy.javacode.structure.tree.RedBlackTree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,10 +81,20 @@ public class MainTest {
                     testMergerSort();
                     break;
                 case "shellSort":
+                    //测试希尔排序
                     testShellSort();
                     break;
                 case "quickSort":
+                    //测试快速排序
                     testQuickSort();
+                    break;
+                case "binaryTree":
+                    //测试二叉树
+                    testBinaryTree();
+                    break;
+                case "redBlackTree":
+                    //测试红黑树
+                    testRedBlackTree();
                     break;
                 default:
                     break;
@@ -93,10 +105,88 @@ public class MainTest {
 
     }
 
+    private static void testRedBlackTree() {
+        RedBlackTree<Integer,String> redBlackTree=new RedBlackTree<>();
+        for (int i = 0; i < 10; i++) {
+            int key = (int) (10+Math.random() * 128);
+            String data = "data_" + key;
+            redBlackTree.insert(key,data);
+            System.out.println("\n ---------- display ----------");
+            redBlackTree.display();
+        }
+
+        redBlackTree.insert(200, "data-200");
+        System.out.print("\n ---------- find ----------");
+        redBlackTree.find(200).display();
+        System.out.println();
+        redBlackTree.insert(8, "data-8");
+        for (int i = 0; i < 10; i++) {
+            int key = (int) (10+Math.random() * 128);
+            String data = "data_" + key;
+            redBlackTree.insert(key,data);
+            System.out.println("\n ---------- display ----------");
+            redBlackTree.display();
+        }
+        redBlackTree.insert(20, "data-20");
+        redBlackTree.display();
+        System.out.println("\n ---------- 前序遍历 ----------");
+        redBlackTree.traverse(1);
+        System.out.println("\n ---------- 中序遍历 ----------");
+        redBlackTree.traverse(2);
+        System.out.println("\n ---------- 后序遍历 ----------");
+        redBlackTree.traverse(3);
+
+        System.out.println("\n ---------- display ----------");
+        redBlackTree.display();
+        System.out.println("\n ---------- delete ----------");
+        redBlackTree.delete(200);
+
+        System.out.println("\n ---------- display ----------");
+        redBlackTree.display();
+        System.out.println("\n ---------- delete ----------");
+        redBlackTree.delete(8);
+
+        System.out.println("\n ---------- display ----------");
+        redBlackTree.display();
+        System.out.println("\n ---------- delete ----------");
+        redBlackTree.delete(20);
+
+        redBlackTree.display();
+        System.out.println("\n ---------- display ----------");
+
+        redBlackTree.destroy();
+
+    }
+
+    private static void testBinaryTree() {
+        BinaryTree<String> binaryTree = new BinaryTree<>();
+        for (int i = 0; i < 20; i++) {
+            int key = (int) (Math.random() * 128);
+            String data = "data_" + key;
+            binaryTree.insert(key, data);
+            System.out.println("\n ---------- display ----------");
+            binaryTree.display();
+        }
+        binaryTree.insert(200, "data-200");
+        System.out.println("\n ---------- find ----------");
+        binaryTree.find(200).display();
+        System.out.println("\n ---------- display ----------");
+        binaryTree.display();
+        binaryTree.delete(200);
+        System.out.println("\n ---------- display ----------");
+        binaryTree.display();
+        System.out.println("\n ---------- 前序遍历 ----------");
+        binaryTree.traverse(1);
+        System.out.println("\n ---------- 中序遍历 ----------");
+        binaryTree.traverse(2);
+        System.out.println("\n ---------- 后序遍历 ----------");
+        binaryTree.traverse(3);
+    }
+
     private static void testQuickSort() {
-        int[] arr=new int[20];
+        int[] arr = new int[20];
         for (int i = 0; i < arr.length; i++) {
-            arr[i]= (int) (Math.random()*128);
+            arr[i] = (int) (Math.random() * 128);
         }
         //常规
 //        ArrayUtil.getInstance().quickSort(arr);
@@ -105,9 +195,9 @@ public class MainTest {
     }
 
     private static void testShellSort() {
-        int[] arr=new int[100];
+        int[] arr = new int[100];
         for (int i = 0; i < arr.length; i++) {
-            arr[i]=100-i;
+            arr[i] = 100 - i;
         }
         ArrayUtil.getInstance().shellSort(arr);
     }
