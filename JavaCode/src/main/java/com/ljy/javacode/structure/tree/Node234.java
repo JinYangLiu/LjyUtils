@@ -1,5 +1,7 @@
 package com.ljy.javacode.structure.tree;
 
+import com.ljy.javacode.structure.bean.DataItem;
+
 /**
  * Created by LJY on 2018/6/7 21:17
  *
@@ -107,15 +109,5 @@ public class Node234<K extends Comparable<K>,T>  {
    }
 
 
-    /**
-     * 数据项的模型类
-     */
-    public static class DataItem<K,T>{
-        public K key;
-        public T data;
 
-        public void display(){
-            System.out.print(" DataItem:{ key = "+key.toString()+", data = "+data.toString()+"}");
-        }
-    }
 }

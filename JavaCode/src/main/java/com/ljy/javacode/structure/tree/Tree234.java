@@ -1,5 +1,7 @@
 package com.ljy.javacode.structure.tree;
 
+import com.ljy.javacode.structure.bean.DataItem;
+
 /**
  * Created by LJY on 2018/6/7 21:58
  * <p>
@@ -39,7 +41,7 @@ public class Tree234<K extends Comparable<K>, T> {
      *             用key+data合成数据项
      */
     public void insert(K key, T data) {
-        Node234.DataItem<K, T> newData = new Node234.DataItem<>();
+        DataItem<K, T> newData = new DataItem<>();
         newData.key = key;
         newData.data = data;
         Node234<K, T> current = root;
@@ -69,7 +71,7 @@ public class Tree234<K extends Comparable<K>, T> {
 
     //分裂节点, assumes node is full
     private void split(Node234<K, T> node) {
-        Node234.DataItem<K, T> itemB, itemC;
+        DataItem<K, T> itemB, itemC;
         Node234<K, T> parent, child2, child3;
         int itemIndex;
         // remove items from node

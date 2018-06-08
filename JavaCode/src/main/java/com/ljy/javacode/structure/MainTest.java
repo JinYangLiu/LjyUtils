@@ -2,6 +2,7 @@ package com.ljy.javacode.structure;
 
 import com.ljy.javacode.structure.array.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
+import com.ljy.javacode.structure.hash.HashTable;
 import com.ljy.javacode.structure.link.DoublyLinkList;
 import com.ljy.javacode.structure.link.FirstLastLinkList;
 import com.ljy.javacode.structure.link.Link;
@@ -101,6 +102,10 @@ public class MainTest {
                     //测试234树
                     test234Tree();
                     break;
+                case "HashTable":
+                    //测试哈希表
+                    testHashTable();
+                    break;
                 default:
                     break;
 
@@ -108,6 +113,28 @@ public class MainTest {
         }
 
 
+    }
+
+    private static void testHashTable() {
+        HashTable<String> hashTable=new HashTable<>();
+        for (int i = 0; i < 22; i++) {
+            int key = (int) (10+Math.random() * 128);
+            String data = "data_" + key;
+            System.out.println("insert:"+key);
+            hashTable.insert(key,data);
+            System.out.println("\n ---------- display ----------");
+            hashTable.display();
+        }
+        System.out.println("insert:"+200);
+        hashTable.insert(200, "data-200");
+        System.out.print("find:");
+        hashTable.find(200).display();
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
+        System.out.print("delete:");
+        hashTable.delete(200).display();
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
     }
 
     private static void test234Tree() {
