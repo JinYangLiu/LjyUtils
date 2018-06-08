@@ -365,10 +365,11 @@ public class RedBlackTree<K extends Comparable<K>, T> extends Tree<RedBlackNode<
         //若待删除节点的左右子节点都不为空
         if (node.leftChild != null && node.rightChild != null) {
             //用后续子节点代替
-            RedBlackNode<K, T> successor = node;
-            successor = successor.rightChild;
-            while (successor.leftChild != null)
-                successor = successor.leftChild;
+            RedBlackNode<K, T> successor=getSuccessor(node);
+//            RedBlackNode<K, T> successor = node;
+//            successor = successor.rightChild;
+//            while (successor.leftChild != null)
+//                successor = successor.leftChild;
 
             if (parentOf(successor) != null) {
                 //successor不是根节点

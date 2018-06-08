@@ -12,6 +12,7 @@ import com.ljy.javacode.structure.queue.ArrayQueue;
 import com.ljy.javacode.structure.stack.ArrayStacker;
 import com.ljy.javacode.structure.tree.BinaryTree;
 import com.ljy.javacode.structure.tree.RedBlackTree;
+import com.ljy.javacode.structure.tree.Tree234;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +97,10 @@ public class MainTest {
                     //测试红黑树
                     testRedBlackTree();
                     break;
+                case "234Tree":
+                    //测试234树
+                    test234Tree();
+                    break;
                 default:
                     break;
 
@@ -103,6 +108,24 @@ public class MainTest {
         }
 
 
+    }
+
+    private static void test234Tree() {
+        Tree234<Integer,String> tree234=new Tree234<>();
+        for (int i = 0; i < 20; i++) {
+            int key = (int) (10+Math.random() * 128);
+            String data = "data_" + key;
+            tree234.insert(key,data);
+            System.out.println("\n ---------- display ----------");
+            tree234.display();
+        }
+
+        System.out.print("\n ---------- insert ----------");
+        tree234.insert(200, "data-200");
+        System.out.println("\n ---------- display ----------");
+        tree234.display();
+        System.out.print("\n ---------- find ----------");
+        tree234.find(200);
     }
 
     private static void testRedBlackTree() {
