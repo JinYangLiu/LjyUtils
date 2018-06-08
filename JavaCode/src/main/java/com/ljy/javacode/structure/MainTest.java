@@ -2,6 +2,7 @@ package com.ljy.javacode.structure;
 
 import com.ljy.javacode.structure.array.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
+import com.ljy.javacode.structure.bean.DataItem;
 import com.ljy.javacode.structure.hash.HashTable;
 import com.ljy.javacode.structure.link.DoublyLinkList;
 import com.ljy.javacode.structure.link.FirstLastLinkList;
@@ -117,7 +118,7 @@ public class MainTest {
 
     private static void testHashTable() {
         HashTable<String> hashTable=new HashTable<>();
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 28; i++) {
             int key = (int) (10+Math.random() * 128);
             String data = "data_" + key;
             System.out.println("insert:"+key);
@@ -125,14 +126,26 @@ public class MainTest {
             System.out.println("\n ---------- display ----------");
             hashTable.display();
         }
-        System.out.println("insert:"+200);
-        hashTable.insert(200, "data-200");
+
+        int k=208;
+        System.out.println("insert:"+k);
+        hashTable.insert(k, "data-"+k);
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
         System.out.print("find:");
-        hashTable.find(200).display();
+        DataItem<Integer, String> dataF = hashTable.find(k);
+        if (dataF!=null)
+            dataF.display();
+        else
+            System.out.println("null");
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("delete:");
-        hashTable.delete(200).display();
+        DataItem<Integer, String> dataD = hashTable.delete(k);
+        if (dataD!=null)
+            dataD.display();
+        else
+            System.out.println("null");
         System.out.println("\n ---------- display ----------");
         hashTable.display();
     }

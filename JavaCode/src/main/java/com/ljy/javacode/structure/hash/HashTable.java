@@ -14,6 +14,16 @@ public class HashTable<T> {
     private int arraySize;
     private DataItem<Integer, T> nonItem;//for deleted items
 
+    private boolean isLineDetect=false;//控制时线性探测还是二次探测
+
+    /**
+     * 控制时线性探测还是二次探测
+     * @param lineDetect
+     */
+    public void setLineDetect(boolean lineDetect) {
+        isLineDetect = lineDetect;
+    }
+
     public HashTable() {
         this.arraySize = DEFAULT_SIZE;
         array = new DataItem[arraySize];
@@ -37,11 +47,20 @@ public class HashTable<T> {
         item.data=data;
         int count = 0;
         int hashVal = hashFunc(key);
+        int step=0;
         while (array[hashVal] != null && array[hashVal].key != -1) {
             if (++count > arraySize) {
                 expandArray();//数组满了后进行扩充
             }
-            ++hashVal;
+            if (isLineDetect) {
+                // 线性探测
+                ++hashVal;
+            }else {
+                //二次探测：目前这样写会有问题，数组没有满时就会扩充
+                ++step;
+                hashVal += step * step;
+            }
+
             hashVal = hashFunc(hashVal);//关键点
         }
         array[hashVal] = item;
@@ -63,13 +82,21 @@ public class HashTable<T> {
     public DataItem<Integer, T> find(int key) {
         int count = 0;
         int hashVal = hashFunc(key);
+        int step=0;
         while (array[hashVal] != null) {
             if (++count > arraySize)
                 return null;
 
             if (array[hashVal].key == key)
                 return array[hashVal];
-            ++hashVal;
+            if (isLineDetect) {
+                // 线性探测
+                ++hashVal;
+            }else {
+                //二次探测
+                ++step;
+                hashVal += step * step;
+            }
             hashVal = hashFunc(hashVal);
         }
         return null;
@@ -84,6 +111,7 @@ public class HashTable<T> {
     public DataItem<Integer, T> delete(int key) {
         int count=0;
         int hashVal = hashFunc(key);
+        int step=0;
         while (array[hashVal] != null) {
             if (++count > arraySize)
                 return null;
@@ -92,7 +120,14 @@ public class HashTable<T> {
                 array[hashVal] = nonItem;
                 return temp;
             }
-            ++hashVal;
+            if (isLineDetect) {
+                // 线性探测
+                ++hashVal;
+            }else {
+                //二次探测
+                ++step;
+                hashVal += step * step;
+            }
             hashVal = hashFunc(hashVal);
         }
         return null;
