@@ -13,7 +13,7 @@ package com.ljy.javacode.structure.link;
  * 那么数组就排好序了,这种排序方式比常用的插入排序效率更高些
  */
 
-public class OrderedLinkList<T extends Comparable> extends LinkList<T> {
+public class OrderedLinkList<T extends Comparable<T>> extends LinkList<T> {
     public void insert(T value) {
         Link<T> newLink = new Link<>(value);
         Link<T> previous = null;

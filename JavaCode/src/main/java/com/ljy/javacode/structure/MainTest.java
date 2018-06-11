@@ -1,5 +1,7 @@
 package com.ljy.javacode.structure;
 
+import com.ljy.javacode.structure.tree.Heap;
+import com.ljy.javacode.structure.tree.Node;
 import com.ljy.javacode.util.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
 import com.ljy.javacode.structure.bean.DataItem;
@@ -106,9 +108,13 @@ public class MainTest {
                     //测试哈希表
                     testHashTable();
                     break;
-                    case "LinkedHashTable":
+                case "LinkedHashTable":
                     //测试哈希表 = 链地址法 + 有序链表
                     testLinkedHashTable();
+                    break;
+                case "Heap":
+                    //测试堆
+                    testHeap();
                     break;
                 default:
                     break;
@@ -116,23 +122,53 @@ public class MainTest {
         }
     }
 
-    private static void testLinkedHashTable() {
-        LinkedHashTable hashTable=new LinkedHashTable(10);
+    private static void testHeap() {
+        Heap<Integer, String> heap = new Heap<>(30);
         for (int i = 0; i < 28; i++) {
-            int key = (int) (10+Math.random() * 128);
-            System.out.println("insert:"+key);
+            int key = (int) (10 + Math.random() * 128);
+            System.out.println("insert:" + key);
+            String data = "data_" + key;
+            heap.insert(key, data);
+            System.out.println("---------- display ----------");
+            heap.display();
+        }
+        int k = 208;
+        System.out.println("insert:" + k);
+        heap.insert(k, "data-" + k);
+        System.out.println(" ---------- display ----------");
+        heap.display();
+        System.out.println("change:3, 111, \"change_111\"");
+        heap.change(3, 111, "change_111");
+        System.out.println(" ---------- display ----------");
+        heap.display();
+        System.out.print("delete:");
+
+        Node<Integer, String> dataD = heap.remove();
+        if (dataD != null)
+            dataD.display();
+        else
+            System.out.println("null");
+        System.out.println("\n ---------- display ----------");
+        heap.display();
+    }
+
+    private static void testLinkedHashTable() {
+        LinkedHashTable hashTable = new LinkedHashTable(10);
+        for (int i = 0; i < 28; i++) {
+            int key = (int) (10 + Math.random() * 128);
+            System.out.println("insert:" + key);
             hashTable.insert(key);
             System.out.println("\n ---------- display ----------");
             hashTable.display();
         }
-        int k=208;
-        System.out.println("insert:"+k);
+        int k = 208;
+        System.out.println("insert:" + k);
         hashTable.insert(k);
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("find:");
         Link<Integer> dataF = hashTable.find(k);
-        if (dataF!=null)
+        if (dataF != null)
             dataF.display();
         else
             System.out.println("null");
@@ -141,7 +177,7 @@ public class MainTest {
         System.out.print("delete:");
 
         Link<Integer> dataD = hashTable.delete(k);
-        if (dataD!=null)
+        if (dataD != null)
             dataD.display();
         else
             System.out.println("null");
@@ -150,32 +186,32 @@ public class MainTest {
     }
 
     private static void testHashTable() {
-        HashTable<String> hashTable=new HashTable<>();
+        HashTable<String> hashTable = new HashTable<>();
         for (int i = 0; i < 28; i++) {
-            int key = (int) (10+Math.random() * 128);
+            int key = (int) (10 + Math.random() * 128);
             String data = "data_" + key;
-            System.out.println("insert:"+key);
-            hashTable.insert(key,data,HashTable.TYPE_DETECT_DOUBLE_HASH);
+            System.out.println("insert:" + key);
+            hashTable.insert(key, data, HashTable.TYPE_DETECT_DOUBLE_HASH);
             System.out.println("\n ---------- display ----------");
             hashTable.display();
         }
 
-        int k=208;
-        System.out.println("insert:"+k);
-        hashTable.insert(k, "data-"+k,HashTable.TYPE_DETECT_DOUBLE_HASH);
+        int k = 208;
+        System.out.println("insert:" + k);
+        hashTable.insert(k, "data-" + k, HashTable.TYPE_DETECT_DOUBLE_HASH);
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("find:");
-        DataItem<Integer, String> dataF = hashTable.find(k,HashTable.TYPE_DETECT_DOUBLE_HASH);
-        if (dataF!=null)
+        DataItem<Integer, String> dataF = hashTable.find(k, HashTable.TYPE_DETECT_DOUBLE_HASH);
+        if (dataF != null)
             dataF.display();
         else
             System.out.println("null");
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("delete:");
-        DataItem<Integer, String> dataD = hashTable.delete(k,HashTable.TYPE_DETECT_DOUBLE_HASH);
-        if (dataD!=null)
+        DataItem<Integer, String> dataD = hashTable.delete(k, HashTable.TYPE_DETECT_DOUBLE_HASH);
+        if (dataD != null)
             dataD.display();
         else
             System.out.println("null");
@@ -184,11 +220,11 @@ public class MainTest {
     }
 
     private static void test234Tree() {
-        Tree234<Integer,String> tree234=new Tree234<>();
+        Tree234<Integer, String> tree234 = new Tree234<>();
         for (int i = 0; i < 20; i++) {
-            int key = (int) (10+Math.random() * 128);
+            int key = (int) (10 + Math.random() * 128);
             String data = "data_" + key;
-            tree234.insert(key,data);
+            tree234.insert(key, data);
             System.out.println("\n ---------- display ----------");
             tree234.display();
         }
@@ -202,11 +238,11 @@ public class MainTest {
     }
 
     private static void testRedBlackTree() {
-        RedBlackTree<Integer,String> redBlackTree=new RedBlackTree<>();
+        RedBlackTree<Integer, String> redBlackTree = new RedBlackTree<>();
         for (int i = 0; i < 10; i++) {
-            int key = (int) (10+Math.random() * 128);
+            int key = (int) (10 + Math.random() * 128);
             String data = "data_" + key;
-            redBlackTree.insert(key,data);
+            redBlackTree.insert(key, data);
             System.out.println("\n ---------- display ----------");
             redBlackTree.display();
         }
@@ -217,9 +253,9 @@ public class MainTest {
         System.out.println();
         redBlackTree.insert(8, "data-8");
         for (int i = 0; i < 10; i++) {
-            int key = (int) (10+Math.random() * 128);
+            int key = (int) (10 + Math.random() * 128);
             String data = "data_" + key;
-            redBlackTree.insert(key,data);
+            redBlackTree.insert(key, data);
             System.out.println("\n ---------- display ----------");
             redBlackTree.display();
         }
