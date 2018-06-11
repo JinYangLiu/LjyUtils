@@ -1,9 +1,10 @@
 package com.ljy.javacode.structure;
 
-import com.ljy.javacode.structure.array.ArrayUtil;
+import com.ljy.javacode.util.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
 import com.ljy.javacode.structure.bean.DataItem;
 import com.ljy.javacode.structure.hash.HashTable;
+import com.ljy.javacode.structure.hash.LinkedHashTable;
 import com.ljy.javacode.structure.link.DoublyLinkList;
 import com.ljy.javacode.structure.link.FirstLastLinkList;
 import com.ljy.javacode.structure.link.Link;
@@ -16,9 +17,7 @@ import com.ljy.javacode.structure.tree.BinaryTree;
 import com.ljy.javacode.structure.tree.RedBlackTree;
 import com.ljy.javacode.structure.tree.Tree234;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -107,13 +106,47 @@ public class MainTest {
                     //测试哈希表
                     testHashTable();
                     break;
+                    case "LinkedHashTable":
+                    //测试哈希表 = 链地址法 + 有序链表
+                    testLinkedHashTable();
+                    break;
                 default:
                     break;
-
             }
         }
+    }
 
+    private static void testLinkedHashTable() {
+        LinkedHashTable hashTable=new LinkedHashTable(10);
+        for (int i = 0; i < 28; i++) {
+            int key = (int) (10+Math.random() * 128);
+            System.out.println("insert:"+key);
+            hashTable.insert(key);
+            System.out.println("\n ---------- display ----------");
+            hashTable.display();
+        }
+        int k=208;
+        System.out.println("insert:"+k);
+        hashTable.insert(k);
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
+        System.out.print("find:");
+        Link<Integer> dataF = hashTable.find(k);
+        if (dataF!=null)
+            dataF.display();
+        else
+            System.out.println("null");
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
+        System.out.print("delete:");
 
+        Link<Integer> dataD = hashTable.delete(k);
+        if (dataD!=null)
+            dataD.display();
+        else
+            System.out.println("null");
+        System.out.println("\n ---------- display ----------");
+        hashTable.display();
     }
 
     private static void testHashTable() {

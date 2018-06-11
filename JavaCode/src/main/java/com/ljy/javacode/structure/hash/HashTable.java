@@ -61,7 +61,7 @@ public class HashTable<T> {
                 // 线性探测
                 ++hashVal;
             } else if (typeDetect == TYPE_DETECT_SECOND) {
-                //二次探测：目前这样写会有问题，数组没有满时就会扩充
+                //二次探测：目前这样写会有问题，数组没有满时就会扩充,例如在磁盘存储数据,若用此方法就会导致磁盘没有被充分利用
                 ++step;
                 hashVal += step * step;
             } else if (typeDetect == TYPE_DETECT_DOUBLE_HASH) {

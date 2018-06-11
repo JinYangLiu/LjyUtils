@@ -1,4 +1,4 @@
-package com.ljy.javacode.structure.array;
+package com.ljy.javacode.util;
 
 import java.util.Arrays;
 
