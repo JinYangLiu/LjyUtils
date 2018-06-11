@@ -9,6 +9,9 @@ package com.ljy.javacode.structure.tree;
  * 所以这里用数组实现堆,而不是之前实现二叉树是=时那样用引用,其结构如下:
  * {A , A1,A2, A11,A12,A21,A22, A111,A112,A121,A122,A211,A212,A221,A222, ...}
  * 每层节点最多个数依次为: 1,2,4,8,16, ...
+ *
+ * 注: 这里没有对数组进行扩展的操作,之前在HashTable中已经有过相关的实现
+ * 另外, 也可以用Vector代替数组, Vector 是可以自动扩展的, 详见VectorHeap.java
  */
 public class Heap<K extends Comparable<K>, T> {
     private Node<K, T>[] heapArray;

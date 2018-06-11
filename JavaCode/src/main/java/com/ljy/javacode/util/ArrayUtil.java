@@ -1,5 +1,7 @@
 package com.ljy.javacode.util;
 
+import com.ljy.javacode.structure.tree.VectorHeap;
+
 import java.util.Arrays;
 
 /**
@@ -42,7 +44,6 @@ public class ArrayUtil {
 
 
     /**
-     *
      * 1. 直接选择排序
      * 每一趟从待排序的数据元素中选出最小（或最大）的一个元素，顺序放在已排好序的数列的最后，
      * 直到全部待排序的数据元素排完，它需要经过n-1趟比较。
@@ -122,7 +123,7 @@ public class ArrayUtil {
      * 折半插入排序
      * 又叫二分插入排序
      */
-    public  void binaryInsertSort(int[] array) {
+    public void binaryInsertSort(int[] array) {
         for (int i = 1; i < array.length; i++) {
             if (array[i] < array[i - 1]) {
                 // 缓存i处的元素值
@@ -393,7 +394,7 @@ public class ArrayUtil {
      * - 基数:一个数字系统的基,10是十进制系统的激素,2是二进制系统的基数
      * - 把数值拆分2为数字位,对每一位进行排序
      * - 缺点:以空间换时间
-     *  使用: radixSort(data, 10, 4);
+     * 使用: radixSort(data, 10, 4);
      */
     public void radixSort(int[] data, int radix, int d) {
         // 缓存数组
@@ -426,9 +427,21 @@ public class ArrayUtil {
             }
             rate *= radix;
         }
-
     }
 
+
+    /**
+     * 堆排序
+     */
+    public void heapSort(int[] array) {
+        print(array);
+        VectorHeap<Integer, Integer> vectorHeap = new VectorHeap<>();
+        for (int i = 0; i < array.length; i++)
+            vectorHeap.insert(array[i], null);
+        for (int i = 0; i < array.length; i++)
+            array[array.length-1-i] = vectorHeap.remove().key;
+        print(array);
+    }
 
 
 }

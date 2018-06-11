@@ -2,6 +2,7 @@ package com.ljy.javacode.structure;
 
 import com.ljy.javacode.structure.tree.Heap;
 import com.ljy.javacode.structure.tree.Node;
+import com.ljy.javacode.structure.tree.VectorHeap;
 import com.ljy.javacode.util.ArrayUtil;
 import com.ljy.javacode.structure.array.OrderedArray;
 import com.ljy.javacode.structure.bean.DataItem;
@@ -116,14 +117,28 @@ public class MainTest {
                     //测试堆
                     testHeap();
                     break;
+                case "heapSort":
+                    //测试堆排序
+                    testHeapSort();
+                    break;
                 default:
                     break;
             }
         }
     }
 
+    private static void testHeapSort() {
+        int[] array = new int[30];
+        for (int i = 0; i < array.length; i++) {
+            int value = (int) (Math.random() * 128);
+            array[i]=value;
+        }
+        ArrayUtil.getInstance().heapSort(array);
+    }
+
     private static void testHeap() {
-        Heap<Integer, String> heap = new Heap<>(30);
+//        Heap<Integer, String> heap = new Heap<>(30);
+        VectorHeap<Integer, String> heap = new VectorHeap<>();
         for (int i = 0; i < 28; i++) {
             int key = (int) (10 + Math.random() * 128);
             System.out.println("insert:" + key);
