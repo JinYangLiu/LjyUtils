@@ -9,20 +9,13 @@ import com.ljy.javacode.structure.bean.DataItem;
  */
 
 public class HashTable<T> {
-    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 11;
+    public static final int TYPE_DETECT_LINE = 0;//线性探测
+    public static final int TYPE_DETECT_SECOND = 1;//二次探测
+    public static final int TYPE_DETECT_DOUBLE_HASH = 2;//再哈希探测
     private DataItem<Integer, T>[] array;
     private int arraySize;
     private DataItem<Integer, T> nonItem;//for deleted items
-
-    private boolean isLineDetect=false;//控制时线性探测还是二次探测
-
-    /**
-     * 控制时线性探测还是二次探测
-     * @param lineDetect
-     */
-    public void setLineDetect(boolean lineDetect) {
-        isLineDetect = lineDetect;
-    }
 
     public HashTable() {
         this.arraySize = DEFAULT_SIZE;
@@ -32,47 +25,61 @@ public class HashTable<T> {
 
     //根据 关键字值 计算 哈希值
     private int hashFunc(int key) {
-        int hashVal=key % arraySize;
-        System.out.println("arraySize:"+arraySize+", key:"+key+", hashVal:"+hashVal);
+        int hashVal = key % arraySize;
+        System.out.println("hashFunc: arraySize:" + arraySize + ", key:" + key + ", hashVal:" + hashVal);
+        return hashVal;
+    }
+
+    // 再哈希法计算探测序列
+    private int hashFunc2(int key) {
+        int hashVal = 5 - key % 5;
+        System.out.println("hashFunc_2: arraySize:" + arraySize + ", key:" + key + ", hashVal:" + hashVal);
         return hashVal;
     }
 
     /**
      * 向哈希表中插入数据
-     *
+     * <p>
+     * typeDetect 探测类型
      */
-    public void insert(int key ,T data) {
-        DataItem<Integer, T> item=new DataItem<>();
-        item.key=key;
-        item.data=data;
+    public void insert(int key, T data) {
+        insert(key, data, TYPE_DETECT_LINE);
+    }
+
+    public void insert(int key, T data, int typeDetect) {
+        DataItem<Integer, T> item = new DataItem<>();
+        item.key = key;
+        item.data = data;
         int count = 0;
         int hashVal = hashFunc(key);
-        int step=0;
+        int step = typeDetect == TYPE_DETECT_DOUBLE_HASH ? hashFunc2(key) : 0;
         while (array[hashVal] != null && array[hashVal].key != -1) {
             if (++count > arraySize) {
-                expandArray();//数组满了后进行扩充
+                expandArray(typeDetect);//数组满了后进行扩充
             }
-            if (isLineDetect) {
+            if (typeDetect == TYPE_DETECT_LINE) {
                 // 线性探测
                 ++hashVal;
-            }else {
+            } else if (typeDetect == TYPE_DETECT_SECOND) {
                 //二次探测：目前这样写会有问题，数组没有满时就会扩充
                 ++step;
                 hashVal += step * step;
+            } else if (typeDetect == TYPE_DETECT_DOUBLE_HASH) {
+                hashVal += step;
             }
-
+            System.out.print("防止溢出: ");
             hashVal = hashFunc(hashVal);//关键点
         }
         array[hashVal] = item;
     }
 
-    private void expandArray() {
+    private void expandArray(int typeDetect) {
         DataItem<Integer, T>[] temp = array;
         arraySize *= 2;
         array = new DataItem[arraySize];
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i]!=null&&temp[i].key!=-1){
-                insert(temp[i].key,temp[i].data);
+            if (temp[i] != null && temp[i].key != -1) {
+                insert(temp[i].key, temp[i].data, typeDetect);
                 System.out.print("expandArray: ");
                 display();
             }
@@ -80,24 +87,30 @@ public class HashTable<T> {
     }
 
     public DataItem<Integer, T> find(int key) {
+        return find(key, TYPE_DETECT_LINE);
+    }
+
+    public DataItem<Integer, T> find(int key, int typeDetect) {
         int count = 0;
         int hashVal = hashFunc(key);
-        int step=0;
+        int step = typeDetect == TYPE_DETECT_DOUBLE_HASH ? hashFunc2(key) : 0;
         while (array[hashVal] != null) {
             if (++count > arraySize)
                 return null;
 
             if (array[hashVal].key == key)
                 return array[hashVal];
-            if (isLineDetect) {
+            if (typeDetect == TYPE_DETECT_LINE) {
                 // 线性探测
                 ++hashVal;
-            }else {
-                //二次探测
+            } else if (typeDetect == TYPE_DETECT_SECOND) {
+                //二次探测：目前这样写会有问题，数组没有满时就会扩充
                 ++step;
                 hashVal += step * step;
+            } else if (typeDetect == TYPE_DETECT_DOUBLE_HASH) {
+                hashVal += step;
             }
-            hashVal = hashFunc(hashVal);
+            hashVal = hashFunc(hashVal);//关键点
         }
         return null;
     }
@@ -109,9 +122,13 @@ public class HashTable<T> {
      * @return
      */
     public DataItem<Integer, T> delete(int key) {
-        int count=0;
+        return delete(key, TYPE_DETECT_LINE);
+    }
+
+    public DataItem<Integer, T> delete(int key, int typeDetect) {
+        int count = 0;
         int hashVal = hashFunc(key);
-        int step=0;
+        int step = typeDetect == TYPE_DETECT_DOUBLE_HASH ? hashFunc2(key) : 0;
         while (array[hashVal] != null) {
             if (++count > arraySize)
                 return null;
@@ -120,15 +137,17 @@ public class HashTable<T> {
                 array[hashVal] = nonItem;
                 return temp;
             }
-            if (isLineDetect) {
+            if (typeDetect == TYPE_DETECT_LINE) {
                 // 线性探测
                 ++hashVal;
-            }else {
-                //二次探测
+            } else if (typeDetect == TYPE_DETECT_SECOND) {
+                //二次探测：目前这样写会有问题，数组没有满时就会扩充
                 ++step;
                 hashVal += step * step;
+            } else if (typeDetect == TYPE_DETECT_DOUBLE_HASH) {
+                hashVal += step;
             }
-            hashVal = hashFunc(hashVal);
+            hashVal = hashFunc(hashVal);//关键点
         }
         return null;
     }

@@ -122,18 +122,18 @@ public class MainTest {
             int key = (int) (10+Math.random() * 128);
             String data = "data_" + key;
             System.out.println("insert:"+key);
-            hashTable.insert(key,data);
+            hashTable.insert(key,data,HashTable.TYPE_DETECT_DOUBLE_HASH);
             System.out.println("\n ---------- display ----------");
             hashTable.display();
         }
 
         int k=208;
         System.out.println("insert:"+k);
-        hashTable.insert(k, "data-"+k);
+        hashTable.insert(k, "data-"+k,HashTable.TYPE_DETECT_DOUBLE_HASH);
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("find:");
-        DataItem<Integer, String> dataF = hashTable.find(k);
+        DataItem<Integer, String> dataF = hashTable.find(k,HashTable.TYPE_DETECT_DOUBLE_HASH);
         if (dataF!=null)
             dataF.display();
         else
@@ -141,7 +141,7 @@ public class MainTest {
         System.out.println("\n ---------- display ----------");
         hashTable.display();
         System.out.print("delete:");
-        DataItem<Integer, String> dataD = hashTable.delete(k);
+        DataItem<Integer, String> dataD = hashTable.delete(k,HashTable.TYPE_DETECT_DOUBLE_HASH);
         if (dataD!=null)
             dataD.display();
         else
