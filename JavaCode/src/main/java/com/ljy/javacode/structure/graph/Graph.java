@@ -78,8 +78,7 @@ public class Graph<T> {
                 stack.push(v);
             }
         }
-        for (int i = 0; i < nVerts; i++)
-            vertexArray[i].wasVisited = false;
+        initWasVisited();
     }
 
     /**
@@ -98,10 +97,37 @@ public class Graph<T> {
                 queue.insert(v2);
             }
         }
+        initWasVisited();
+    }
+
+    /**
+     * 实现最小生成树算法,排除多余的边,找到连接所有顶点的最少的边
+     * 使用DFS实现比较容易,因为DFS访问所有顶点,但只访问一次
+     */
+    public void mst() {
+        vertexArray[0].wasVisited = true;
+        stack.push(0);
+        while (!stack.isEmpty()) {
+            int currentVertex = stack.peek();
+            int v = getAdjUnvisitedVertex(currentVertex);
+            if (v == -1)
+                stack.pop();
+            else {
+                vertexArray[v].wasVisited = true;
+                stack.push(v);
+
+                displayVertex(currentVertex);
+                displayVertex(v);
+                System.out.print("  ");
+            }
+        }
+        initWasVisited();
+    }
+
+    private void initWasVisited() {
         for (int i = 0; i < nVerts; i++)
             vertexArray[i].wasVisited = false;
     }
-
 
     //规则1:寻找传入顶点v的一个未访问的邻接顶点
     private int getAdjUnvisitedVertex(int v) {

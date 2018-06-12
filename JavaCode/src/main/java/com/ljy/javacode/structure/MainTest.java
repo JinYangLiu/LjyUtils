@@ -158,6 +158,19 @@ public class MainTest {
         System.out.print("广度优先搜索:");
         graph.displayBFS();
         System.out.println();
+        graph.addEdge(0,1);//AB
+        graph.addEdge(0,2);//AC
+        graph.addEdge(0,3);//AD
+        graph.addEdge(0,4);//AE
+        graph.addEdge(1,2);//BC
+        graph.addEdge(1,3);//BD
+        graph.addEdge(1,4);//BE
+        graph.addEdge(2,3);//CD
+        graph.addEdge(2,4);//CE
+        graph.addEdge(3,4);//DE
+        System.out.print("最小生成树:");
+        graph.mst();
+        System.out.println();
 
     }
 
