@@ -3,15 +3,16 @@ package com.ljy.javacode.structure.graph;
 /**
  * Created by LJY on 2018/6/12 14:06
  * 有向图的实现类
+ * Directed  Graph
  */
-public class Digraph<T> {
+public class DiGraph<T> {
     private final int MAX_VERTS = 20;
     private Vertex<T>[] vertexArray;
     private int adjMat[][];
     private int nVerts;
     private T[] sortArray;
 
-    public Digraph() {
+    public DiGraph() {
         nVerts = 0;
         vertexArray = new Vertex[MAX_VERTS];
         adjMat = new int[MAX_VERTS][MAX_VERTS];

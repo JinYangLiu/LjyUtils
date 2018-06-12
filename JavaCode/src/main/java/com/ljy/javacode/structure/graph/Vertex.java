@@ -8,9 +8,11 @@ package com.ljy.javacode.structure.graph;
 public class Vertex<T> {
     public T value;
     public boolean wasVisited;//标志位,搜索算法时用到
+    public boolean isInTree;//标志位,无向带权图的最小生成树时用到
 
     public Vertex(T value) {
         this.value = value;
         this.wasVisited=false;
+        this.isInTree=false;
     }
 }

@@ -1,7 +1,8 @@
 package com.ljy.javacode.structure;
 
-import com.ljy.javacode.structure.graph.Digraph;
+import com.ljy.javacode.structure.graph.DiGraph;
 import com.ljy.javacode.structure.graph.Graph;
+import com.ljy.javacode.structure.graph.WeiGraph;
 import com.ljy.javacode.structure.tree.Node;
 import com.ljy.javacode.structure.tree.VectorHeap;
 import com.ljy.javacode.util.ArrayUtil;
@@ -130,38 +131,68 @@ public class MainTest {
                     //测试有向无环图的拓扑排序
                     testTopoSort();
                     break;
+                case "WeiGraph":
+                    //测试无向带权图的最小生成树
+                    testWeiGraph();
+                    break;
                 default:
                     break;
             }
         }
     }
 
-    private static void testTopoSort() {
-        Digraph<Character> digraph=new Digraph<>();
-        digraph.addVertex('A');
-        digraph.addVertex('B');
-        digraph.addVertex('C');
-        digraph.addVertex('D');
-        digraph.addVertex('E');
-        digraph.addVertex('F');
-        digraph.addVertex('G');
-        digraph.addVertex('H');
+    private static void testWeiGraph() {
+        WeiGraph<Character> graph = new WeiGraph<>();
+        graph.addVertex('A');//0
+        graph.addVertex('B');//1
+        graph.addVertex('C');//2
+        graph.addVertex('D');//3
+        graph.addVertex('E');//4
+        graph.addVertex('F');//5
 
-        digraph.addEdge(0,3);//AD
-        digraph.addEdge(0,4);//AE
-        digraph.addEdge(1,4);//BE
-        digraph.addEdge(2,5);//CF
-        digraph.addEdge(3,6);//DG
-        digraph.addEdge(4,6);//EG
-        digraph.addEdge(5,7);//FH
-        digraph.addEdge(6,7);//GH
-        digraph.topoSort();
+        graph.addEdge(0, 1, 6);//AB 6
+        graph.addEdge(0, 3, 4);//AD 4
+        graph.addEdge(1, 2, 10);//BC 10
+        graph.addEdge(1, 3, 7);//BD 7
+        graph.addEdge(1, 4, 7);//BE 7
+        graph.addEdge(2, 3, 8);//CD 8
+        graph.addEdge(2, 4, 5);//CE 5
+        graph.addEdge(2, 5, 6);//CF 6
+        graph.addEdge(3, 4, 12);//DE 12
+        graph.addEdge(4, 5, 7);//EF 7
+
+        System.out.print("无向带权图的最小生成树:");
+        graph.mstw();
+        System.out.println();
+
+    }
+
+    private static void testTopoSort() {
+        DiGraph<Character> graph = new DiGraph<>();
+        graph.addVertex('A');//0
+        graph.addVertex('B');//1
+        graph.addVertex('C');//2
+        graph.addVertex('D');//3
+        graph.addVertex('E');//4
+        graph.addVertex('F');//5
+        graph.addVertex('G');//6
+        graph.addVertex('H');//7
+
+        graph.addEdge(0, 3);//AD
+        graph.addEdge(0, 4);//AE
+        graph.addEdge(1, 4);//BE
+        graph.addEdge(2, 5);//CF
+        graph.addEdge(3, 6);//DG
+        graph.addEdge(4, 6);//EG
+        graph.addEdge(5, 7);//FH
+        graph.addEdge(6, 7);//GH
+        graph.topoSort();
         System.out.println(" ---------- display ----------");
-        digraph.display();
+        graph.display();
         System.out.println("warshall.....");
-        digraph.warshall();
+        graph.warshall();
         System.out.println(" ---------- display ----------");
-        digraph.display();
+        graph.display();
     }
 
     private static void testGraph() {
@@ -606,7 +637,7 @@ public class MainTest {
         priorityQueue.insert(2);
         priorityQueue.display();
         while (!priorityQueue.isEmpty()) {
-            priorityQueue.remove();
+            priorityQueue.removeMin();
             priorityQueue.display();
         }
         priorityQueue.insert(23);
