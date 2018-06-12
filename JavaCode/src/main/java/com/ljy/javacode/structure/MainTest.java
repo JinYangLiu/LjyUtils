@@ -1,6 +1,6 @@
 package com.ljy.javacode.structure;
 
-import com.ljy.javacode.structure.tree.Heap;
+import com.ljy.javacode.structure.graph.Graph;
 import com.ljy.javacode.structure.tree.Node;
 import com.ljy.javacode.structure.tree.VectorHeap;
 import com.ljy.javacode.util.ArrayUtil;
@@ -15,7 +15,7 @@ import com.ljy.javacode.structure.link.LinkIterator;
 import com.ljy.javacode.structure.link.LinkList;
 import com.ljy.javacode.structure.queue.PriorityArrayQueue;
 import com.ljy.javacode.structure.queue.ArrayQueue;
-import com.ljy.javacode.structure.stack.ArrayStacker;
+import com.ljy.javacode.structure.stack.ArrayStack;
 import com.ljy.javacode.structure.tree.BinaryTree;
 import com.ljy.javacode.structure.tree.RedBlackTree;
 import com.ljy.javacode.structure.tree.Tree234;
@@ -121,10 +121,44 @@ public class MainTest {
                     //测试堆排序
                     testHeapSort();
                     break;
+                case "graph":
+                    //测试无向无权图
+                    testGraph();
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    private static void testGraph() {
+        Graph<Character> graph=new Graph<>();
+        graph.addVertex('A');//0 ,start for dfs
+        graph.addVertex('B');//1
+        graph.addVertex('C');//2
+        graph.addVertex('D');//3
+        graph.addVertex('E');//4
+
+        graph.addEdge(0,1);//AB
+        graph.addEdge(1,2);//BC
+        graph.addEdge(0,3);//AD
+        graph.addEdge(3,4);//DE
+
+        //上图结构可以如下表示:
+        //    B -- C
+        //  /
+        //A
+        //  \
+        //    D -- E
+
+        System.out.println("Graph:");
+        System.out.print("深度优先搜索:");
+        graph.displayDFS();
+        System.out.println();
+        System.out.print("广度优先搜索:");
+        graph.displayBFS();
+        System.out.println();
+
     }
 
     private static void testHeapSort() {
@@ -512,7 +546,7 @@ public class MainTest {
     }
 
     private static void testPriorityQueue() {
-        PriorityArrayQueue priorityQueue = new PriorityArrayQueue(10);
+        PriorityArrayQueue<Integer>priorityQueue = new PriorityArrayQueue<>(10);
         priorityQueue.insert(3);
         priorityQueue.display();
         priorityQueue.insert(9);
@@ -539,7 +573,7 @@ public class MainTest {
     }
 
     private static void testQueue() {
-        ArrayQueue queue = new ArrayQueue(10);
+        ArrayQueue<String> queue = new ArrayQueue<>(10);
         for (int i = 100; i < 120; i++) {
             if (!queue.isFull()) {
                 queue.insert("data—" + i);
@@ -565,7 +599,7 @@ public class MainTest {
     }
 
     private static void testStack() {
-        ArrayStacker stacker = new ArrayStacker(10);
+        ArrayStack<String> stacker = new ArrayStack<>(10);
         for (int i = 100; i < 120; i++) {
             if (!stacker.isFull()) {
                 stacker.push("" + i);

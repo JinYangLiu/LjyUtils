@@ -10,14 +10,14 @@ package com.ljy.javacode.structure.stack;
  * 后进先出 LIFO （last in first out）
  */
 
-public class ArrayStacker  extends Stacker{
+public class ArrayStack<T> extends Stack<T> {
 
     protected int maxSize;
     protected int top;
-    private String[] stackArray;
+    private T[] stackArray;
 
-    public ArrayStacker(int maxSize){
-        stackArray=new String[maxSize];
+    public ArrayStack(int maxSize){
+        stackArray= (T[]) new Object[maxSize];
         this.maxSize=maxSize;
         top=-1;
     }
@@ -32,17 +32,17 @@ public class ArrayStacker  extends Stacker{
     }
 
     @Override
-    public void push(String value){
+    public void push(T value){
         stackArray[++top]=value;
     }
 
     @Override
-    public String pop(){
+    public T pop(){
         return stackArray[top--];
     }
 
     @Override
-    public String peek(){
+    public T peek(){
         return stackArray[top];
     }
 

@@ -8,11 +8,11 @@ import com.ljy.javacode.structure.link.LinkList;
  * 使用单链表实现栈
  */
 
-public class LinkStacker extends Stacker {
+public class LinkStack<T> extends Stack<T> {
 
-    private LinkList<String> linkList;
+    private LinkList<T> linkList;
 
-    public LinkStacker() {
+    public LinkStack() {
         linkList =new LinkList();
     }
 
@@ -22,17 +22,17 @@ public class LinkStacker extends Stacker {
     }
 
     @Override
-    public void push(String value) {
+    public void push(T value) {
         linkList.insertFirst(value);
     }
 
     @Override
-    public String pop() {
+    public T pop() {
         return linkList.deleteFirst().data;
     }
 
     @Override
-    public String peek() {
+    public T peek() {
         return linkList.getFirst().data;
     }
 

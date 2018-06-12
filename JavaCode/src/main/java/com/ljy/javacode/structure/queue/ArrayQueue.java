@@ -20,23 +20,23 @@ package com.ljy.javacode.structure.queue;
  *  优先级队列的实现见：PriorityQueue.java
  */
 
-public class ArrayQueue extends Queue {
+public class ArrayQueue<T> extends Queue<T> {
     private int maxSize;
-    private String[] queArray;
+    private T[] queArray;
     private int front;//队列首
     private int rear;//队列尾
     private int nItems;
 
     public ArrayQueue(int maxSize){
         this.maxSize=maxSize;
-        queArray=new String[maxSize];
+        queArray=(T[]) new Object[maxSize];
         front=0;
         rear=-1;
         nItems=0;
     }
 
     @Override
-    public void insert(String value){
+    public void insert(T value){
         if (rear==maxSize-1)
             rear=-1;
         queArray[++rear]=value;
@@ -44,15 +44,15 @@ public class ArrayQueue extends Queue {
     }
 
     @Override
-    public String remove(){
-        String temp=queArray[front++];
+    public T remove(){
+        T temp=queArray[front++];
         if (front==maxSize)
             front=0;
         nItems--;
         return temp;
     }
 
-    public String peekFront(){
+    public T peekFront(){
         return queArray[front];
     }
 

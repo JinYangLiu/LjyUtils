@@ -8,25 +8,25 @@ package com.ljy.javacode.structure.queue;
  * 也可以用一种特别的树--堆 来实现
  */
 
-public class PriorityArrayQueue {
+public class PriorityArrayQueue<T extends Comparable<T>> {
     private int maxSize;
-    private long[] queArray;
+    private T[] queArray;
     private int nItems;
 
     public PriorityArrayQueue(int maxSize){
         this.maxSize=maxSize;
-        queArray=new long[maxSize];
+        queArray=(T[]) new Object[maxSize];
         nItems=0;
     }
 
-    public void insert(long value){
+    public void insert(T value){
         int j;
         if (nItems==0){
             queArray[nItems++]=value;
         }else {
             //插入排序
             for(j=nItems-1;j>=0;j--){
-                if (value>queArray[j])
+                if (value.compareTo(queArray[j])>0)
                     //从队尾开始，依次循环，把所有比新值小的都后移一位，把新值插入移动后空出的位置
                     //如此插入，实现了从大到小排序，又因为remove方法是从队尾开始，这样就实现了优先处理较小值的需求
                     queArray[j+1]=queArray[j];
@@ -38,11 +38,11 @@ public class PriorityArrayQueue {
         }
     }
 
-    public long remove(){
+    public T remove(){
         return queArray[--nItems];
     }
 
-    public long peekMin(){
+    public T peekMin(){
         return queArray[nItems-1];
     }
 

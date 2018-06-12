@@ -4,15 +4,15 @@ package com.ljy.javacode.structure.stack;
  * Created by ljy on 2018/6/1.
  */
 
-public abstract class Stacker {
+public abstract class Stack<T> {
 
     public abstract boolean isEmpty();
 
-    public abstract void push(String value);
+    public abstract void push(T value);
 
-    public abstract String pop();
+    public abstract T pop();
 
-    public abstract String peek();
+    public abstract T peek();
 
     public abstract void display();
 

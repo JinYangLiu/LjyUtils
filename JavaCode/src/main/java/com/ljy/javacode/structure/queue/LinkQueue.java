@@ -8,12 +8,12 @@ import com.ljy.javacode.structure.link.FirstLastLinkList;
  * 用双端链表实现队列
  */
 
-public class LinkQueue extends Queue {
+public class LinkQueue<T> extends Queue<T> {
 
-    private FirstLastLinkList<String> linkList;
+    private FirstLastLinkList<T> linkList;
 
     public LinkQueue() {
-        linkList=new FirstLastLinkList();
+        linkList=new FirstLastLinkList<>();
     }
 
     @Override
@@ -22,12 +22,12 @@ public class LinkQueue extends Queue {
     }
 
     @Override
-    public void insert(String value) {
+    public void insert(T value) {
         linkList.insertLast(value);
     }
 
     @Override
-    public String remove() {
+    public T remove() {
         return linkList.deleteFirst().data;
     }
 
