@@ -1,5 +1,6 @@
 package com.ljy.javacode.structure;
 
+import com.ljy.javacode.structure.graph.Digraph;
 import com.ljy.javacode.structure.graph.Graph;
 import com.ljy.javacode.structure.tree.Node;
 import com.ljy.javacode.structure.tree.VectorHeap;
@@ -125,24 +126,56 @@ public class MainTest {
                     //测试无向无权图
                     testGraph();
                     break;
+                case "topoSort":
+                    //测试有向无环图的拓扑排序
+                    testTopoSort();
+                    break;
                 default:
                     break;
             }
         }
     }
 
+    private static void testTopoSort() {
+        Digraph<Character> digraph=new Digraph<>();
+        digraph.addVertex('A');
+        digraph.addVertex('B');
+        digraph.addVertex('C');
+        digraph.addVertex('D');
+        digraph.addVertex('E');
+        digraph.addVertex('F');
+        digraph.addVertex('G');
+        digraph.addVertex('H');
+
+        digraph.addEdge(0,3);//AD
+        digraph.addEdge(0,4);//AE
+        digraph.addEdge(1,4);//BE
+        digraph.addEdge(2,5);//CF
+        digraph.addEdge(3,6);//DG
+        digraph.addEdge(4,6);//EG
+        digraph.addEdge(5,7);//FH
+        digraph.addEdge(6,7);//GH
+        digraph.topoSort();
+        System.out.println(" ---------- display ----------");
+        digraph.display();
+        System.out.println("warshall.....");
+        digraph.warshall();
+        System.out.println(" ---------- display ----------");
+        digraph.display();
+    }
+
     private static void testGraph() {
-        Graph<Character> graph=new Graph<>();
+        Graph<Character> graph = new Graph<>();
         graph.addVertex('A');//0 ,start for dfs
         graph.addVertex('B');//1
         graph.addVertex('C');//2
         graph.addVertex('D');//3
         graph.addVertex('E');//4
 
-        graph.addEdge(0,1);//AB
-        graph.addEdge(1,2);//BC
-        graph.addEdge(0,3);//AD
-        graph.addEdge(3,4);//DE
+        graph.addEdge(0, 1);//AB
+        graph.addEdge(1, 2);//BC
+        graph.addEdge(0, 3);//AD
+        graph.addEdge(3, 4);//DE
 
         //上图结构可以如下表示:
         //    B -- C
@@ -158,16 +191,16 @@ public class MainTest {
         System.out.print("广度优先搜索:");
         graph.displayBFS();
         System.out.println();
-        graph.addEdge(0,1);//AB
-        graph.addEdge(0,2);//AC
-        graph.addEdge(0,3);//AD
-        graph.addEdge(0,4);//AE
-        graph.addEdge(1,2);//BC
-        graph.addEdge(1,3);//BD
-        graph.addEdge(1,4);//BE
-        graph.addEdge(2,3);//CD
-        graph.addEdge(2,4);//CE
-        graph.addEdge(3,4);//DE
+        graph.addEdge(0, 1);//AB
+        graph.addEdge(0, 2);//AC
+        graph.addEdge(0, 3);//AD
+        graph.addEdge(0, 4);//AE
+        graph.addEdge(1, 2);//BC
+        graph.addEdge(1, 3);//BD
+        graph.addEdge(1, 4);//BE
+        graph.addEdge(2, 3);//CD
+        graph.addEdge(2, 4);//CE
+        graph.addEdge(3, 4);//DE
         System.out.print("最小生成树:");
         graph.mst();
         System.out.println();
@@ -178,7 +211,7 @@ public class MainTest {
         int[] array = new int[30];
         for (int i = 0; i < array.length; i++) {
             int value = (int) (Math.random() * 128);
-            array[i]=value;
+            array[i] = value;
         }
         ArrayUtil.getInstance().heapSort(array);
     }
@@ -559,7 +592,7 @@ public class MainTest {
     }
 
     private static void testPriorityQueue() {
-        PriorityArrayQueue<Integer>priorityQueue = new PriorityArrayQueue<>(10);
+        PriorityArrayQueue<Integer> priorityQueue = new PriorityArrayQueue<>(10);
         priorityQueue.insert(3);
         priorityQueue.display();
         priorityQueue.insert(9);

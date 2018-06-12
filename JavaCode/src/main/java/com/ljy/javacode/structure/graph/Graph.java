@@ -6,7 +6,7 @@ import com.ljy.javacode.structure.stack.ArrayStack;
 
 /**
  * Created by LJY on 2018/6/11 17:29
- * 图的实现
+ * 无权无向图的实现
  */
 public class Graph<T> {
     private final int MAX_VERTS = 20;
