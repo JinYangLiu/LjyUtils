@@ -1,5 +1,7 @@
 package com.ljy.javacode;
 
+import java.util.Arrays;
+
 /**
  * Created by Mr.LJY on 2018/2/11.
  * <p>
@@ -9,7 +11,7 @@ package com.ljy.javacode;
 public class Matrix {
     public static void main(String args[]) {
 
-        int[][] arr={
+        int[][] arr = {
                 {0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
                 {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1},
                 {1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1},
@@ -24,9 +26,9 @@ public class Matrix {
                 {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
-        ReachableMatrix reachableMatrix = new ReachableMatrix(arr).invoke();
-        reachableMatrix.printResult();
-
+        ReachableMatrix reachableMatrix = new ReachableMatrix(arr);
+        reachableMatrix.invoke().printResult();
+        reachableMatrix.invoke2().printResult();
     }
 
     private static class ReachableMatrix {
@@ -38,12 +40,23 @@ public class Matrix {
             this.arr = arr;
         }
 
-        public int[][] getResult() {
-            return result;
-        }
-
-        public int getLen() {
-            return len;
+        public ReachableMatrix invoke2() {
+            //1. 复制原数组,并与单位矩阵进行或(|)运算
+            len = arr.length;
+            result = new int[len][len];
+            for (int i = 0; i < len; i++) {
+                for (int j = 0; j < len; j++) {
+                    result[i][j] = i == j ? 1 : arr[i][j];
+                }
+            }
+            //2.  Warshall算法利用图的邻接矩阵求出原图的传递闭包
+            for (int i = 0; i < len; i++) //行
+                for (int j = 0; j < len; j++) //列
+                    if (result[i][j] == 1)// i-->j
+                        for (int k = 0; k < len; k++)  // k-->i , 找到连接i的顶点
+                            if (result[k][i] == 1 && k != j)
+                                result[k][j] = 1;//k-->j
+            return this;
         }
 
         public ReachableMatrix invoke() {
@@ -51,7 +64,7 @@ public class Matrix {
             result = new int[len][len];
             for (int i = 0; i < len; i++) {
                 for (int j = 0; j < len; j++) {
-                    result[i][j] = i==j?1:arr[i][j];
+                    result[i][j] = i == j ? 1 : arr[i][j];
                 }
             }
             for (int k = 0; k < len; k++)
@@ -61,11 +74,11 @@ public class Matrix {
             return this;
         }
 
-        public void printResult(){
+        public void printResult() {
             System.out.println("--->");
             for (int i = 0; i < len; i++) {
                 for (int j = 0; j < len; j++) {
-                    System.out.print( result[i][j]+"\t");
+                    System.out.print(result[i][j] + "\t");
                 }
                 System.out.print("\n");
             }
