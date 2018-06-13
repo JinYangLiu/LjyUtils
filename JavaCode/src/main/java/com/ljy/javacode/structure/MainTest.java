@@ -140,10 +140,29 @@ public class MainTest {
                     //测试有向带权图 及 最短路径
                     testWeiDiGraph();
                     break;
+                case "floyd":
+                    //测试有向带权图 及 最短路径
+                    testFloyd();
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    private static void testFloyd() {
+        int N = Integer.MAX_VALUE;
+
+        char[] Nodes = {'A', 'B', 'C', 'D'};
+        int matrix[][] = {
+                //     A  B  C  D
+                /*A*/ {0, 1, 2, 1},
+                /*B*/ {N, 0, N, N},
+                /*C*/ {N, 3, 0, 1},
+                /*D*/ {N, 1, 1, 0},
+        };
+        WeiDiGraph.Floyd floyd = new WeiDiGraph.Floyd(Nodes, matrix);
+        floyd.floyd();
     }
 
     private static void testWeiDiGraph() {
