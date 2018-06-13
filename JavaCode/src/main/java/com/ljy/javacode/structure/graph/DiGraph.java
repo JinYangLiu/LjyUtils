@@ -4,6 +4,7 @@ package com.ljy.javacode.structure.graph;
  * Created by LJY on 2018/6/12 14:06
  * 有向图的实现类
  * Directed  Graph
+ * 重点是 拓扑排序 和 连通性
  */
 public class DiGraph<T> {
     private final int MAX_VERTS = 20;

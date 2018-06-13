@@ -6,16 +6,17 @@ import com.ljy.javacode.structure.queue.PriorityArrayQueue;
  * Created by LJY on 2018/6/12 16:28
  * 无向带权图
  * Weighted Graph
+ * 重点是最小生成树问题
  */
 public class WeiGraph<T> {
     private final int MAX_VERTS = 20;
-    private final int INFINITY = 1000 * 1000;
+    private final int INFINITY = 1000 * 1000;//表示无穷大,不能到达
     private Vertex<T>[] vertexArray;
     private int adjMat[][];
     private int nVerts;
     private int currentVert;
-    private MyPQ queue;
     private int nTree;
+    private MyPQ queue;
 
     /**
      * 初始化数据

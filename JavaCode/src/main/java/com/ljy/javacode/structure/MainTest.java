@@ -2,6 +2,7 @@ package com.ljy.javacode.structure;
 
 import com.ljy.javacode.structure.graph.DiGraph;
 import com.ljy.javacode.structure.graph.Graph;
+import com.ljy.javacode.structure.graph.WeiDiGraph;
 import com.ljy.javacode.structure.graph.WeiGraph;
 import com.ljy.javacode.structure.tree.Node;
 import com.ljy.javacode.structure.tree.VectorHeap;
@@ -132,13 +133,39 @@ public class MainTest {
                     testTopoSort();
                     break;
                 case "WeiGraph":
-                    //测试无向带权图的最小生成树
+                    //测试无向带权图 及最小生成树
                     testWeiGraph();
+                    break;
+                case "WeiDiGraph":
+                    //测试有向带权图 及 最短路径
+                    testWeiDiGraph();
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private static void testWeiDiGraph() {
+        WeiDiGraph<Character> graph = new WeiDiGraph<>();
+        graph.addVertex('A');//0 , start
+        graph.addVertex('B');//1
+        graph.addVertex('C');//2
+        graph.addVertex('D');//3
+        graph.addVertex('E');//4
+
+        graph.addEdge(0, 1, 50);//AB 50
+        graph.addEdge(0, 3, 80);//AD 80
+        graph.addEdge(1, 2, 60);//BC 60
+        graph.addEdge(1, 3, 90);//BD 90
+        graph.addEdge(2, 4, 40);//CE 40
+        graph.addEdge(3, 2, 20);//DC 20
+        graph.addEdge(3, 4, 70);//DE 70
+        graph.addEdge(4, 1, 50);//EB 50
+
+        System.out.println("有向带权图的最短路径:");
+        graph.path();
+        System.out.println();
     }
 
     private static void testWeiGraph() {
