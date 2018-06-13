@@ -29,6 +29,7 @@ import com.ljy.ljyutils.activity.ArgueProgressActivity;
 import com.ljy.ljyutils.activity.AspectJTestActivity;
 import com.ljy.ljyutils.activity.BallActivity;
 import com.ljy.ljyutils.activity.BezierActivity;
+import com.ljy.ljyutils.activity.BigImgActivity;
 import com.ljy.ljyutils.activity.BindDataActivity;
 import com.ljy.ljyutils.activity.BroadcastActivity;
 import com.ljy.ljyutils.activity.BuglyDemoActivity;
@@ -193,7 +194,8 @@ public class MainActivity extends BaseActivity {
                 "分组ListView+索引条", "webView测试", "xml解析",
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
                 "注解与反射", "多进程通信", "RemoteViews", "Drawable",
-                "window", "测试CrashHandler", "插件化", "布局优化"
+                "window", "测试CrashHandler", "插件化", "布局优化",
+                "加载大图"
         };
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
@@ -209,7 +211,8 @@ public class MainActivity extends BaseActivity {
                 SideIndexBarActivity.class, WebViewTestActivity.class, XmlParserTestActivity.class,
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
                 AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class,
-                WindowActivity.class, CrashHandlerTestActivity.class, PluginActivity.class, LayoutBetterActivity.class
+                WindowActivity.class, CrashHandlerTestActivity.class, PluginActivity.class, LayoutBetterActivity.class,
+                BigImgActivity.class
         };
 
         for (int i = textArr.length - 1; i >= 0; i--) {

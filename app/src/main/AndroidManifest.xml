@@ -159,8 +159,10 @@
         //meta-data end
 
         //android原生多渠道打包的meta-data
-        <meta-data android:name="PRODUCT"
-            android:value="${CHANNEL_VALUE}"/>
+        <meta-data
+            android:name="PRODUCT"
+            android:value="${CHANNEL_VALUE}" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.ljy.ljyutils.fileProvider"
@@ -424,7 +426,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LayoutBetterActivity"></activity>
+        <activity android:name=".activity.LayoutBetterActivity" />
+        <activity android:name=".activity.BigImgActivity"></activity>
     </application>
 
 </manifest>

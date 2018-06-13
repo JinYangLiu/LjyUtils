@@ -17,7 +17,6 @@ apply from: 'multiple-channel.gradle'
 //多渠道打包命令：gradle assembleReleaseChannels
 
 
-
 android {
 //    compileSdkVersion 'android-P'
 //    compileSdkVersion 28
@@ -42,9 +41,9 @@ android {
 //        Alternatively, set android.defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true to continue with previous behavior.  Note that this option is deprecated and will be removed in the future.
 //                See https://developer.android.com/r/tools/annotation-processor-error-message.html for more details.
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
-        resValue("string","app_name","LjyDemo")
+        resValue("string", "app_name", "LjyDemo")
         //resValue还可以这样
-        resValue("string","build_time",buildTime())
+        resValue("string", "build_time", buildTime())
         //java类中调用上面创建的resValue
         //L.d(tag,getString(R.string.build_time));
     }
@@ -110,7 +109,7 @@ android {
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //下面一行，可以增加变量到R文件中，但R中不能有相同key的变量，此处用来为不同的buildType设置不同的appName
-            resValue("string","app_name","LjyDemoR")
+            resValue("string", "app_name", "LjyDemoR")
         }
         debug {
             buildConfigField("boolean", "isDebug", "true")
@@ -118,13 +117,13 @@ android {
             debuggable true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue("string","app_name","LjyDemoD")
+            resValue("string", "app_name", "LjyDemoD")
         }
 
         //自定义构建类型还可以继承已有的构建类型
         ljy.initWith(buildTypes.debug)
         //自定义构建类型
-        ljy{
+        ljy {
             applicationIdSuffix ".jinyang"//可以给应用的包名添加后缀，以区分不同的构建类型
             //MyApplication中打印的进程名果然添加来后缀com.ljy.ljyutils.jinyang
         }
@@ -196,37 +195,37 @@ android {
 //        }
 //    }
     //方式2：
-    productFlavors{
-        baidu{}
-        tencent{}
+    productFlavors {
+        baidu {}
+        tencent {}
     }
-    productFlavors.all{ flavor->
-        flavor.manifestPlaceholders=[CHANNEL_VALUE:name,APP_NAME:"@string/app_name"]
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [CHANNEL_VALUE: name, APP_NAME: "@string/app_name"]
     }
 
     //打包的apk命名规则默认为app-渠道名-buildType.apk,保存路径为app/build/outputs/apk
     //下面对release版apk的命名和存放位置进行自定义
-    applicationVariants.all{variant ->
+    applicationVariants.all { variant ->
         //gradle升级到4.x后，outputFile变成类只读属性,可以用 variant.outputs.all 代替
-        variant.outputs.each{ output ->
-            if(output.outputFile!=null&&
-                    output.outputFile.name.endsWith('.apk')&&
-                    'release'.equals(variant.buildType.name)){
+        variant.outputs.each { output ->
+            if (output.outputFile != null &&
+                    output.outputFile.name.endsWith('.apk') &&
+                    'release'.equals(variant.buildType.name)) {
                 //修改保存的路径和文件名
-                def apkFile=new File(output.outputFile.getParent()+"/release",
+                def apkFile = new File(output.outputFile.getParent() + "/release",
                         "ljyUtils_${variant.flavorName}_v${variant.versionName}.apk")
-                output.outputFile=apkFile
+                output.outputFile = apkFile
             }
         }
 //        variant.outputs.all {
 //            outputFileName = "ljyUtils_${variant.flavorName}_v${variant.versionName}.apk"
 //        }
-        tasks.all{
-            if(it.name.startsWith("assemble")){
+        tasks.all {
+            if (it.name.startsWith("assemble")) {
                 //复制到指定路径,并重命名
                 it.doLast {
                     copy {
-                        from variant.outputs.outputFile+"/release"
+                        from variant.outputs.outputFile + "/release"
                         into "./build/apkRelease"
                         rename { String fileName ->
                             fileName.replace("ljyUtils", "LJYUtil")
@@ -237,7 +236,8 @@ android {
         }
     }
 }
-def buildTime(){
+
+def buildTime() {
     return new Date().format("yyyy-MM-dd HH:mm:ss")
 }
 
