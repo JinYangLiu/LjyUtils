@@ -1,4 +1,4 @@
-package com.ljy.javacode;
+package com.ljy.javacode.util;
 
 import java.util.Arrays;
 
