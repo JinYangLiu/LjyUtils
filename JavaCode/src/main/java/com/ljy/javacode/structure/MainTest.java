@@ -724,10 +724,8 @@ public class MainTest {
     private static void testStack() {
         ArrayStack<String> stacker = new ArrayStack<>(10);
         for (int i = 100; i < 120; i++) {
-            if (!stacker.isFull()) {
-                stacker.push("" + i);
-                stacker.display();
-            }
+            stacker.push("" + i);
+            stacker.display();
         }
         System.out.println("peek:" + stacker.peek());
         System.out.println("peek:" + stacker.peek());
@@ -745,8 +743,7 @@ public class MainTest {
             String param = sc.next();
             char[] chars = param.toCharArray();
             for (char aChar : chars) {
-                if (!stacker.isFull())
-                    stacker.push(aChar + "");
+                stacker.push(aChar + "");
             }
             System.out.print("逆序后的字符串：");
             while (!stacker.isEmpty()) {
