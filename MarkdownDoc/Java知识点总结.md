@@ -59,5 +59,52 @@
           }  
       }  
     }  
+    
+### java的二进制兼容性：
+- 定义：一个类改变时，新版的类是否可以直接替换原来的类，却不至于损坏其他由不同厂商，作者开发的依赖于该类的组件
+- 优势：
+    1. java将二进制兼容性的粒度从整个库（如unix的.so库文件，windows的.dll库文件），细化到了单个的类（.class）
+    2. java的二进制兼容性不需要有意识的去规划，而是一种与生具来的天性（.java-->.class）
+    3. 传统的共享对象只针对函数名称，而java二进制兼容性考虑到类重载，函数签名（方法名+形参类型列表），返回值类型；
+    4. java提供了更晚上的错误控制机制，版本不兼容会触发异常，但可以方便但捕获和处理
+- 关键：延迟绑定（Late Binding），指java直到运行时才检查类，域，方法的名称，
+    这意味着只要域，方法的名称（及类型）一样，类的主题可以任意替换（其实还与public，private，static，abstract等修饰符有关）
+- 方法的兼容性：要注意重写对父类方法的覆盖；
+（java用一种称为"虚拟方法调度"的技术判断要调用的方法体，它依据被调用的方法所在的实际实例来决定要使用的方法体，可以看作一种扩展的延迟绑定策略）        
+- 域的兼容性：域不能覆盖    
+````
+    private static void testBinaryCompatibility() {
+        class Language {
+            String greeting = "你好";
+            void perform() {
+                System.out.println("白日依山尽");
+            }
+        }
+
+        class French extends Language {
+            String greeting = "Bon jour";
+            void perform() {
+                System.out.println("To be or not to be.");
+            }
+        }
+
+        French french=new French();
+        Language language=french;
+        french.perform();
+        language.perform();//调用实际实例的方法体
+        System.out.println(french.greeting);
+        System.out.println(language.greeting);//依赖于实例的类型
+
+    }
+    
+    //输出结果如下：
+    请输入要执行的方法名：testBinaryCompatibility
+    To be or not to be.
+    To be or not to be.
+    Bon jour
+    你好
+
+````
+    
        
     
