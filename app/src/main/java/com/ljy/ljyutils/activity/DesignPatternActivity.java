@@ -354,6 +354,9 @@ public class DesignPatternActivity extends BaseActivity {
         }.start();
     }
 
+
+
+
     public interface Ticket {
         //展示车票信息的函数
         void showTicketInfo(String bunk);
@@ -522,7 +525,6 @@ public class DesignPatternActivity extends BaseActivity {
      * android源码中的应用:View和ViewGroup
      */
     private void methodCompositePattern() {
-        //以电脑中的文件和文件夹为例
         //创建一个目录对象表示根目录
         Dir diskD = new Folder("D");
         //D下创建一个文件
@@ -649,6 +651,9 @@ public class DesignPatternActivity extends BaseActivity {
      * 定义: 包装了一系列对象相互作用的方式,使得这些对象不必相互明显作用,从而实现松耦合.
      * 当某些对象之间的作用发生改变时,不会影响其他对象,保证独立变化.
      * 将多对多的相互作用转化为一对多的相互作用,由复杂的网状结构变为以中介者为中心的星型结构
+     * Android源码中：
+     * 1。锁屏的 KeyguardViewMediator 是整个待机解/锁屏业务的调度器，负责调度锁屏界面的相关动作及查询解锁屏状态
+     * 2。Binder
      */
     private void methodMediatorPattern() {
         //以电脑播放CD为例
@@ -821,44 +826,38 @@ public class DesignPatternActivity extends BaseActivity {
         //以员工绩效评定为例
         //1.构建报表
         BusinessReport report = new BusinessReport();
-        LjyLogUtil.i("给CEO看的报表:");
-        report.showReport(new CEOVisitor());
+        LjyLogUtil.i("给CHO看的报表:");
+        report.showReport(new CHOVisitor());
         LjyLogUtil.i("给CTO看的报表");
         report.showReport(new CTOVisitor());
     }
 
 
     public interface Visitor {
-        //访问工程师类型
-        void visit(Engineer engineer);
-
-        //访问经理类型
-        void visit(Manage leader);
+        //访问职员的方法
+        void visit(Staff staff);
     }
 
-    class CEOVisitor implements Visitor {
+    //人事主管类
+    class CHOVisitor implements Visitor {
 
         @Override
-        public void visit(Engineer engineer) {
-            LjyLogUtil.i("工程师: " + engineer.name + ", KPI: " + engineer.kpi);
-        }
-
-        @Override
-        public void visit(Manage leader) {
-            LjyLogUtil.i("产品: " + leader.name + ", KPI: " + leader.kpi);
+        public void visit(Staff staff) {
+            LjyLogUtil.i("职员: " + staff.name + ", KPI: " + staff.kpi);
         }
     }
 
+    //技术主管类
     class CTOVisitor implements Visitor {
 
         @Override
-        public void visit(Engineer engineer) {
-            LjyLogUtil.i("工程师: " + engineer.name + ", 代码数量: " + engineer.getCodeLines());
-        }
-
-        @Override
-        public void visit(Manage leader) {
-            LjyLogUtil.i("产品: " + leader.name + ", 产品数量: " + leader.getProducts());
+        public void visit(Staff staff) {
+            if (staff instanceof Engineer)
+                LjyLogUtil.i("工程师: " + staff.name + ", 代码数量: " + ((Engineer) staff).getCodeLines());
+            else if (staff instanceof Manage)
+                LjyLogUtil.i("产品: " + staff.name + ", 产品数量: " + ((Manage) staff).getProducts());
+            else
+                LjyLogUtil.i("职员: " + staff.name + ", 这人不属于我的考核范围哦");
         }
     }
 
@@ -872,6 +871,7 @@ public class DesignPatternActivity extends BaseActivity {
             this.kpi = new Random().nextInt(10);
         }
 
+        //接受访问者的方法
         public abstract void accept(Visitor visitor);
     }
 
@@ -1327,7 +1327,7 @@ public class DesignPatternActivity extends BaseActivity {
         }
     }
 
-    //接收者角色,CS游戏
+    //接收者角色,贪吃蛇游戏
     class Snake extends Game {
         //游戏方法的具体实现
         @Override
@@ -1462,6 +1462,7 @@ public class DesignPatternActivity extends BaseActivity {
 
     /**
      * 解释器模式 (化繁为简的翻译机)
+     * 通过定义一个表达式接口,解释一个特定的上下文.
      * 本质:将复杂的问题简单化,模块化,分离实现,解释执行
      * 使用场景:
      * 1.如果某个简单的语言需要解释执行而且可以将该语言中的语句表示为一个抽象的语法树时
@@ -1705,7 +1706,7 @@ public class DesignPatternActivity extends BaseActivity {
         }
     }
 
-    //主管
+    //老板
     class Boss extends Leader {
 
         @Override
@@ -2170,12 +2171,13 @@ public class DesignPatternActivity extends BaseActivity {
      */
     private void methodFacadePattern() {
         SmartControl smartControl = new SmartControl();
+        smartControl.airOn();
+        smartControl.airOff();
+        smartControl.tvOn();
+        smartControl.tvOff();
         smartControl.allOn();
         smartControl.allOff();
 
-        startActivity(null);
-        mContext.sendBroadcast(null);
-        mContext.bindService(null, null, 0);
     }
 
     //以智能家居,统一管理家电为例
@@ -2630,7 +2632,7 @@ public class DesignPatternActivity extends BaseActivity {
         Phone phone = new Phone();
         phone.setVoltAdapter(new Volt220To5Adapter());
         //2.对象的适配器模式
-        phone.setVoltAdapter(new Volt5Adapter(new Volt220()) {
+        phone.setVoltAdapter(new Volt5Adapter(new VoltChina()) {
             @Override
             public int getVolt() {
                 return getVoltage() / 44 + 1;
@@ -2650,9 +2652,15 @@ public class DesignPatternActivity extends BaseActivity {
         public abstract int getVoltage();
     }
 
-    class Volt220 extends Volt {
+    class VoltChina extends Volt {
         public int getVoltage() {
             return 220;
+        }
+    }
+
+    class VoltAmerican extends Volt {
+        public int getVoltage() {
+            return 110;
         }
     }
 
@@ -2661,7 +2669,7 @@ public class DesignPatternActivity extends BaseActivity {
     }
 
     //1.类的适配器模式:
-    class Volt220To5Adapter extends Volt220 implements VoltAdapter {
+    class Volt220To5Adapter extends VoltChina implements VoltAdapter {
 
         @Override
         public int getVolt() {
@@ -3147,9 +3155,11 @@ public class DesignPatternActivity extends BaseActivity {
 
     //饿汉式
     public static class A {
-        private static A a = new A();
+        private static final A a = new A();
 
         private A() {
+            if (a != null)
+                throw new AssertionError();
         }
 
         public static A getInstance() {
