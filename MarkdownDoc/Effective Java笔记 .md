@@ -462,30 +462,30 @@
 25. 列表优先于数组
     - 两个不同点
         1. 数组是协变的：如果Sub是Super的子类，那么数组Sub[]也是Super[]的子类；
-        而泛型则是不可变的List<Sub>和List<Super>不存在父子关系；
-        正因如此，数组在这一点上是存在缺陷的,请看下面例子：
-        ````
-        //编译期合法的：
-        //fails at runtime(运行时报错：ArrayStoreException)
-        Object[] objArr=new Long[10];
-        objArr[0]="Hello";
-
-        //编译期不合法：
-        //won't compile（不能编译通过:Incompatible types,required...,find...）
-        List<Object> objList=new ArrayList<Long>();
-        objList.add("World");
-        ````
+            而泛型则是不可变的List<Sub>和List<Super>不存在父子关系；
+            正因如此，数组在这一点上是存在缺陷的,请看下面例子：
+            ````
+            //编译期合法的：
+            //fails at runtime(运行时报错：ArrayStoreException)
+            Object[] objArr=new Long[10];
+            objArr[0]="Hello";
+    
+            //编译期不合法：
+            //won't compile（不能编译通过:Incompatible types,required...,find...）
+            List<Object> objList=new ArrayList<Long>();
+            objList.add("World");
+            ````
         2. 数组是具体化的，在运行时才知道并检查它们的元素类型约束；
-        而java中的泛型只存在于编译期，以强化类型信息，在运行时丢弃（擦除）其元素类型信息，.class中是没有泛型的；
-        （擦除就是使泛型可以与没有使用泛型的代码随意进行互用，也是为了兼容泛型出现前的代码）
-        ````
-        List<String> l1 = new ArrayList<String>();
-        List<Integer> l2 = new ArrayList<Integer>();
-        
-        System.out.println(l1.getClass() == l2.getClass());
-        
-        //输出结果为true
-        ````
+            而java中的泛型只存在于编译期，以强化类型信息，在运行时丢弃（擦除）其元素类型信息，.class中是没有泛型的；
+            （擦除就是使泛型可以与没有使用泛型的代码随意进行互用，也是为了兼容泛型出现前的代码）
+            ````
+            List<String> l1 = new ArrayList<String>();
+            List<Integer> l2 = new ArrayList<Integer>();
+            
+            System.out.println(l1.getClass() == l2.getClass());
+            
+            //输出结果为true
+            ````
     - 综上原因，创建泛型数组 new List<E>[],参数化类型数组 new List<String>[],类型参数数组new E[]，这些都是非法的
 
 26. 优先考虑泛型
@@ -509,7 +509,7 @@
 
 27. 优先考虑泛型方法
     - 如同类泛型化一样，泛型方法也具有类型检查的优势，无需明确指定类型参数的值，
-    更加安全，也便于使用，尤其是静态工具方法，非常适合泛型化
+        更加安全，也便于使用，尤其是静态工具方法，非常适合泛型化
         ````
         public static Set union1(Set s1,Set s2){
             Set result=new HashSet(s1);//警告：unchecked call...
@@ -529,122 +529,488 @@
     
 28. 利用有限制通配符来提升API的灵活性
     - 我们知道参数化类型是不可变的，如List<String>与List<Object>不存在父子关系（A is B 的关系），
-    其所带来的优势就是类型安全，可以解决25.1中的问题，然而有些时候却不够灵活，
-    例如下面代码中的pushAll_1()和popAll_1()使用时的问题
-    ````
-     //栈的实现类
-     class Stack<T> {
-        private T[] arr;
-        private int top = -1;
-
-        @SuppressWarnings("unchecked")
-        public Stack() {
-            arr = (T[]) new Object[10];
-        }
-
-        public T pop() {
-            T result = arr[top--];
-            return result;
-        }
-
-        //泛型不可变
-        public void pushAll_1(Collection<T> list) {
-            for (T item : list) {
-                arr[++top] = item;
+        其所带来的优势就是类型安全，可以解决25.1中的问题，然而有些时候却不够灵活，
+        例如下面代码中的pushAll_1()和popAll_1()使用时的问题
+        ````
+         //栈的实现类
+         class Stack<T> {
+            private T[] arr;
+            private int top = -1;
+    
+            @SuppressWarnings("unchecked")
+            public Stack() {
+                arr = (T[]) new Object[10];
             }
-        }
-
-        //有限制的通配符类型(上限)
-        public void pushAll_2(Collection<? extends T> list) {
-            for (T item : list) {
-                arr[++top] = item;
+    
+            public T pop() {
+                T result = arr[top--];
+                return result;
             }
-        }
-
-        //泛型不可变
-        public void popAll_1(Collection<T> dst){
-            while (top >=0){
-                dst.add(pop());
+    
+            //泛型不可变
+            public void pushAll_1(Collection<T> list) {
+                for (T item : list) {
+                    arr[++top] = item;
+                }
             }
+    
+            //有限制的通配符类型(上限)
+            public void pushAll_2(Collection<? extends T> list) {
+                for (T item : list) {
+                    arr[++top] = item;
+                }
+            }
+    
+            //泛型不可变
+            public void popAll_1(Collection<T> dst){
+                while (top >=0){
+                    dst.add(pop());
+                }
+            }
+            
+            //下限
+            public void popAll_2(Collection<? super T> dst){
+                while (top >=0){
+                    dst.add(pop());
+                }
+            }
+    
+            public void display() {
+                System.out.println("Stack-->" + Arrays.asList(arr).toString());
+            }
+         }
+    
+        //调用
+        Stack<Number> numberStack = new Stack<>();
+        List<Integer> stringList = Arrays.asList(new Integer[]{11,12,13});
+        // objectStack.pushAll_1(stringList);//报错
+        numberStack.pushAll_2(stringList);
+        numberStack.display();
+        List<Object> dst=new ArrayList<>();
+        // numberStack.popAll_1(dst);//报错
+        numberStack.popAll_2(dst);
+        System.out.println("dst-->" +dst.toString());
+    
+        ````
+    - 类型参数和通配符选择哪个？请看下面代码：
+        ````
+        //无限制的通配符，在公共API中这种写法更好，因为简单
+        //一般来说如果类型参数只在方法声明中出现一次，就可以用通配符取代它
+        public static void swap(List<?> list, int i, int j) {
+            // list.set(i,list.set(j,list.get(i)));//编译时报错，不能将任何null之外的值放到List<?>中
+            swapHelper(list, i, j);
         }
         
-        //下限
-        public void popAll_2(Collection<? super T> dst){
-            while (top >=0){
-                dst.add(pop());
-            }
-        }
-
-        public void display() {
-            System.out.println("Stack-->" + Arrays.asList(arr).toString());
-        }
-     }
-
-    //调用
-    Stack<Number> numberStack = new Stack<>();
-    List<Integer> stringList = Arrays.asList(new Integer[]{11,12,13});
-    // objectStack.pushAll_1(stringList);//报错
-    numberStack.pushAll_2(stringList);
-    numberStack.display();
-    List<Object> dst=new ArrayList<>();
-    // numberStack.popAll_1(dst);//报错
-    numberStack.popAll_2(dst);
-    System.out.println("dst-->" +dst.toString());
-
-    ````
-    - 类型参数和通配符选择哪个？请看下面代码：
-    ````
-    //无限制的通配符，在公共API中这种写法更好，因为简单
-    //一般来说如果类型参数只在方法声明中出现一次，就可以用通配符取代它
-    public static void swap(List<?> list, int i, int j) {
-        // list.set(i,list.set(j,list.get(i)));//编译时报错，不能将任何null之外的值放到List<?>中
-        swapHelper(list, i, j);
-    }
-    
-    //无限制的类型参数,使用泛型方法作为私有辅助方法
-    private static <E> void swapHelper(List<E> list, int i, int j) {
-        list.set(i,list.set(j,list.get(i)));
-    }    
-    ````
+        //无限制的类型参数,使用泛型方法作为私有辅助方法
+        private static <E> void swapHelper(List<E> list, int i, int j) {
+            list.set(i,list.set(j,list.get(i)));
+        }    
+        ````
     
 29. 优先考虑类型安全的异构容器    
     - 泛型的常见用法是这样List<T>,Map<K,V>,ThreadLocal<T>,充当被参数化了的容器，
-    但这限制了每个容器只能有固定数目的类型参数，如：List只有一个类型参数T代表其元素类型；
+        但这限制了每个容器只能有固定数目的类型参数，如：List只有一个类型参数T代表其元素类型；
     - 一种解决方案：将键(key)进行参数化而不是将容器参数化，然后将参数化的键提交给容器来插入或者获取值，
-    用泛型系统来确保值的类型与它的键相符，就行下面代码这样：
-    ````
-    //Favorites是类型安全的，同时也是异构的（所有键都是不同类型的）
-    //将其称作：类型安全的异构容器
-    public static class Favorites{
-        private Map<Class<?> ,Object> favorites=new HashMap<>();
-
-        public <T> void put(Class<T> type,T instance){
-            if (type==null)
-                throw new NullPointerException("type is null");
-            favorites.put(type,instance);
+        用泛型系统来确保值的类型与它的键相符，就行下面代码这样：
+        ````
+        //Favorites是类型安全的，同时也是异构的（所有键都是不同类型的）
+        //将其称作：类型安全的异构容器
+        public static class Favorites{
+            private Map<Class<?> ,Object> favorites=new HashMap<>();
+    
+            public <T> void put(Class<T> type,T instance){
+                if (type==null)
+                    throw new NullPointerException("type is null");
+                favorites.put(type,instance);
+            }
+    
+            public <T> T get(Class<T> type){
+                return type.cast(favorites.get(type));
+            }
         }
-
-        public <T> T get(Class<T> type){
-            return type.cast(favorites.get(type));
-        }
-    }
+        
+        //使用
+        Favorites f=new Favorites();
+        
+        f.put(String.class,"java");
+        f.put(Integer.class,0x16);//按16进制存
+        f.put(Class.class,Favorites.class);
+        
+        String fStr=f.get(String.class);
+        int fInt=f.get(Integer.class);//按10进制取
+        Class<?> fFavor=f.get(Class.class);
+        System.out.printf("%s %x %s%n",fStr,fInt,fFavor.getName());
     
-    //使用
-    Favorites f=new Favorites();
-    
-    f.put(String.class,"java");
-    f.put(Integer.class,0x16);//按16进制存
-    f.put(Class.class,Favorites.class);
-    
-    String fStr=f.get(String.class);
-    int fInt=f.get(Integer.class);//按10进制取
-    Class<?> fFavor=f.get(Class.class);
-    System.out.printf("%s %x %s%n",fStr,fInt,fFavor.getName());
-
-    ````
-    
+        ````
+        
 ### 枚举和注解
 
-30. 用enum代替int常量    
+30. 用enum代替int常量  
+    - int枚举：
+        - 引入枚举前，一般是声明一组具名的int常量，每个常量代表一个类型成员，这种方法叫做int枚举模式  
+        - int枚举模式是类型不安全的，例如下面两组常量：性别和动物种类，二者不存在任何关系，
+            然而却可以将ANIMAL_DOG传入一个需要性别参数的方法中，编译器不会出现警告，而且方法内部逻辑还会继续执行比较等操作，
+            ````
+            public static final int SEX_WOMAN=0;//女
+            public static final int SEX_MAN=1;//男
+            
+            public static final int ANIMAL_CAT=10;//猫
+            public static final int ANIMAL_DOG=11;//狗
+            ````
+        - 采用int枚举模式的程序是十分脆弱的，因为int枚举是编译时常量，被编译到使用它们的客户端中，如果与枚举常量关联的
+            int值发生变化客户端就必须重新编译，然而不重新编译却不会报错，但是会导致程序的结果不准确，
+            例如上面的常量SEX_MAN被客户端使用，于是将其值1编译到客户端的.class中，然后如果API类中将SEX_MAN的值改为2，
+            却不重新编译客户端，那么客户端得到的结果就是不准确的了
+        - int枚举常量很难被翻译成可打印的字符串，不利于开发调试
+        - 开发过程中还可能遇到这种模式的变体，如String枚举模式，同样是存在上述问题
+        
+    - 枚举类型：
     
+        - 由一组固定的常量组成的合法值的类型，例如
+            ````
+             public enum Sex {MAN, WOMAN}
+            
+             public enum Animal {CAT, DOG}
+            ````
+        
+        - 实现思路：通过公有静态的final域为每个枚举常量导出实例的类
+        
+        - 枚举类型是类型安全的枚举模式，而且完善类int枚举模式的不足
+        
+        - 枚举类型还允许添加任意的方法和域，并实现任意的接口，它提供类所以Object方法的高级实现，
+        实现了Comparable和Serializable接口，并针对枚举类型的可任意改变性设计了序列化方式
+            ````
+            public enum Animal {
+                CAT("喵喵喵", 4),
+                DOG("汪汪汪", 4);
+        
+                private final String info;
+                private final int foots;//几条腿
+        
+                Animal(String info, int foots) {
+                    this.info = info;
+                    this.foots = foots;
+                }
+        
+                public String getInfo() {
+                    return info;
+                }
+        
+                public int getFoots() {
+                    return foots;
+                }
+            }
+            
+            //使用枚举的方法
+            private static void testEnum(Sex sex, Animal animal) {
+                System.out.println(sex.toString());
+                System.out.println(animal.toString());
+                int foots = animal.getFoots();
+                String info = animal.getInfo();
+                int result = animal.compareTo(Animal.CAT);
+            }
+            //调用方法
+            testEnum(Sex.MAN, Animal.DOG);
+            ````
+            
+        - 特定于常量的方法实现：在枚举类型中声明一个抽象方法，并在特定于常量的类主体中，
+        用具体的方法覆盖每个常量的抽象方法。例如下面这样定义一个代表加减乘除等运算符的枚举    
+            ````
+            //普通写法，这样写逻辑上没有问题，但不太好看，而且若新增枚举常量，而忘记在apply方法的switch中添加相应的条件，
+            //编译不会有问题，但运行时如果用到新增的枚举常量就会失败
+            public enum Operation {
+                PLUS, MINUS, TIMES, DIVIDE;
+        
+                double apply(double x, double y){
+                    switch (this){
+                        case PLUS: return x+y;
+                        case MINUS:return x-y;
+                        case TIMES:return x*y;
+                        case DIVIDE:return x/y;
+                    }
+                    throw new AssertionError("Unknown operation: "+this);
+                }
+            }
+            
+            //特定于常量的方法实现
+            public enum Operation {
+            
+                PLUS ("+") { double apply(double x, double y) { return x + y; }},
+                MINUS ("-") { double apply(double x, double y) { return x - y; }},
+                TIMES ("*") { double apply(double x, double y) { return x * y; }},
+                DIVIDE ("/") { double apply(double x, double y) { return x / y; }};
+                
+                private final String symbol;//特定于常量的数据
+        
+                Operation(String symbol) {
+                    this.symbol = symbol;
+                }
+        
+                abstract double apply(double x, double y);
+                
+                //重写toString
+                @Override public String toString(){ return symbol;}
+            }
+            ````        
+        
+        - 策略枚举：多个枚举常量同时共享相同的行为时，考虑使用策略枚举，例如下面这样：
+            ````
+            public enum PayrollDay {
+                MONDAY(PayType.WEEKDAY),
+                TUESDAY(PayType.WEEKDAY),
+                WEDNESDAY(PayType.WEEKDAY),
+                THURSDAY(PayType.WEEKDAY),
+                FRIDAY(PayType.WEEKDAY),
+                SATURDAY(PayType.WEEKEND),
+                SUNDAY(PayType.WEEKEND);
+                private final PayType payType;
+        
+                PayrollDay(PayType payType) {
+                    this.payType = payType;
+                }
+        
+                private enum PayType {
+                    WEEKDAY {
+                        @Override
+                        double overtimeDay(double hrs, double payRate) {
+                            return hrs <= HOURS_PER_SHIFT ? 0 : (hrs - HOURS_PER_SHIFT) * payRate / 2;
+                        }
+                    },
+                    WEEKEND {
+                        @Override
+                        double overtimeDay(double hrs, double payRate) {
+                            return hrs * payRate / 2;
+                        }
+                    };
+        
+                    private static final int HOURS_PER_SHIFT = 8;
+        
+                    abstract double overtimeDay(double hrs, double payRate);
+        
+                    double pay(double hoursWorked, double payRate) {
+                        double basePay = hoursWorked * payRate;
+                        return basePay + overtimeDay(hoursWorked, payRate);
+                    }
+                }
+            }
+            ````
     
+31. 用实例域代替序数
+
+    - 序数：枚举天生就与一个单独的int值相关联，所有枚举都有一个ordinal()方法，返回每个枚举常量在类型中的数字位置（类似于数组索引）    
+    - 永远不要根据枚举的序数导出与他相关联的值，而是将它保存在一个实例域中
+    （Enum规范中关于ordinal()写到："大多数程序员都不需要这个方法，它是设计成用于像EnumSet，EnumMap这种基于枚举的通用数据结构的）
+        ````
+        public enum Ensemble{
+            SOLO(1),DUET(2),TRIQ(3),QUARTET(4),QUINTET(5);
+
+            private final int numberOfMusicians;
+            Ensemble(int size){
+                this.numberOfMusicians = size;
+            }
+            public int numberOfMusicians(){
+                // return ordinal()+1;
+                return numberOfMusicians;
+            }
+        }
+        ````
+32. 用EnumSet代替位域
+    - 位域：可以用or（|）位运算将几个常量合并到一个集合中,例如下面代码这样：
+        ````
+        public class Text_1 {
+            //int枚举常量
+            public static final int STYLE_BOLD = 1 << 0;//1,粗体
+            public static final int STYLE_ITALIC = 1 << 1;//2,斜体
+            public static final int STYLE_UNDERLINE = 1 << 2;//4,下划线
+            public static final int STYLE_STRIKETHROUGH = 1 << 3;//8,删除线
+    
+            // parameter is bitwise OR of zero or more STYLE_ constants
+            public void applyStyles(int styles) {
+                //...do something
+            }
+        }
+        
+        //使用
+        Text_1 text_1=new Text_1();
+        //通过位域可以同时传递多个style
+        text_1.applyStyles(Text_1.STYLE_BOLD | Text_1.STYLE_ITALIC);
+        ````
+    - 位域的不足：具有int枚举的所有缺点
+    - 替代方案--EnumSet：
+        从单个枚举类型中提取多个值，每个EnumSet内容都表示为位矢量，
+        如果底层的枚举类型有64或更少的元素（大多如此），整个EnumSet就是用单个long来表示，
+        因此，它的性能比得上位域的性能
+        ````
+        public class Text_2 {
+            //枚举类型
+            public enum Style {BOLD, ITALIC, UNDERLINE, STRIKETHROUGH}
+    
+            //类型安全的
+            public void applyStyles(Set<Style> styles){
+                //do something
+            } 
+        }
+        
+        //使用
+        Text_2 text_2 = new Text_2();
+        text_2.applyStyles(EnumSet.of(Style.BOLD, Style.ITALIC));
+        ````        
+
+33. 用EnumMap代替序数索引
+    - 使用序数索引ordinal的场景：
+        ````
+        //花
+        public static class Flower {
+            //按花季分类：春夏秋冬
+            public enum Type {
+                SPRING, SUMMER, AUTUMN, WINTER
+            }
+    
+            private final String name;//花名
+            private final Type type;//花季
+    
+            public Flower(String name, Type type) {
+                this.name = name;
+                this.type = type;
+            }
+    
+            @Override
+            public String toString() {
+                return name;
+            }
+        }
+        
+        //对花园中的花进行分类
+        //花园
+        Flower[] garden = {
+                new Flower("兰", Flower.Type.SPRING),
+                new Flower("竹", Flower.Type.SUMMER),
+                new Flower("菊", Flower.Type.AUTUMN),
+                new Flower("梅", Flower.Type.WINTER),
+                new Flower("桃", Flower.Type.SPRING),
+                new Flower("杏", Flower.Type.SUMMER),
+                new Flower("梨", Flower.Type.AUTUMN),
+        };
+    
+        //init set数组
+        Set<Flower>[] flowersByType = (Set<Flower>[]) new Set[Flower.Type.values().length];
+    
+        for (int i = 0; i < flowersByType.length; i++)
+            flowersByType[i] = new HashSet<>();
+    
+        //分类
+        for (Flower f : garden) 
+            flowersByType[f.type.ordinal()].add(f);
+    
+        //打印
+        for (int i = 0; i < flowersByType.length; i++) 
+            System.out.println(flowersByType[i]);
+    
+        //结果
+        [桃, 兰]
+        [杏, 竹]
+        [梨, 菊]
+        [梅]
+        ````
+    上面代码实现了对花园中对植物进行分类，然而存在许多问题，1.数组不能与泛型兼容，需要进行未受检对转换;
+    2.set数组并不知道每个索引set的set代表什么；3. 之前有提到不推荐使用ordinal
+    - 解决方案：EnumMap
+        ````
+         //EnumMap:
+        //init map
+        Map<Flower.Type,Set<Flower>> flowerByType=new EnumMap<>(Flower.Type.class);
+    
+        for (Flower.Type t :Flower.Type.values())
+            flowerByType.put(t,new HashSet<Flower>());
+        //分类
+        for (Flower f :garden)
+            flowerByType.get(f.type).add(f);
+    
+        //打印
+        System.out.println(flowerByType);
+        //结果
+        {SPRING=[桃, 兰], SUMMER=[杏, 竹], AUTUMN=[梨, 菊], WINTER=[梅]}
+        ````    
+        
+34. 用接口模拟可伸缩的枚举：
+    - 虽然无法编写可扩展的枚举类型，却可以通过编写接口以及实现该接口的基础枚举类型，对它进行模拟，这样允许客户端
+    编写自己的枚举来实现接口；如果API是根据接口编写的，那么在使用基础枚举类型的任何地方，也都可以使用这些枚举。
+    例如下面代码，还是用之前的算数运算符举例：
+    （但是这样还是有些不足，就是无法实现从一个枚举类型继承到另一个枚举类型，代码少的当然可以直接复制粘贴，
+    如果功能比较多则可以将他们封装在一个辅助类或静态辅助方法中，避免代码的复制工作）
+    ````
+    
+    //运算符接口
+    public interface Operation {
+        double apply(double x, double y);
+    }
+
+    //基础运算符：加减乘除
+    public enum BaseOperation implements Operation {
+        PLUS("+") {
+            public double apply(double x, double y) {
+                return x + y;
+            }
+        },
+        MINUS("-") {
+            public double apply(double x, double y) {
+                return x - y;
+            }
+        },
+        TIMES("*") {
+            public double apply(double x, double y) {
+                return x * y;
+            }
+        },
+        DIVIDE("/") {
+            public double apply(double x, double y) {
+                return x / y;
+            }
+        };
+
+        private final String symbol;//特定于常量的数据
+
+        BaseOperation(String symbol) {
+            this.symbol = symbol;
+        }
+
+
+        //重写toString
+        @Override
+        public String toString() {
+            return symbol;
+        }
+    }
+
+    //扩展的运算符：求幂求余
+    public enum ExtendOperation implements Operation {
+
+        EXP("^") {
+            @Override
+            public double apply(double x, double y) {
+                return Math.pow(x, y);
+            }
+        },
+        REMAINDER("%") {
+            @Override
+            public double apply(double x, double y) {
+                return x % y;
+            }
+        };
+
+        private final String symbol;//特定于常量的数据
+
+        ExtendOperation(String symbol) {
+            this.symbol = symbol;
+        }
+
+
+        //重写toString
+        @Override
+        public String toString() {
+            return symbol;
+        }
+    }
+    ````
+
+        
