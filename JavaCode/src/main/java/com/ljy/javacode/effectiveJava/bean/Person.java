@@ -18,8 +18,7 @@ import java.util.TimeZone;
  * Created by ljy on 2018/6/14.
  */
 
-public class Person implements Cloneable, Comparable<Person
-        > {
+public class Person implements Cloneable, Comparable<Person> {
     private String name;//姓名
     private String nickname;//昵称
     private int age;//年龄
@@ -310,7 +309,7 @@ public class Person implements Cloneable, Comparable<Person
         }
 
         public int addAll(String[] values) {
-            int count=0;
+            int count = 0;
             for (String val : values) {
                 if (add(val))
                     count++;
@@ -342,19 +341,19 @@ public class Person implements Cloneable, Comparable<Person
     }
 
     //使用复合/转发代替继承
-    class MyForwardList{
+    class MyForwardList {
 
         private MyList myList;
 
         private int size;
 
-        public void add(String value){
+        public void add(String value) {
             if (myList.add(value))
                 size++;
         }
 
-        public void addAll(String[] values){
-            size+=myList.addAll(values);
+        public void addAll(String[] values) {
+            size += myList.addAll(values);
         }
     }
 
