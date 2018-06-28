@@ -1,1 +1,1 @@
-include ':app', ':lib', ':push', ':processor', ':AndroidStub', ':demoplugin1', ':PluginCoreLib', ':JavaCode'
+include ':app', ':lib', ':push', ':processor', ':AndroidStub', ':demoplugin1', ':PluginCoreLib', ':JavaCode',':kefu-easeui'

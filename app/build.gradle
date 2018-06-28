@@ -46,6 +46,9 @@ android {
         resValue("string", "build_time", buildTime())
         //java类中调用上面创建的resValue
         //L.d(tag,getString(R.string.build_time));
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi"
+        }
     }
 
 //    fir {
@@ -113,7 +116,7 @@ android {
         }
         debug {
             buildConfigField("boolean", "isDebug", "true")
-            minifyEnabled true
+            minifyEnabled false
             debuggable true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -183,25 +186,25 @@ android {
     //命令行执行gradle assemble，就会打出所有渠道的所有构建类型的apk
     //也可以只打指定的构建类型的apk-->gradle assembleRelease/assembleDebug
     //方式1：
-//    productFlavors{
-//        ljyUtilsForBaidu{
-//            manifestPlaceholders=[CHANNEL_VALUE:"baidu",APP_NAME:"@string/app_name"]
-//        }
-//        ljyUtilsFor360{
-//            manifestPlaceholders=[CHANNEL_VALUE:"360",APP_NAME:"@string/app_name"]
-//        }
-//        ljyUtilsForTencent{
-//            manifestPlaceholders=[CHANNEL_VALUE:"tencent",APP_NAME:"@string/app_name"]
-//        }
-//    }
+    productFlavors{
+        ljyUtilsForBaidu{
+            manifestPlaceholders=[CHANNEL_VALUE:"baidu",APP_NAME:"@string/app_name"]
+        }
+        ljyUtilsFor360{
+            manifestPlaceholders=[CHANNEL_VALUE:"360",APP_NAME:"@string/app_name"]
+        }
+        ljyUtilsForTencent{
+            manifestPlaceholders=[CHANNEL_VALUE:"tencent",APP_NAME:"@string/app_name"]
+        }
+    }
     //方式2：
-    productFlavors {
-        baidu {}
-        tencent {}
-    }
-    productFlavors.all { flavor ->
-        flavor.manifestPlaceholders = [CHANNEL_VALUE: name, APP_NAME: "@string/app_name"]
-    }
+//    productFlavors {
+//        baidu {}
+//        tencent {}
+//    }
+//    productFlavors.all { flavor ->
+//        flavor.manifestPlaabiFilters ceholders = [CHANNEL_VALUE: name, APP_NAME: "@string/app_name"]
+//    }
 
     //打包的apk命名规则默认为app-渠道名-buildType.apk,保存路径为app/build/outputs/apk
     //下面对release版apk的命名和存放位置进行自定义
@@ -249,49 +252,72 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.1.0'
     compile rootProject.ext.dependencies.support_v7
+
     //butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     //dagger2
     compile 'com.google.dagger:dagger:2.13'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
+
     //greenDao
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'org.greenrobot:greendao-generator:3.2.0'
+
     //multidex，解决method ID not in [0, 0xffff]: 65536 这个问题
     compile 'com.android.support:multidex:1.0.1'
+
     //lottie
     compile 'com.airbnb.android:lottie:2.1.0'
 
     //+@aar可以关闭依赖传递，即值依赖该项目，而不依赖该项目所依赖的项目(只aar，jar不受影响)
-//    compile 'com.airbnb.android:lottie:2.1.0@aar'
+
+    //    compile 'com.airbnb.android:lottie:2.1.0@aar'
 
     //强制刷新远程库，避免远程库更新后，并蒂为刷新问题
-//    compile ('com.airbnb.android:lottie:2.1.0'){
-//        transitive=true
-//    }
+
+    //    compile ('com.airbnb.android:lottie:2.1.0'){
+
+    //        transitive=true
+
+    //    }
+
     //排除一个库中引用的某些库
-//    compile ('com.airbnb.android:lottie:2.1.0'){
-//        exclude module:'com.android.support:appcompat-v7:27.1.1'
-//        exclude module:'com.android.support:appcompat-v4:27.1.1'
-//    }
+
+    //    compile ('com.airbnb.android:lottie:2.1.0'){
+
+    //        exclude module:'com.android.support:appcompat-v7:27.1.1'
+
+    //        exclude module:'com.android.support:appcompat-v4:27.1.1'
+
+    //    }
+
     //依赖本地的aar（依赖aar可以省去对module的编译，使项目更整洁，隐藏内部实现，只是不易修改）
-//    compile name:"aaa",ext:'aar'
+
+    //    compile name:"aaa",ext:'aar'
 
     // 远程依赖集成方式（推荐）
     compile 'com.tencent.bugly:crashreport_upgrade:1.3.4'
+
     //walle
     compile 'com.meituan.android.walle:library:1.1.6'
     compile 'com.android.support:design:27.1.1'
+
     //AspectJ
     compile 'org.aspectj:aspectjrt:1.8.13'
+
     //友盟推送
     compile project(':push')
+
     //我的工具类lib
     compile project(':lib')
+
     //我的注解lib
     compile project(':processor')
+
     //recycleView的万能适配器
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     compile project(':PluginCoreLib')
+    compile project(':kefu-easeui')
 }

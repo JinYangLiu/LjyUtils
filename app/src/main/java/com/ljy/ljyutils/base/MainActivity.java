@@ -8,18 +8,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.ljy.adapter.LjyBaseAdapter;
 import com.ljy.adapter.LjyBaseFilterAdapter;
 import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.AnimatorActivity;
@@ -77,14 +72,13 @@ import com.ljy.ljyutils.activity.WebViewTestActivity;
 import com.ljy.ljyutils.activity.WindowActivity;
 import com.ljy.ljyutils.activity.XmlParserTestActivity;
 import com.ljy.ljyutils.bean.ProcessBean;
+import com.ljy.ljyutils.kefu.KeFuUtils;
 import com.ljy.ljyutils.service.TimerService;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyScreenUtils;
 import com.ljy.util.LjyToastUtil;
-import com.ljy.view.LjyRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -195,7 +189,7 @@ public class MainActivity extends BaseActivity {
                 "设计模式", "自定义View", "RxJava test", "AspectJ使用",
                 "注解与反射", "多进程通信", "RemoteViews", "Drawable",
                 "window", "测试CrashHandler", "插件化", "布局优化",
-                "加载大图"
+                "加载大图", "环信客服"
         };
 
         Class[] classArr = new Class[]{UseUtilsActivity.class, GlideUtilActivity.class, ViewSizeActivity.class,
@@ -212,7 +206,7 @@ public class MainActivity extends BaseActivity {
                 DesignPatternActivity.class, CustomViewActivity.class, RxJavaTestActivity.class, AspectJTestActivity.class,
                 AnnotationActivity.class, ProcessActivity.class, RemoteViewsActivity.class, DrawableActivity.class,
                 WindowActivity.class, CrashHandlerTestActivity.class, PluginActivity.class, LayoutBetterActivity.class,
-                BigImgActivity.class
+                BigImgActivity.class, null
         };
 
         for (int i = textArr.length - 1; i >= 0; i--) {
@@ -254,10 +248,16 @@ public class MainActivity extends BaseActivity {
                 holder.setOnClickListener(R.id.itemRoot, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (item.getTextInfo().equals("夜间模式")) {
-                            setNight();
-                        } else {
-                            startActivity(new Intent(mContext, item.getIntentClass()));
+                        switch (item.getTextInfo()) {
+                            case "夜间模式":
+                                setNight();
+                                break;
+                            case "环信客服":
+                                KeFuUtils.getInstance().methodKeFu(MainActivity.this);
+                            default:
+                                if (item.getIntentClass() != null)
+                                    startActivity(new Intent(mContext, item.getIntentClass()));
+                                break;
                         }
                     }
                 });

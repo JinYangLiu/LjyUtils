@@ -1,0 +1,15 @@
+<resources>
+    <string name="chat_row_satisfaction_content">请对我的服务做出评价</string>
+    <string name="chatrow_eval_btn_text">立即评价</string>
+    <string name="tag">TAG标签</string>
+    <string name="title_satifisfaction_eval">满意度评价</string>
+    <string name="nick_service">客服昵称</string>
+    <string name="tip_eval">请对我的服务做出评价</string>
+    <string name="hint_leave_message">留言</string>
+    <string name="tip_btn_sumbit">提交</string>
+    <string name="no_selected_tag_noti">最少选择一个标签！</string>
+    <string name="em_tip_wating">请稍等…</string>
+    <string name="comment_suc">评论成功</string>
+    <string name="em_tip_request_fail">请求失败</string>
+
+</resources>

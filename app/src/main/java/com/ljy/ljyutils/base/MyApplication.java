@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.ljy.crash.LjyCrashHandler;
 import com.ljy.ljyutils.BuildConfig;
+import com.ljy.ljyutils.kefu.KeFuUtils;
 import com.ljy.util.LjyDatabaseUtil;
 import com.ljy.util.LjyLogUtil;
 import com.ljy.util.LjyRetrofitUtil;
@@ -60,10 +61,15 @@ public class MyApplication extends Application {
         initBugly();
         initUmengPush();
         initDB();
+        initKeFu();
         //当前进程名称:
         LjyLogUtil.i("当前进程名称:"+ LjySystemUtil.getProcessName(getApplicationContext()));
         //crashHandler使用
         LjyCrashHandler.getInstance().init(this);
+    }
+
+    private void initKeFu() {
+        KeFuUtils.getInstance().init(this,MainActivity.class);
     }
 
     private void initDB() {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/title_back_btn_layout_width"
+    android:layout_height="match_parent"
+    android:background="@drawable/hd_common_tab_bg"
+    android:clickable="true"
+    android:onClick="back">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/icon_back_gray" />
+
+</RelativeLayout>
