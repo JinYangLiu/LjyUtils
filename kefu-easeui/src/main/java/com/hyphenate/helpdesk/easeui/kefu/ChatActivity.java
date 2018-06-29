@@ -65,7 +65,7 @@ public class ChatActivity extends BaseActivity {
     public void onBackPressed() {
         chatFragment.onBackPressed();
         if (CommonUtils.isSingleActivity(this)) {
-            Intent intent = new Intent(this, Constant.backHomeActivity);
+            Intent intent = new Intent(this, Constant.getInstance().getBackHomeActivity());
             startActivity(intent);
         }
         super.onBackPressed();

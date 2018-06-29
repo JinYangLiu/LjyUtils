@@ -25,6 +25,7 @@ import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.easeui.util.GlideUtils;
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder;
 import com.hyphenate.helpdesk.easeui.util.UserUtil;
+import com.ljy.ljyutils.activity.WebViewTestActivity;
 
 import org.json.JSONObject;
 
@@ -33,205 +34,13 @@ import java.util.List;
 
 /**
  * Created by Mr.LJY on 2016/11/29.
- *
+ * <p>
  * 对环信客服的配置和调用的类
  */
 
 public class KeFuUtils {
 
-
-
-    public  void methodKeFu(final Activity mActivity) {
-        login(mActivity, true);
-    }
-
-    private  void goChat(Activity mActivity) {
-        // 进入主页面
-        if (ChatClient.getInstance().isLoggedInBefore()) {
-            Intent intent = new IntentBuilder(mActivity)
-                    .setTargetClass(ChatActivity.class)
-                    .setVisitorInfo(Preferences.getInstance().createVisitorInfo(mActivity))
-                    .setServiceIMNumber(Preferences.getInstance().getCustomerAccount())
-                    .setScheduleQueue(Preferences.getInstance().createQueueIdentity(null))
-                    .setShowUserNick(false)
-                    .build();
-            mActivity.startActivity(intent);
-        } else {
-            Toast.makeText(mActivity, "登录失败，请稍候再试", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private  void login(final Activity mActivity, final boolean ifChat) {
-//        RetrofitUtils.getInstance().getToken(mActivity, new RetrofitUtils.CallBack() {
-//            @Override
-//            public void call(String token) {
-//                login(mActivity,callback,ifChat,token);
-//            }
-//        });
-
-        //此处信息应通过接口从自己公司的服务器获取
-        final String userName = "ljy123321";
-        final String passWord = "1234123";
-        final String realName = "JinYang";
-        final String phoneNum = "10086";
-        if (Preferences.getInstance().getUsername().equals(userName)) {
-            //登录:
-            Preferences.getInstance().setUsername(userName);
-            Preferences.getInstance().setRealname(realName);
-            Preferences.getInstance().setPhonenum(phoneNum);
-            initLogin(mActivity, userName, passWord, ifChat);
-        } else {
-            //注册:
-            //建议在服务端创建，而不要放到APP中，可以在登录自己APP时从返回的结果中获取环信账号再登录环信服务器
-            ChatClient.getInstance().register(userName, passWord, new Callback() {
-                @Override
-                public void onSuccess() {
-                    Preferences.getInstance().setUsername(userName);
-                    Preferences.getInstance().setRealname(realName);
-                    Preferences.getInstance().setPhonenum(phoneNum);
-                    initLogin(mActivity, userName, passWord, ifChat);
-                }
-
-                @Override
-                public void onError(int code, String error) {
-                    Log.i("ljy",code + "_客服系统注冊回调.失败:" + error);
-                    if (code==Error.USER_ALREADY_EXIST){
-                        Preferences.getInstance().setUsername(userName);
-                        Preferences.getInstance().setRealname(realName);
-                        Preferences.getInstance().setPhonenum(phoneNum);
-                        initLogin(mActivity, userName, passWord, ifChat);
-                    }
-
-                }
-
-                @Override
-                public void onProgress(int progress, String status) {
-
-                }
-            });
-        }
-
-    }
-//    private static void login(final Activity mActivity, final Callback callback, final boolean ifChat, String token) {
-//        Map<String, String> params = new HashMap<>();
-//        params.put("action", "HuanXin");
-//        params.put("cmd", "CreatAccount");
-//        params.put("token", token);
-//        params.put("pl", "2");
-//        SPUtil spUtil = new SPUtil(mActivity);
-//        params.put("uid", spUtil.getFromSp(SPUtil.USERID, ""));
-//        params.put("pwd", spUtil.getFromSp(SPUtil.USERPWD, ""));
-//        RetrofitUtils.getInstance().isPubUrl().getJsonObject( RetrofitUtils.pubDefaultMethod, params,
-//                new RetrofitUtils.SuccessCallBackT<ParserDataBase<Object>>() {
-//                    @Override
-//                    public void onSuccess(ParserDataBase<Object> parserData) {
-//                        if (parserData != null && parserData.getCode()==0) {
-//                            Gson gson = new Gson();
-//                            String bodyStr = gson.toJson(parserData.getBody());
-//                            ParserBodyKeFu parserBody = gson.fromJson(bodyStr,ParserBodyKeFu.class);
-//                            String userName = parserBody.getUserName();
-//                            String pwd = parserBody.getPwd();
-//                            String realName = parserBody.getRealName();
-//                            String phoneNum = parserBody.getMobile();
-//                            if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(pwd)) {
-//                                Toast.makeText(mActivity, "暂无网络", Toast.LENGTH_SHORT).show();
-//                            } else {
-//                                Preferences.getInstance().setUsername(userName);
-//                                Preferences.getInstance().setRealname(realName);
-//                                Preferences.getInstance().setPhonenum(phoneNum);
-//                                initLogin(mActivity, userName, pwd, ifChat);
-//                            }
-//                        } else {
-//                            if (parserData != null)
-//                                Toast.makeText(mActivity, TextUtils.isEmpty(parserData.getMessage()) ? "暂无网络" : parserData.getMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }, new RetrofitUtils.FailureCallBack() {
-//                    @Override
-//                    public void onFaliure(String string) {
-//                        Toast.makeText(mActivity, "暂无网络", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-
-    private  void initLogin(final Activity mActivity, final String userName, final String pwd, final boolean ifChat) {
-        final Callback callback = new Callback() {
-            @Override
-            public void onSuccess() {
-                Preferences.getInstance().setCurrentuser(userName);
-                if (ifChat)
-                    goChat(mActivity);
-            }
-
-            @Override
-            public void onError(int i, String s) {
-                Log.i("ljy",i + "_客服系统登录回调.失败:" + s);
-            }
-
-            @Override
-            public void onProgress(int i, String s) {
-
-            }
-        };
-        if (!ChatClient.getInstance().isLoggedInBefore()) {
-            ChatClient.getInstance().login(userName, pwd, callback);
-        } else if (!userName.equals(Preferences.getInstance().getCurrentuser())) {
-            ChatClient.getInstance().logout(true, new Callback() {
-                @Override
-                public void onSuccess() {
-                    ChatClient.getInstance().login(userName, pwd, callback);
-                }
-
-                @Override
-                public void onError(int i, String s) {
-
-                }
-
-                @Override
-                public void onProgress(int i, String s) {
-
-                }
-            });
-
-        } else {
-            if (ifChat) {
-                goChat(mActivity);
-            }
-        }
-    }
-
-    /**
-     * 重置了环信客服账号，由于客服聊天记录是保存在本地的，避免出现
-     * 不同账号相同聊天记录
-     */
-    public static void resetKeFuAccount() {
-        if (ChatClient.getInstance().isLoggedInBefore()) {
-            ChatClient.getInstance().logout(true, new Callback() {
-                @Override
-                public void onSuccess() {
-
-                }
-
-                @Override
-                public void onError(int i, String s) {
-
-                }
-
-                @Override
-                public void onProgress(int i, String s) {
-
-                }
-            });
-        }
-
-    }
-
-    //---------------------------------------demoHelper---------------------------------
-
-    private static final String TAG = "DemoHelper";
-
-    public static KeFuUtils instance = new KeFuUtils();
-
+    private static final String TAG = "KeFuUtils";
     /**
      * kefuChat.MessageListener
      */
@@ -244,6 +53,18 @@ public class KeFuUtils {
 
     private UIProvider _uiProvider;
 
+
+    //我自己测试的
+    private final String DEFAULT_CUSTOMER_APPKEY = "1145161128115990#kefuchannelapp31788";
+    private final String DEFAULT_CUSTOMER_ACCOUNT = "kefuchannelimid_811684";
+    private final String DEFAULT_TENANT_ID = "31788";
+    //环信demo的
+//	public static final String DEFAULT_CUSTOMER_APPKEY = "1141161024115978#kefuchannelapp29593";
+//	public static final String DEFAULT_CUSTOMER_ACCOUNT = "kefuchannelimid_012680";
+//	public static final String DEFAULT_TENANT_ID = "29593";
+
+    public static KeFuUtils instance = new KeFuUtils();
+
     private KeFuUtils() {
     }
 
@@ -251,19 +72,34 @@ public class KeFuUtils {
         return instance;
     }
 
+
     /**
-     * init helper
+     * 初始化环信客服，必须要调用
      *
      * @param context application context
      */
-    public void init(final Context context,Class backHomeActivity) {
+    public void init(final Context context, Class backHomeActivity) {
+        //初始化环信的sharedPreferences
         Preferences.init(context);
-        Constant.backHomeActivity=backHomeActivity;
+        //必要的配置项
+        Constant.getInstance()
+                .setAppKey(DEFAULT_CUSTOMER_APPKEY)
+                .setAccount(DEFAULT_CUSTOMER_ACCOUNT)
+                .setTenantId(DEFAULT_TENANT_ID)
+                .setBackHomeActivity(backHomeActivity)
+                .setOnUrlLinkClickListener(new Constant.OnUrlLinkClickListener() {
+                    @Override
+                    public void onClick(Context context, String url) {
+                        Intent intent1 = new Intent(context, WebViewTestActivity.class);
+                        intent1.putExtra("url", url);
+                        context.startActivity(intent1);
+                    }
+                });
         ChatClient.Options options = new ChatClient.Options();
         ////必填项，appkey获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“AppKey”
-        options.setAppkey(Preferences.getInstance().getAppKey());
+        options.setAppkey(Constant.getInstance().getAppKey());
         ////必填项，tenantId获取地址：kefu.easemob.com，“管理员模式 > 设置 > 企业信息”页面的“租户ID”
-        options.setTenantId(Preferences.getInstance().getTenantId());
+        options.setTenantId(Constant.getInstance().getTenantId());
 
         //在小米手机上当app被kill时使用小米推送进行消息提示，SDK已支持，可选
 //        options.setMipushConfig("2882303761517507836", "5631750729836");
@@ -398,7 +234,7 @@ public class KeFuUtils {
 
     private void setGlobalListeners() {
         // create the global connection listener
-        /*connectionListener = new ChatClient.ConnectionListener(){
+        connectionListener = new ChatClient.ConnectionListener(){
 
             @Override
             public void onConnected() {
@@ -416,7 +252,7 @@ public class KeFuUtils {
         };
 
         //注册连接监听
-        ChatClient.getInstance().addConnectionListener(connectionListener);*/
+        ChatClient.getInstance().addConnectionListener(connectionListener);
 
         //注册消息事件监听
         registerEventListener();
@@ -518,6 +354,192 @@ public class KeFuUtils {
 
     public Notifier getNotifier() {
         return _uiProvider.getNotifier();
+    }
+
+
+    public void methodKeFu(final Activity mActivity) {
+        login(mActivity, true);
+    }
+
+    private void goChat(Activity mActivity) {
+        // 进入主页面
+        if (ChatClient.getInstance().isLoggedInBefore()) {
+            Intent intent = new IntentBuilder(mActivity)
+                    .setTargetClass(ChatActivity.class)
+                    .setVisitorInfo(Preferences.getInstance().createVisitorInfo(mActivity))
+                    .setServiceIMNumber(Constant.getInstance().getAccount())
+                    .setScheduleQueue(Preferences.getInstance().createQueueIdentity(null))
+                    .setShowUserNick(false)
+                    .build();
+            mActivity.startActivity(intent);
+        } else {
+            Toast.makeText(mActivity, "登录失败，请稍候再试", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void login(final Activity mActivity, final boolean ifChat) {
+//        RetrofitUtils.getInstance().getToken(mActivity, new RetrofitUtils.CallBack() {
+//            @Override
+//            public void call(String token) {
+//                login(mActivity,callback,ifChat,token);
+//            }
+//        });
+
+        //此处信息应通过接口从自己公司的服务器获取
+        final String userName = "ljy123321";
+        final String passWord = "1234123";
+        final String realName = "JinYang";
+        final String phoneNum = "10086";
+        if (Preferences.getInstance().getUsername().equals(userName)) {
+            //登录:
+            Preferences.getInstance().setUsername(userName);
+            Preferences.getInstance().setRealname(realName);
+            Preferences.getInstance().setPhonenum(phoneNum);
+            initLogin(mActivity, userName, passWord, ifChat);
+        } else {
+            //注册:
+            //建议在服务端创建，而不要放到APP中，可以在登录自己APP时从返回的结果中获取环信账号再登录环信服务器
+            ChatClient.getInstance().register(userName, passWord, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Preferences.getInstance().setUsername(userName);
+                    Preferences.getInstance().setRealname(realName);
+                    Preferences.getInstance().setPhonenum(phoneNum);
+                    initLogin(mActivity, userName, passWord, ifChat);
+                }
+
+                @Override
+                public void onError(int code, String error) {
+                    Log.i("ljy", code + "_客服系统注冊回调.失败:" + error);
+                    if (code == Error.USER_ALREADY_EXIST) {
+                        Preferences.getInstance().setUsername(userName);
+                        Preferences.getInstance().setRealname(realName);
+                        Preferences.getInstance().setPhonenum(phoneNum);
+                        initLogin(mActivity, userName, passWord, ifChat);
+                    }
+
+                }
+
+                @Override
+                public void onProgress(int progress, String status) {
+
+                }
+            });
+        }
+
+    }
+//    private static void login(final Activity mActivity, final Callback callback, final boolean ifChat, String token) {
+//        Map<String, String> params = new HashMap<>();
+//        params.put("action", "HuanXin");
+//        params.put("cmd", "CreatAccount");
+//        params.put("token", token);
+//        params.put("pl", "2");
+//        SPUtil spUtil = new SPUtil(mActivity);
+//        params.put("uid", spUtil.getFromSp(SPUtil.USERID, ""));
+//        params.put("pwd", spUtil.getFromSp(SPUtil.USERPWD, ""));
+//        RetrofitUtils.getInstance().isPubUrl().getJsonObject( RetrofitUtils.pubDefaultMethod, params,
+//                new RetrofitUtils.SuccessCallBackT<ParserDataBase<Object>>() {
+//                    @Override
+//                    public void onSuccess(ParserDataBase<Object> parserData) {
+//                        if (parserData != null && parserData.getCode()==0) {
+//                            Gson gson = new Gson();
+//                            String bodyStr = gson.toJson(parserData.getBody());
+//                            ParserBodyKeFu parserBody = gson.fromJson(bodyStr,ParserBodyKeFu.class);
+//                            String userName = parserBody.getUserName();
+//                            String pwd = parserBody.getPwd();
+//                            String realName = parserBody.getRealName();
+//                            String phoneNum = parserBody.getMobile();
+//                            if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(pwd)) {
+//                                Toast.makeText(mActivity, "暂无网络", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Preferences.getInstance().setUsername(userName);
+//                                Preferences.getInstance().setRealname(realName);
+//                                Preferences.getInstance().setPhonenum(phoneNum);
+//                                initLogin(mActivity, userName, pwd, ifChat);
+//                            }
+//                        } else {
+//                            if (parserData != null)
+//                                Toast.makeText(mActivity, TextUtils.isEmpty(parserData.getMessage()) ? "暂无网络" : parserData.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                }, new RetrofitUtils.FailureCallBack() {
+//                    @Override
+//                    public void onFaliure(String string) {
+//                        Toast.makeText(mActivity, "暂无网络", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+
+    private void initLogin(final Activity mActivity, final String userName, final String pwd, final boolean ifChat) {
+        final Callback callback = new Callback() {
+            @Override
+            public void onSuccess() {
+                Preferences.getInstance().setCurrentuser(userName);
+                if (ifChat)
+                    goChat(mActivity);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.i("ljy", i + "_客服系统登录回调.失败:" + s);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        };
+        if (!ChatClient.getInstance().isLoggedInBefore()) {
+            ChatClient.getInstance().login(userName, pwd, callback);
+        } else if (!userName.equals(Preferences.getInstance().getCurrentuser())) {
+            ChatClient.getInstance().logout(true, new Callback() {
+                @Override
+                public void onSuccess() {
+                    ChatClient.getInstance().login(userName, pwd, callback);
+                }
+
+                @Override
+                public void onError(int i, String s) {
+
+                }
+
+                @Override
+                public void onProgress(int i, String s) {
+
+                }
+            });
+
+        } else {
+            if (ifChat) {
+                goChat(mActivity);
+            }
+        }
+    }
+
+    /**
+     * 重置了环信客服账号，由于客服聊天记录是保存在本地的，避免出现
+     * 不同账号相同聊天记录
+     */
+    public static void resetKeFuAccount() {
+        if (ChatClient.getInstance().isLoggedInBefore()) {
+            ChatClient.getInstance().logout(true, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+
+                }
+
+                @Override
+                public void onProgress(int i, String s) {
+
+                }
+            });
+        }
+
     }
 
 }

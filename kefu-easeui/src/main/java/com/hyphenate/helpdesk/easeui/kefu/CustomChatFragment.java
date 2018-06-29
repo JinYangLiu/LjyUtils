@@ -82,7 +82,7 @@ public class CustomChatFragment extends ChatFragment implements ChatFragment.Eas
             @Override
             public void onClick(View v) {
                 if (CommonUtils.isSingleActivity(getActivity())) {
-                    Intent intent = new Intent(getActivity(), Constant.backHomeActivity);
+                    Intent intent = new Intent(getActivity(), Constant.getInstance().getBackHomeActivity());
                     startActivity(intent);
                 }
                 getActivity().finish();

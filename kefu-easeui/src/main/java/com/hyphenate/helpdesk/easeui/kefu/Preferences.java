@@ -35,18 +35,6 @@ public class Preferences {
         instance.editor = instance.pref.edit();
     }
 
-    public synchronized String getAppKey() {
-        return Constant.DEFAULT_CUSTOMER_APPKEY;
-    }
-
-    public synchronized String getTenantId() {
-        return Constant.DEFAULT_TENANT_ID;
-    }
-
-    public String getCustomerAccount(){
-        return  Constant.DEFAULT_CUSTOMER_ACCOUNT;
-    }
-
     public synchronized void setUsername(String username) {
         editor.putString(USERNAME, username);
         editor.commit();
