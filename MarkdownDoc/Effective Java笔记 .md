@@ -1012,5 +1012,357 @@
         }
     }
     ````
-
+    
+35. 注解优先于命名模式
+    - 命名模式：有些程序元素需要通过某种工具或框架进行特殊处理
+        - 例1：JUnit测试框架原本要求用户一定要用test作为测试方法名的开头
+        - 例2：iOS中的init方法要求必须是initXXX()
+    - 命名模式缺陷：
+        1. 文字拼写错误会导致失败，且没有任何提示，造成错误的安全感，如JUnit的测试方法testXX写成textXX或tsetXX等
+        2. 无法确保他们只用于相应的程序元素，如JUnit的命名只对方法生效，将某个类命名testXX是无效的，不会报错，但不会执行测试
+        3. 没有提供将参数值与程序元素关联起来的好方法，如JUnit想增加一种测试类别，只在抛出某种特定异常时才会成功, 
+        而这个异常类型需要用户通过参数进行自定义，这种实现通过命名模式实现（将异常类型编写到方法名中）并不理想
+    - 注解对上面问题的解决，请看下面代码
+        ````
+        //1.创建注解
+        //Retention，Target这种用在注解类型声明中的注解被称为元注解
+        @Retention(RetentionPolicy.RUNTIME)//表示test注解应在运行时保留
+        //解决问题2：只能用于方法中
+        @Target(ElementType.METHOD)//表示test注解只在方法声明中才合法，不能用在类声明，域声明或其他元素
+        public @interface Test {
+            Class<? extends Exception>[] value();
+        }
+        //2.使用注解
+        //解决问题1：使用注解不会出现拼错而不自知的情况
+        //解决问题2：将错误类型以参数传递
+        @Test(NullPointerException.class)
+        private static void m1() {
+            System.out.println("m1");
+        }
+    
+        @Test(NullPointerException.class)
+        private static void m2() {
+            throw new NullPointerException("空指针了");
+        }
+    
+        @Test({NullPointerException.class,IndexOutOfBoundsException.class})
+        private static void m3() {
+            throw new RuntimeException("报错了哦");
+        }
+        //3.解析注解
+        private static void testAnno() {
+            Class testClass=MainTest.class;
+            for (Method m:testClass.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(Test.class)){
+                    //System.out.println("methodName:"+m.getName()+"_Anno:"+m.getAnnotation(Test.class).toString());
+                    try {
+                        m.invoke(null);
+                    } catch (Throwable throwable) {
+                        Throwable exc=throwable.getCause();
+                        Class<? extends Exception>[] excTypes= m.getAnnotation(Test.class).value();
+                        for (Class<? extends Exception> excType:excTypes){
+                            if (excType.isInstance(exc)){
+                                System.out.println("触发了"+excType.getSimpleName()+",msg:"+exc.getLocalizedMessage());
+                            }
+                        }
+    
+                    }
+                }
+            }
+        }
+        ```` 
+36. 坚持使用Override注解 
+    - 应该在想要覆盖超类声明的每个方法声明中使用Override注解
+        - 例如我们经常会重写自定义模型类的equals方法，下面用代码说明使用Override注解的优势
+        ````
+            //1. 如果不使用注解，我们像下面这些写，程序不会报错，我们也没看出什么问题
+            //然而要注意到这里参数类型Person，而Object类中equals方法的参数类型是Object，
+            那么这就是对equals方法的重载，而不是重写，那么当使用者调用该方法，并传入一个非Person类型的参数时，
+            仍然会调用父类的equals方法
+            public boolean equals(Person obj) {
+                return true;
+            }
         
+            //2. 使用Override注解，编译器会对重写对方法进行检查，确保重写语法正确，并对错误对写法有明确对提示信息
+            @Override
+            public boolean equals(Object obj) {
+                if (obj instanceof Person) {
+                    Person p = (Person) obj;
+                    System.out.println(String.format("hash:_%d, p.hash_%d", this.hashCode(), p.hashCode()));
+                    return this.hashCode() == p.hashCode()
+                            && this.name.equals(p.name)
+                            && this.age == p.age
+                            && this.height == p.height;
+                } else {
+                    retrn false;
+                }
+            }
+        ````              
+        - 使用Override还有一点好处，就是可以区分哪些方法是超类对，哪些方法子类扩展对
+
+37. 用标记接口定义类型
+    - 标记接口：没有方法声明，只是表示具有某种属性，如Serializable接口
+    - 标记接口的优点
+        1. 标记接口定义的类型是由被标记类的实例实现的，标记注解则没有这样的类型
+        2. 标记接口可以更加精确的被锁定，可以是对其他接口的扩展，也可以被其他标记接口扩展，如Collection和Set
+    - 标记注解的优点：
+        1. 可以通过默认方式添加一个或多个注解类型的元素，给已被使用的注解类型添加更多的信息，方便扩展
+        2. 另一个优点在于它们是更大的注解机制的一部分，因此，标记注解，在那些支持注解作为编程元素之一的框架中同样具有一致性
+    - 如何选择？
+        - 如果标记是应用到任何程序元素而不只是类或接口，那就必须使用注解
+        - 如果只是用于类或接口，需要考虑要编写只接受有这种标记的方法，使用接口作为相关方法的参数类型，
+        可以提供编译时就进行类型检查的好处        
+        - 是否要永远限制这个标记只用于特殊接口的元素，如果是，最好将标记定义成该接口的一个子接口
+     
+### 方法
+
+38. 检查参数的有效性
+    - 绝大多数方法和构造器对于传递给它们的参数值都会有某些限制，例如，索引值必须非负数，对象引用不能为null，
+    我们应该在文档中清楚的指明这些限制，并在方法体的开头处检查这些参数，以强制施加这些限制，清楚的抛出适当的异常，
+    以便在发生错误后尽快的检测出错误，例如下面这样：
+        ````
+        //1. 对于公有方法应该在方法注释中用@throws说明违反参数值限制时会抛出的异常
+        /**
+         * 对数组的两个元素换位
+         *
+         * @param array 目标数组
+         * @param i     需要交换的索引i
+         * @param j     需要交换的另一个索引j
+         * @throws NullPointerException           if array is null
+         * @throws ArrayIndexOutOfBoundsException if i|j is more than array.length-1
+         */
+        public void swap(int[] array, int i, int j) {
+            if (array == null)
+                throw new NullPointerException("数组不能是空");
+                
+            if (i >= array.length - 1 || j >= array.length - 1)
+                throw new ArrayIndexOutOfBoundsException("需要交换的索引应在数组长度范围内");
+                
+            if (i == j)
+                return;
+                
+            array[i] = array[i] + array[j];
+            array[j] = array[i] - array[j];
+            array[i] = array[i] - array[j];
+        }
+        
+        //2. 对于私有方法，应该使用断言assert来检查他们的有有效性，并确保只将有效的参数传递进来
+        private void swap(int[] array, int i, int j) {
+            //断言失败将抛出AssertionError
+            assert array != null;
+            assert i < array.length && j < array.length;
+            if (i == j)
+                return;
+            array[i] = array[i] + array[j];
+            array[j] = array[i] - array[j];
+            array[i] = array[i] - array[j];
+        }
+        ````
+        
+    - 如果不检查：
+        - 可能在处理过程中失败，并产生令人费解的异常
+        - 更糟糕的情况是正常返回，但计算出错误的结果
+        - 最糟糕的是正常返回，但使得某个对象处于被破坏但状态，在将来某个不确定的时候，某个不想干的点上引发错误
+    - 对于某些参数，方法本身没有用到，却被保存起来供以后使用，检验这类参数的有效性尤为重要，构造器就是属于这种情景之一。
+    - 例外情况：有些情况下有效性检查工作是非常昂贵的，或是根本不切实际的，或是有效性检查已经隐含在计算过程中完成来
+        
+39. 必要时进行保护性拷贝
+    - 假设类的客户端会尽其所能来破坏这个类的约束条件，因此你必须保护性的设计程序
+    - 对于构造器的每个可变参数进行保护性拷贝是必要的
+    请看下面例子:
+    ````
+    //这个类想表示一段不可变的时间周期
+    public static final class Period{
+        private final Date start;
+        private final Date end;
+
+        public Period(Date start, Date end) {
+            if (start.compareTo(end)>0)
+                throw new IllegalArgumentException("start 不应该在 end 之后");
+            this.start = start;
+            this.end = end;
+        }
+
+        public Date getStart() {
+            return start;
+        }
+
+        public Date getEnd() {
+            return end;
+        }
+
+        private static final SimpleDateFormat dateFormat;
+
+        static {
+             dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+
+        @Override
+        public String toString() {
+            return "Period{" +
+                    "start=" + dateFormat.format(start) +
+                    ", end=" + dateFormat.format(end) +
+                    '}';
+        }
+    }
+    //然而使用时：
+    Date start =new Date(1991-1900,2-1,14);
+    Date end =new Date(2018-1900,6-1,1);
+    Period period=new Period(start,end);
+    end.setYear(1970-1900);
+    System.out.println(period.toString());
+    // 打印结果：
+    Period{start=1991-02-14, end=1970-06-01}
+    ````
+    下面使用保护性拷贝进行改进
+    ````
+    //1.构造器改进
+    public Period(Date start, Date end) {
+        this.start = new Date(start.getTime());
+        this.end = new Date(end.getTime());
+        //注意应先进行保护性拷贝，再对拷贝后的对象进行有效性检查，可以避免"危险阶段"期间从另一个线程改变类的参数
+        //危险阶段：指从检查参数开始，到拷贝参数之间的时间段
+        if (this.start.compareTo(this.end)>0)
+            throw new IllegalArgumentException("start 不应该在 end 之后");
+    }
+    //2.get方法改进
+    public Date getStart() {
+        return new Date(start.getTime());
+    }
+
+    public Date getEnd() {
+        return new Date(end.getTime());
+    }
+    //这样period对象就是真正不可变的了
+    ````
+    - 保护性拷贝会使性能收到一定损失，如果类信任它的客户端不会进行不恰当的修改组件，可以在文档中指明客户端的职责是：不得修改
+    受到影响的组件，以此来代替保护性拷贝。
+    
+40. 谨慎设计方法签名
+    - 谨慎的选择方法的名称：
+        方法名称应始终遵循标准的命名习惯，1. 应易于理解并与同包中其他方法名称风格一致，2. 应选择与大众认可的名称相一致的名称，如java类库的API
+    - 不要过于追求提供便利的方法：
+        每个方法都应该尽其所能，功能齐全，方法太多会使类难以学习，使用，文档化，测试和维护，会使接口的实现者和用户的工作变得复杂        
+    - 避免过长的参数列表
+        - 目标是4个或更少，相同类型的长参数序列格外有害，如margin(int l,int t,int r,int b...)，很可能不小心弄错顺序，
+        而程序仍可编译运行，然而的到错误的结果，缩短参数列表的方法：
+            - 把方法分分解成多个方法
+            - 创建辅助类      
+            - 使用建造者模式（builder模式）
+        - 对于参数类型，要优先使用接口而不是类，例如，我们经常使用的集合类，应优先使用Map做参数而不是HashMap，优先使用List而不是ArrayList
+        - 对于boolean参数，要优先使用两个元素的枚举类型，更具有易读性，方便编写
+        
+41. 慎用重载
+    - 对于重载方法的选择是静态的，对于重写/覆盖方法的选择是动态的，选择被覆盖的方法的版本是在运行时进行的，选择的依据是被调用方法所在对象的运行时类型        
+    例如下面代码中对问题：想用重载区分传入参数对实际类型，然而结果只是选择了引用声明的类型对应的重载方法
+        ````
+        //定义三个类，对name方法分别进行重写，anim中对name重载
+        public static class Anim {
+            public String name() {
+                return "animal";
+            }
+    
+            public static String name(Anim anim) {
+                return "Anim";
+            }
+    
+            public static String name(Cat cat) {
+                return "Cat";
+            }
+    
+            public static String name(TomCat tomCat) {
+                return "TomCat";
+            }
+        }
+    
+        public static class Cat extends Anim {
+            @Override
+            public String name() {
+                return "cat";
+            }
+        }
+    
+        public static class TomCat extends Cat {
+            @Override
+            public String name() {
+                return "tom cat";
+            }
+    
+    
+        }
+        //调用
+        Anim[] anims = {new Anim(), new Cat(), new TomCat()};
+        for (int i = 0; i < anims.length; i++) {
+            System.out.println("重写.name:" + anims[i].name());
+            System.out.println("重载.name:" + Anim.name(anims[i]));
+        }
+        System.out.println("重载.name:" + Anim.name(new Anim()));
+        System.out.println("重载.name:" + Anim.name(new Cat()));
+        System.out.println("重载.name:" + Anim.name(new TomCat()));
+        //结果：
+        重写.name:animal
+        重载.name:Anim
+        重写.name:cat
+        重载.name:Anim
+        重写.name:tom cat
+        重载.name:Anim
+        
+        重载.name:Anim
+        重载.name:Cat
+        重载.name:TomCat
+        ````
+    - 一个安全而保守的策略是：
+        - 永远不要导出两个具有相同参数数目的重载方法（可以给方法起不同的名称而不是使用重载机制），对于可变参数（varargs）不要重载它。
+        例如ObjectOutputStream类的write方法：writeBoolean(boolean),writeInt(int),writeLong(long)，而不是使用重载。
+        - 对于构造器则是应该进了使用静态工厂方法代替重载，或使用builder模式
+        - 如果几个重载方法的参数直接不存在任何关系，如read(int),read(List),read(String[]),当然是可以使用重载的
+        - 自动装箱引发的一个问题，下面程序中的remove，希望去除0，1，2；然而由于自动装箱对Integer对象和int值进行了转换，
+        导致调用了remove不同对重载方法，所以得到了意料外对结果。
+        ````
+        Set<Integer> set =new TreeSet<>();
+        List<Integer> list=new ArrayList<>();
+        for (int i = -3; i < 3 ; i++) {
+            set.add(i);
+            list.add(i);
+        }
+        System.out.println("111-->"+set+"_"+list);
+        for (int i = 0; i < 3; i++) {//期望去掉0，1，2
+            set.remove(i);//set只有一个remove(obj)
+            list.remove(i);//list有两个重载的remove(obj)和remove(int)
+            //这里调用了list.remove(int index)
+            //改进方法是：
+            //list.remove(Integer.valueOf(i));
+        }
+        System.out.println("222-->"+set+"_"+list);
+        //结果：
+        111-->[-3, -2, -1, 0, 1, 2]_[-3, -2, -1, 0, 1, 2]
+        222-->[-3, -2, -1]_[-2, 0, 2]
+        ````
+        
+42. 慎用可变参数
+    - 可变参数方法：可匹配不同长度的变量的方法，接收0或多个指定类型的参数，其机制是通过先创建一个数组，
+    数组的大小为调用位置所传递的参数数量，然后将参数值传到数组中，最后将数组传递给方法
+    - 可变参数为了printf和反射机制而设计,如printf(String format, Object ... args)
+    - 不必改造具有final数组参数的每个方法，只当确实是在数量不定的值上执行调用时才使用可变参数
+    - 缺点：
+        - 客户端调用这个方法时可能没有传递参数进去，编译时并不会失败，但可能会造成运行时错误，应进行显示的有效性检查，
+        如args.length==0的情况。
+        - 可变参数方法的每次调用都会导致进行一次数组分配和初始化
+    - 如果真的需要可变参数的灵活性，可以考虑下面重载的实现方案：
+    ````
+    public void foo(){}
+    public void foo(int a1){}
+    public void foo(int a1,int a2){}
+    public void foo(int a1,int a2,int a3){}
+    public void foo(int a1,int a2,int a3,int... ans){}
+    ````
+    
+43. 返回零长度的数组或集合，而不是null
+    - 若直接返回null，几乎每次用到该方法时都需要额外的代码来处理null的情况，一旦忘记处理就会出错；
+    有人可能觉得返回null避免来分配数组或创建对象的开销，然而
+    1. 相对于一个可能导致运行时崩溃的定时炸弹，此时担心性能问题是不明智的，
+    2. 可以用一个私有静态的空数组进行共享，避免每次调用都创建新的对象
+    3. 可以使用java内置的空集合避免自己创建的开销：Collections.emptyList(),Collections.emptyMap(),Collections.emptySet();
+    
+44. 为所有导出的API元素编写文档注释
+    

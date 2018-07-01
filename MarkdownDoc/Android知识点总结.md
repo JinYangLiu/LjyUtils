@@ -449,4 +449,270 @@
             架构设计上要思考是否真的有必要这样做，尽量避免。
             如果架构需要这么设计，那么此对象的生命周期你有责任管理起来。
 
+  ### Fragment
+  - 目的：解决不同屏幕分辨率的动态灵活的UI设计
+  - 优点：
+    - 将Activity分离成多个可重用的组件，每个都有自己的生命周期和UI
+    - 创建动态灵活的UI设计，适应于不同的屏幕尺寸
+    - 与Activity绑定，可以动态的移除，加入，交换
+    - 轻量切换，解决Activity间的切换不流畅
+    - 替代TabActivity做导航，性能更好
+    - 可以嵌套使用，生成更好的界面效果
+    - 布局内容更新更方便，可以懒加载，提高性能
+  - 生命周期(结合Activity的生命周期)：
+    - [Act.onCreate()]-->onAttach()-->onCreate()-->onCreateView()-->onActivityCreated()-->
+    - [Act.onStart()]-->onStart()
+    - [Act.onResume()]-->onResume()  
+    - onPause()-->[Act.onPause()]
+    - onStop()-->[Act.onStop()]
+    - onDestroyView()-->onDestroy()--onDetach()-->[Act.onDestroy()]
+  - Fragment间信息交互：
+    - 方式1：取得对象
+    ````
+    //点击该Fragment的button按钮，将该button的text设置为另一个fragment中Edittext的文本值
+    button.setOnClickListener(new View.OnClickListener() { 
+        @Override 
+        public void onClick(View v) { 
+            //通过FragmentManager找到另一个fragment中的edittext对象，并取得text内容 
+            EditText editText = (EditText)(getFragmentManager().findFragmentByTag("left").getView().findViewById(R.id.name)); 
+            button.setText(editText.getText().toString()); 
+        } 
+    }); 
+    ```` 
+    - 方式2：通过回调函数  
+    ````
+    button.setOnClickListener(new View.OnClickListener() { 
+        @Override 
+        public void onClick(View v) { 
+            RightFragment rightFrag = (RightFragment) (getFragmentManager().findFragmentByTag("right")); 
+            //通过set方法，向其传递一个实例化对象，由于rightFrag.set()方法内部执行RightFragment.CallBack.get()方法，完成了参数的传递
+            rightFrag.set(new RightFragment.CallBack() { 
+                @Override 
+                public void get(String str) { 
+                    button.setText(str); 
+                } 
+            }); 
+        } 
+    }); 
+    
+    //RightFragment
+    public class RightFragment extends ListFragment { 
+        public void set(CallBack callBack) { 
+            EditText editText = (EditText) getView().findViewById(R.id.name); 
+            callBack.get(editText.getText().toString()); 
+        } 
+    
+        interface CallBack { 
+            public void get(String str); 
+        } 
+    }
+    ```` 
+  - 与Activity信息交互
+    - 方式1：通过getActivity() 方法来获得Activity的实例，如：View listView = getActivity().findViewById(R.id.list);
+    但是注意调用getActivity()时，fragment必须和activity关联（attached to an activity），否则将会返回一个null。
+    - 方式2：通过回调函数
+    
+### Activity
+
+- Activity的startActivity和Context的startActivity区别
+    1. 从Activity中启动新的Activity时可以直接mContext.startActivity(intent)就好;
+    2. 如果从其他Context中启动Activity则必须给intent设置Flag: intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    
+- Android应用程序/Activity启动过程  
+    Activity启动有两种情况，第一种是从桌面launcher上点击相应的应用图标，第二种是在activity中通过调用startActivity来启动一个新的activity。
+    我们创建一个新的项目，默认的根activity都是MainActivity，而所有的activity都是保存在堆栈中的，我们启动一个新的activity就会放在上一个activity上面，
+    而我们从桌面点击应用图标的时候，由于launcher本身也是一个应用，当我们点击图标的时候，系统就会调用startActivitySately(),
+    一般情况下，我们所启动的activity的相关信息都会保存在intent中，比如action，category等等。我们在安装这个应用的时候，
+    系统也会启动一个PackaManagerService的管理服务，这个管理服务会对AndroidManifest.xml文件进行解析，从而得到应用程序中的相关信息，
+    比如service，activity，Broadcast等等，然后获得相关组件的信息。当我们点击应用图标的时候，就会调用startActivitySately()方法，
+    而这个方法内部则是调用startActivty(),而startActivity()方法最终还是会调用startActivityForResult()这个方法。
+    而在startActivityForResult()方法是有返回结果的，所以系统就直接给一个-1，就表示不需要结果返回了。
+    而startActivityForResult()这个方法实际是通过Instrumentation类中的execStartActivity()方法来启动activity，
+    Instrumentation这个类主要作用就是监控程序和系统之间的交互。而在这个execStartActivity()方法中会获取ActivityManagerService的代理对象，
+    通过这个代理对象进行启动activity。启动会就会调用一个checkStartActivityResult()方法，如果说没有在配置清单中配置有这个组件，
+    就会在这个方法中抛出异常了。当然最后是调用的是Application.scheduleLaunchActivity()进行启动activity，
+    而这个方法中通过获取得到一个ActivityClientRecord对象，而这个ActivityClientRecord通过handler来进行消息的发送，
+    系统内部会将每一个activity组件使用ActivityClientRecord对象来进行描述，而ActivityClientRecord对象中保存有一个LoaderApk对象，
+    通过这个对象调用handleLaunchActivity来启动activity组件，而页面的生命周期方法也就是在这个方法中进行调用。
+     
+    
+- Activity任务栈/启动模式
+    - 使用方式：
+        - AndroidManifest.xml中给Activity标签设置android:launchMode="standard|singleInstance|singleTask|singleTop"
+        - 给Intent设置Flag：intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|FLAG_ACTIVITY_NEW_TASK);
+    - 分类：
+        1. standard：默认模式：每次启动都会创建一个新的activity对象，放到目标任务栈中
+        2. singleTop：判断当前的任务栈顶是否存在相同的activity对象，如果存在，则直接使用，如果不存在，那么创建新的activity对象放入栈中
+        3. singleTask：在任务栈中会判断是否存在相同的activity，如果存在，那么会清除该activity之上的其他activity对象显示，如果不存在，则会创建一个新的activity放入栈顶
+        4. singleInstance：会在一个新的任务栈中创建activity，并且该任务栈种只允许存在一个activity实例，其他调用该activity的组件会直接使用该任务栈种的activity对象
+    
+### Service
+- Service生命周期？
+  - service有两种启动方式，startService()和bindService()，不同的启动方式他们的生命周期是不一样；
+  - startService() --> onCreate()--> onStartCommand()--> onDestroy()。
+    这种方式启动的话，需要注意几个问题:
+        1. 当我们通过startService被调用以后，多次在调用startService(),onCreate()方法也只会被调用一次，
+           而onStartCommand()会被多次调用；当我们调用stopService()的时候，onDestroy()就会被调用，从而销毁服务。
+        2. 当我们通过startService启动时候，通过intent传值，在onStartCommand()方法中获取值的时候，一定要先判断intent是否为null。
+  - bindService()-->onCreate()-->onBind()-->unBind()-->onDestroy()
+    bindService 这种方式进行启动service好处是更加便利activity中操作service，
+    比如加入service中有几个方法，a,b ，如果要在activity中调用，在需要在activity获取ServiceConnection对象，
+    通过ServiceConnection来获取service中内部类的类对象，然后通过这个类对象就可以调用类中的方法，当然这个类需要继承Binder对象.
         
+### Broadcast
+- 注册方式
+    - 第一种是静态注册，也可成为常驻型广播，这种广播需要在AndroidManifest.xml中进行注册，这中方式注册的广播，
+    不受页面生命周期的影响，即使退出了页面，也可以收到广播; 
+    这种广播一般用于想开机自启动啊等等，由于这种注册的方式的广播是常驻型广播，所以会占用CPU的资源。
+     
+    - 第二种是动态注册，是在代码中注册的，这种注册方式也叫非常驻型广播，收到生命周期的影响，退出页面后，就不会收到广播，
+    我们通常运用在更新UI方面。这种注册方式优先级较高。最后需要解绑，否会会内存泄露
+- 广播是分为有序广播和无序广播。
+
+### JVM、Dalvik以及ART
+
+- JVM: 基于栈,基于栈的机器必须使用指令来载入和操作栈上数据，所需指令更多更多。
+       运行的是java字节码。（java类会被编译成一个或多个字节码.class文件）
+- Dalvik: Google公司自己设计用于Android平台的Java虚拟机。dex格式是专为Dalvik应用设计的一种压缩格式，
+    适合于内存和处理器速度有限的系统。Dalvik允许同时运行多个虚拟机的实例，并且每一个应用作为独立的Linux进程执行。
+    独立的进程可以防止在虚拟机崩溃的时候所有程序都被关闭;
+    基于寄存器的Dalvik实现虽然牺牲了一些平台无关性，但是它在代码的执行效率上要更胜一筹。    
+    
+- ART: 
+    - 在Dalvik下，应用每次运行都需要通过即时编译器（JIT）将字节码转换为机器码，即每次都要编译加运行，
+      这一机制并不高效(拖慢应用以后每次启动的效率)，但让应用安装比较快，而且更容易在不同硬件和架构上运行。
+      
+    - ART完全改变了这种做法，在应用安装时就预编译字节码到机器语言，在移除解释代码这一过程后，应用程序执行将更有效率，启动更快。    
+      ART占用空间比Dalvik大（字节码变为机器码之后，可能会增加10%-20%），这也是著名的“空间换时间大法"。
+      预编译也可以明显改善电池续航，因为应用程序每次运行时不用重复编译了，从而减少了 CPU 的使用频率，降低了能耗。 
+     
+### 进程保活（不死进程）
+- 黑色保活：不同的app进程，用广播相互唤醒（包括利用系统提供的广播进行唤醒）,举个3个比较常见的场景：
+    场景1：开机，网络切换、拍照、拍视频时候，利用系统产生的广播唤醒app
+    场景2：接入第三方SDK也会唤醒相应的app进程，如微信sdk会唤醒微信，支付宝sdk会唤醒支付宝。由此发散开去，就会直接触发了下面的 场景3
+    场景3：假如你手机里装了支付宝、淘宝、天猫、UC等阿里系的app，那么你打开任意一个阿里系的app后，有可能就顺便把其他阿里系的app给唤醒了。
+
+- 白色保活：启动前台Service
+    调用系统api启动一个前台的Service进程，这样会在系统的通知栏生成一个Notification，用来让用户知道有这样一个app在运行着，
+    哪怕当前的app退到了后台。如QQ音乐等音乐播放器就是这样;
+    
+- 灰色保活：利用系统的漏洞启动前台Service，区别在于它不会在系统通知栏处出现一个Notification
+    思路一：API < 18，启动前台Service时直接传入new Notification()；
+    思路二：API >= 18，同时启动两个id相同的前台Service，然后再将后启动的Service做stop处理     
+    
+### Universal-ImageLoader，Picasso，Fresco，Glide对比    
+- ImageLoader：
+    - 可能由于HttpClient被Google放弃，作者就放弃维护这个框架
+    - 优点：
+        1. 支持下载进度监听
+        2. 可以在 View 滚动中暂停图片加载，通过 PauseOnScrollListener 接口可以在 View 滚动中暂停图片加载。
+        3. 默认实现多种内存缓存算法 这几个图片框架都可以配置缓存算法，不过 ImageLoader 默认实现了较多缓存算法，
+           如 Size 最大先删除、使用最少先删除、最近最少使用、先进先删除、时间最长先删除等。
+        4. 支持本地缓存文件名规则定义
+- Picasso 
+    - 优点
+        1. 自带统计监控功能。支持图片缓存使用的监控，包括缓存命中率、已使用内存大小、节省的流量等。
+        2. 支持优先级处理。每次任务调度前会选择优先级高的任务，比如 App 页面中 Banner 的优先级高于 Icon 时就很适用。
+        3. 支持延迟到图片尺寸计算完成加载
+        4. 支持飞行模式、并发线程数根据网络类型而变。 手机切换到飞行模式或网络类型变换时会自动调整线程池最大并发数，
+           比如 wifi 最大并发为 4，4g 为 3，3g 为 2。这里是根据网络类型来决定最大并发数，而不是 CPU 核数。
+        5. “无”本地缓存。无”本地缓存，不是说没有本地缓存，而是 Picasso 自己没有实现，交给了 Square 的另外一个网络库
+           okHttp 去实现，这样的好处是可以通过请求 Response Header 中的 Cache-Control 及 Expired 控制图片的过期时间。        
+- Glide
+    - 优点
+        1. 不仅仅可以进行图片缓存还可以缓存媒体文件，它支持 Gif、WebP、缩略图。甚至是 Video，所以更该当做一个媒体缓存。
+        2. 支持优先级处理。
+        3. 与 Activity/Fragment 生命周期一致，支持 trimMemory。Glide对每个context都保持一个RequestManager，
+           通过 FragmentTransaction 保持与 Activity/Fragment 生命周期一致，并且有对应的 trimMemory 接口实现可供调用。
+        4. 支持 okHttp、Volley。Glide 默认通过 UrlConnection 获取数据，可以配合 okHttp 或是 Volley 使用。
+           实际 ImageLoader、Picasso 也都支持 okHttp、Volley。
+        5. 内存友好。Glide 的内存缓存有个 active 的设计，从内存缓存中取数据时，不像一般的实现用 get，而是用 remove，
+           再将这个缓存数据放到一个 value 为软引用的 activeResources map 中，并计数引用数，在图片加载完成后进行判断，
+           如果引用计数为空则回收掉。内存缓存更小图片，Glide 以 url、view_width、view_height、屏幕的分辨率等
+           做为联合 key，将处理后的图片缓存在内存缓存中，而不是原始图片以节省大小。图片默认使用默认 RGB_565 而不是 
+           ARGB_888，虽然清晰度差些，但图片更小，也可配置到 ARGB_888。
+        6. Glide 可以通过 signature 或不使用本地缓存支持 url 过期           
+- Fresco 
+    Facebook 推出的开源图片缓存工具，主要特点包括：两个内存缓存加上 Native 缓存构成了三级缓存，
+    - 优点：
+        1. 图片存储在安卓系统的匿名共享内存, 而不是虚拟机的堆内存中, 图片的中间缓冲数据也存放在本地堆内存, 所以, 
+           应用程序有更多的内存使用, 不会因为图片加载而导致oom, 同时也减少垃圾回收器频繁调用回收 Bitmap 导致的界面卡顿, 性能更高。
+        2. 渐进式加载 JPEG 图片, 支持图片从模糊到清晰加载。
+        3. 图片可以以任意的中心点显示在 ImageView, 而不仅仅是图片的中心。
+        4. JPEG 图片改变大小也是在 native 进行的, 不是在虚拟机的堆内存, 同样减少 OOM。
+        5. 很好的支持 GIF 图片的显示。
+    - 缺点:
+        1. 框架较大, 影响 Apk 体积
+        2. 使用较繁琐        
+        
+### Xutils, OKhttp, Volley, Retrofit对比
+- xUtils: 
+    这个框架非常全面，可以进行网络请求，可以进行图片加载处理，可以数据储存，还可以对view进行注解，使用这个框架非常方便，
+    但是缺点也是非常明显的，使用这个项目，会导致项目对这个框架依赖非常的严重，一旦这个框架出现问题，那么对项目来说影响非常大的。
+- okHttp：
+    okHttp针对Java和Android程序，封装的一个高性能的http请求库，支持同步，异步，而且封装了线程池，封装了数据转换，
+    封装了参数的使用，错误处理等。API使用起来更加的方便。但是我们在项目中使用的时候仍然需要自己在做一层封装，这样才能使用的更加的顺手。
+    - OkHttp的优势在于性能更高
+- Volley：
+    Volley是Google官方出的一套小而巧的异步请求库，该框架封装的扩展性很强，支持HttpClient、HttpUrlConnection， 
+    甚至支持OkHttp，而且Volley里面也封装了ImageLoader，所以如果你愿意你甚至不需要使用图片加载框架，不过这块功能
+    没有一些专门的图片加载框架强大，对于简单的需求可以使用，稍复杂点的需求还是需要用到专门的图片加载框架。
+    Volley也有缺陷，比如不支持post大数据，所以不适合上传文件。不过Volley设计的初衷本身也就是为频繁的、数据量小的网络请求而生。
+    - 优势在于封装的更好
+- Retrofit：
+    Retrofit是Square公司出品的默认基于OkHttp封装的一套RESTful网络请求框架。Retrofit的封装可以说是很强大，
+    里面涉及到一堆的设计模式,可以通过注解直接配置请求，可以使用不同的http客户端，虽然默认是用http ，可以使用
+    不同Json Converter 来序列化数据，同时提供对RxJava的支持，使用Retrofit + OkHttp + RxJava + Dagger2 
+    可以说是目前比较潮的一套框架，但是需要有比较高的门槛。
+    - Retrofit解耦的更彻底
+    - 默认使用OkHttp,性能上也要比Volley占优势
+        
+### Http https区别
+1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
+2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
+3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+ 
+- https实现原理：
+（1）客户使用https的URL访问Web服务器，要求与Web服务器建立SSL连接。
+（2）Web服务器收到客户端请求后，会将网站的证书信息（证书中包含公钥）传送一份给客户端。
+（3）客户端的浏览器与Web服务器开始协商SSL连接的安全等级，也就是信息加密的等级。
+（4）客户端的浏览器根据双方同意的安全等级，建立会话密钥，然后利用网站的公钥将会话密钥加密，并传送给网站。
+（5）Web服务器利用自己的私钥解密出会话密钥。
+（6）Web服务器利用会话密钥加密与客户端之间的通信。
+ 
+### Android5.0，6.0，7.0，8.0 新特性
+- 5.0:
+    - 开启扁平化时代，使用新的MaterialDesign设计风格
+    - 全新的通知中心
+    - 放弃了之前一直使用的Dalvik虚拟机，改用ART模式
+    - 增加BatterySaver模式来进行省电处理
+    - RecyclerView，CardView，Toolbar，FloatingActionButton(悬浮按钮),SnackBar,AppBarLayout,TabLayout
+    - 三种Notification：普通，折叠，悬挂
+
+- 6.0:
+    - 为每位用户的每一个应用提供了两套数据存储方案:工作资料和个人信息    
+    - 指纹识别
+    - 运行时权限
+    - App Links(应用唤起)
+    - Android Pay
+    - App Standby（应用待机）、Doze（瞌睡）Exemptions（豁免）等模式来加强电源管理
+    
+- 7.0:
+    - 对文件数据加密，更加安全     
+    - 分屏多任务(多窗口模式)
+    - 加入了JIT编译器，安装程序快了75%，所占空间减少了50%。
+    - 全新下拉快捷开关页
+    - 通知消息快捷回复，通知消息归拢
+    
+- 8.0:
+    - 通知渠道 — Notification Channels
+      引入通知渠道，提高用户体验，方便用户管理通知信息。    
+    - 画中画模式
+    - 自动填充框架
+    - 指纹手势
+- 9.0:
+    - 屏幕缺口支持
+    - 多摄像头支持和摄像头更新      
+
+         
