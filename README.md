@@ -1,5 +1,7 @@
 # LjyUtils
-整理一些常用的工具类和自定义view 
+整理一些常用的工具类和自定义view，以及一些常见功能的Demo，一些三方框架的集成，尽量把Android相关的知识都包含进来
+
+### 下面的文档好久没更新了，等有时间在整理吧，这个项目具体都有啥可以参考提交记录
 
 ### gradle中使用：
 Step 1. Add it in your root build.gradle at the end of repositories:
