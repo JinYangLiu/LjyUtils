@@ -5,14 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import com.hyphenate.chat.ChatClient;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.R;
+import com.hyphenate.helpdesk.callback.ValueCallBack;
 import com.hyphenate.helpdesk.easeui.provider.CustomChatRowProvider;
 import com.hyphenate.helpdesk.easeui.ui.ChatFragment;
 import com.hyphenate.helpdesk.easeui.util.CommonUtils;
@@ -96,6 +100,7 @@ public class CustomChatFragment extends ChatFragment implements ChatFragment.Eas
 //                startActivity(intent);
 //            }
 //        });
+
 
     }
 

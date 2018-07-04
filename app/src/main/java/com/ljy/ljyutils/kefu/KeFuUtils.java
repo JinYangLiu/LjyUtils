@@ -11,10 +11,14 @@ import android.widget.Toast;
 
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
+import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMCmdMessageBody;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.Error;
 import com.hyphenate.helpdesk.callback.Callback;
+import com.hyphenate.helpdesk.callback.ValueCallBack;
 import com.hyphenate.helpdesk.easeui.Notifier;
 import com.hyphenate.helpdesk.easeui.UIProvider;
 import com.hyphenate.helpdesk.easeui.kefu.ChatActivity;
@@ -25,11 +29,13 @@ import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.easeui.util.GlideUtils;
 import com.hyphenate.helpdesk.easeui.util.IntentBuilder;
 import com.hyphenate.helpdesk.easeui.util.UserUtil;
+import com.ljy.ljyutils.R;
 import com.ljy.ljyutils.activity.WebViewTestActivity;
 
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -86,6 +92,7 @@ public class KeFuUtils {
                 .setAppKey(DEFAULT_CUSTOMER_APPKEY)
                 .setAccount(DEFAULT_CUSTOMER_ACCOUNT)
                 .setTenantId(DEFAULT_TENANT_ID)
+                .setAvatarPhotoResId(R.drawable.kf_default_avatar)
                 .setBackHomeActivity(backHomeActivity)
                 .setOnUrlLinkClickListener(new Constant.OnUrlLinkClickListener() {
                     @Override
@@ -180,8 +187,7 @@ public class KeFuUtils {
                 Intent intent = new IntentBuilder(context)
                         .setTargetClass(ChatActivity.class)
                         .setServiceIMNumber(message.getFrom())
-                        .setShowUserNick(true)
-
+                        .setShowUserNick(false)
                         .build();
                 return intent;
             }
@@ -234,7 +240,7 @@ public class KeFuUtils {
 
     private void setGlobalListeners() {
         // create the global connection listener
-        connectionListener = new ChatClient.ConnectionListener(){
+        connectionListener = new ChatClient.ConnectionListener() {
 
             @Override
             public void onConnected() {
@@ -243,9 +249,9 @@ public class KeFuUtils {
 
             @Override
             public void onDisconnected(int errorcode) {
-                if (errorcode == Error.USER_REMOVED){
+                if (errorcode == Error.USER_REMOVED) {
                     //账号被移除
-                }else if (errorcode == Error.USER_LOGIN_ANOTHER_DEVICE){
+                } else if (errorcode == Error.USER_LOGIN_ANOTHER_DEVICE) {
                     //账号在其他地方登陆
                 }
             }
@@ -364,17 +370,85 @@ public class KeFuUtils {
     private void goChat(Activity mActivity) {
         // 进入主页面
         if (ChatClient.getInstance().isLoggedInBefore()) {
-            Intent intent = new IntentBuilder(mActivity)
-                    .setTargetClass(ChatActivity.class)
-                    .setVisitorInfo(Preferences.getInstance().createVisitorInfo(mActivity))
-                    .setServiceIMNumber(Constant.getInstance().getAccount())
-                    .setScheduleQueue(Preferences.getInstance().createQueueIdentity(null))
-                    .setShowUserNick(false)
-                    .build();
-            mActivity.startActivity(intent);
+            ////设置企业欢迎语
+            setWelcome(mActivity);
         } else {
             Toast.makeText(mActivity, "登录失败，请稍候再试", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * 跳转到聊天界面
+     *
+     * @param mActivity from where
+     */
+    private void toChatActivity(Activity mActivity) {
+        Intent intent = new IntentBuilder(mActivity)
+                .setTargetClass(ChatActivity.class)
+                .setVisitorInfo(Preferences.getInstance().createVisitorInfo(mActivity))
+                .setServiceIMNumber(Constant.getInstance().getAccount())
+                .setScheduleQueue(Preferences.getInstance().createQueueIdentity(null))
+                .setShowUserNick(false)
+                .build();
+        mActivity.startActivity(intent);
+    }
+
+    /**
+     * 设置企业欢迎语
+     *
+     * @param mActivity
+     */
+    private void setWelcome(final Activity mActivity) {
+        ChatClient.getInstance().chatManager().getEnterpriseWelcome(new ValueCallBack<String>() {
+            @Override
+            public void onSuccess(final String welcomeValue) {
+                Log.i("ljy", "welcomeValue:" + welcomeValue);
+                ChatClient.getInstance().chatManager().getCurrentSessionId(Constant.getInstance().getAccount(), new ValueCallBack<String>() {
+                    @Override
+                    public void onSuccess(String value) {
+                        Log.i("ljy", "value:" + value);
+                        if (TextUtils.isEmpty(value)) {
+                            if (Preferences.getInstance().isAddWelcome()) {
+                                Message message = Message.createReceiveMessage(Message.Type.TXT);
+                                String welcomeStr = TextUtils.isEmpty(Preferences.getInstance().getWelcomeName()) ? welcomeValue : Preferences.getInstance().getWelcomeName() + ", " + welcomeValue;
+                                message.addBody(new EMTextMessageBody(welcomeStr));
+                                message.setFrom(Constant.getInstance().getAccount());
+                                message.setMessageTime(System.currentTimeMillis());
+                                message.setMsgId(UUID.randomUUID().toString());
+                                ChatClient.getInstance().chatManager().saveMessage(message);
+                                Log.i("ljy", "插入了欢迎语");
+                                Preferences.getInstance().setAddWelcome(false);
+                            }
+                        }else{
+                            Preferences.getInstance().setAddWelcome(true);
+                        }
+                        toChatActivity(mActivity);
+
+                    }
+
+                    @Override
+                    public void onError(int error, String errorMsg) {
+                        toChatActivity(mActivity);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(int error, String errorMsg) {
+                toChatActivity(mActivity);
+            }
+        });
+    }
+
+    //创建一条接收TextMsg
+    private EMMessage createReceivedTextMsg(String message, String from, String to) {
+        EMMessage msg = EMMessage.createReceiveMessage(EMMessage.Type.TXT);
+        EMTextMessageBody body = new EMTextMessageBody(message);
+        msg.addBody(body);
+        msg.setFrom(from);
+        msg.setTo(to);
+        msg.setMsgTime(System.currentTimeMillis());
+        return msg;
     }
 
     private void login(final Activity mActivity, final boolean ifChat) {
@@ -388,13 +462,15 @@ public class KeFuUtils {
         //此处信息应通过接口从自己公司的服务器获取
         final String userName = "ljy123321";
         final String passWord = "1234123";
-        final String realName = "JinYang";
+        final String realName = "刘德华";
         final String phoneNum = "10086";
+        final String welcomeName = "刘先生";
         if (Preferences.getInstance().getUsername().equals(userName)) {
             //登录:
             Preferences.getInstance().setUsername(userName);
             Preferences.getInstance().setRealname(realName);
             Preferences.getInstance().setPhonenum(phoneNum);
+            Preferences.getInstance().setWelcomeName(welcomeName);
             initLogin(mActivity, userName, passWord, ifChat);
         } else {
             //注册:
@@ -405,6 +481,7 @@ public class KeFuUtils {
                     Preferences.getInstance().setUsername(userName);
                     Preferences.getInstance().setRealname(realName);
                     Preferences.getInstance().setPhonenum(phoneNum);
+                    Preferences.getInstance().setWelcomeName(welcomeName);
                     initLogin(mActivity, userName, passWord, ifChat);
                 }
 
@@ -415,6 +492,7 @@ public class KeFuUtils {
                         Preferences.getInstance().setUsername(userName);
                         Preferences.getInstance().setRealname(realName);
                         Preferences.getInstance().setPhonenum(phoneNum);
+                        Preferences.getInstance().setWelcomeName(welcomeName);
                         initLogin(mActivity, userName, passWord, ifChat);
                     }
 

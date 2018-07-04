@@ -98,6 +98,12 @@ public class GlideUtils {
         void onCall(Bitmap resource);
     }
 
+
+    public static void loadImg(Context mContext, int resId, ImageView iv_userimage, BitmapTransformation transformation) {
+        with(mContext.getApplicationContext()).load(resId)//.error(R.drawable.mis_default_error)
+                .transform(transformation)
+                .into(iv_userimage);
+    }
     /**
      * 加载图片，并以圆角或圆形显示
      *

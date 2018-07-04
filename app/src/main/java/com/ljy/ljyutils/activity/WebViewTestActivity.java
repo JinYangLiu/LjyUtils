@@ -45,6 +45,7 @@ public class WebViewTestActivity extends BaseActivity {
         ButterKnife.bind(mActivity);
         initWebView();
         intIntent();
+        mWebView.loadUrl("https://club.anxin.com/m2018/July/");
     }
 
     private void intIntent() {

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.R;
+import com.hyphenate.helpdesk.easeui.kefu.Constant;
 import com.hyphenate.helpdesk.model.AgentInfo;
 import com.hyphenate.helpdesk.model.MessageHelper;
 
@@ -17,7 +18,6 @@ import com.hyphenate.helpdesk.model.MessageHelper;
 public class UserUtil {
 
     private static String nickName;
-    private static String imgPhoto;
 
 
     public static void setNickAndAvatar(Context context, Message message, ImageView userAvatarView, TextView userNickView) {
@@ -38,29 +38,17 @@ public class UserUtil {
                     }
                 }
                 Log.i("ljy_setNickAndAvatar", "strUrl:" + strUrl);
-                if (imgPhoto == null || (strUrl != null && !imgPhoto.equals(strUrl)))
-                    imgPhoto = strUrl;
-                setPhoto(context, userAvatarView, imgPhoto);
+//                GlideUtils.loadImg(context.getApplicationContext(), strUrl, userAvatarView, new GlideUtils.CircleTransform(context.getApplicationContext()));
+                userAvatarView.setImageResource(Constant.getInstance().getAvatarPhotoResId()==-1?R.drawable.ax_default_avatar:Constant.getInstance().getAvatarPhotoResId());
             }
 
         } else {
-            if (userAvatarView != null)
-                if (TextUtils.isEmpty(imgPhoto))
-                    userAvatarView.setImageResource(R.drawable.hd_default_avatar);
-                else
-                    setPhoto(context, userAvatarView, imgPhoto);
+            if (userAvatarView != null){
+                userAvatarView.setImageResource(Constant.getInstance().getAvatarPhotoResId()==-1?R.drawable.ax_default_avatar:Constant.getInstance().getAvatarPhotoResId());
+            }
             if (userNickView != null)
                 userNickView.setText(TextUtils.isEmpty(nickName) ? message.from() : nickName);
         }
 
     }
-
-    private static void setPhoto(Context context, ImageView userAvatarView, String strUrl) {
-        Context var10000 = context.getApplicationContext();
-        GlideUtils var10005 = new GlideUtils();
-        var10005.getClass();
-        GlideUtils.loadImg(var10000, strUrl, userAvatarView, new GlideUtils.CircleTransform(context.getApplicationContext()));
-        userAvatarView.setBackgroundColor(16777215);
-    }
-
 }

@@ -31,6 +31,9 @@ public class Constant {
     private String account;
     private String tenantId;
 
+    private int avatarPhotoResId=-1;
+
+
     public Class getBackHomeActivity() {
         return backHomeActivity;
     }
@@ -73,6 +76,15 @@ public class Constant {
 
     public Constant setTenantId(String tenantId) {
         this.tenantId = tenantId;
+        return this;
+    }
+
+    public int getAvatarPhotoResId() {
+        return avatarPhotoResId;
+    }
+
+    public Constant setAvatarPhotoResId(int avatarPhotoResId) {
+        this.avatarPhotoResId = avatarPhotoResId;
         return this;
     }
 

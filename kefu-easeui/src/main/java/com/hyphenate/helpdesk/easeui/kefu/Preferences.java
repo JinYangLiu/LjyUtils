@@ -22,6 +22,8 @@ public class Preferences {
     public static final String REALNAME = "realName";
     public static final String PHONENUM = "phoneNum";
     public static final String CURRENTUSER = "currentUser";
+    public static final String ADD_WELCOME = "addWelcome";
+    public static final String WELCOME_NAME = "welcomeName";
 
 
     static public Preferences getInstance() {
@@ -61,6 +63,7 @@ public class Preferences {
     public synchronized String getPhonenum() {
         return pref.getString(PHONENUM, "");
     }
+
     public synchronized void setCurrentuser(String currentuser) {
         editor.putString(CURRENTUSER, currentuser);
         editor.commit();
@@ -68,6 +71,24 @@ public class Preferences {
 
     public synchronized String getCurrentuser() {
         return pref.getString(CURRENTUSER, "");
+    }
+
+    public synchronized void setAddWelcome(boolean isAdd) {
+        editor.putBoolean(ADD_WELCOME, isAdd);
+        editor.commit();
+    }
+
+    public synchronized boolean isAddWelcome() {
+        return pref.getBoolean(ADD_WELCOME, true);
+    }
+
+    public synchronized void setWelcomeName(String welcomeName) {
+        editor.putString(WELCOME_NAME, welcomeName);
+        editor.commit();
+    }
+
+    public synchronized String getWelcomeName() {
+        return pref.getString(WELCOME_NAME, "");
     }
 
 

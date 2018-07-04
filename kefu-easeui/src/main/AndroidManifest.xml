@@ -53,6 +53,7 @@
         <activity
             android:name="com.hyphenate.helpdesk.easeui.kefu.ChatActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/horizontal_slide" />
         <activity
             android:name="com.hyphenate.helpdesk.easeui.kefu.SatisfactionActivity"

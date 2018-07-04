@@ -20,6 +20,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,9 +38,14 @@ import android.widget.Toast;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
 import com.hyphenate.chat.Conversation;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.R;
+import com.hyphenate.helpdesk.callback.Callback;
+import com.hyphenate.helpdesk.callback.ValueCallBack;
 import com.hyphenate.helpdesk.easeui.UIProvider;
+import com.hyphenate.helpdesk.easeui.kefu.Constant;
+import com.hyphenate.helpdesk.easeui.kefu.Preferences;
 import com.hyphenate.helpdesk.emojicon.Emojicon;
 import com.hyphenate.helpdesk.easeui.provider.CustomChatRowProvider;
 import com.hyphenate.helpdesk.easeui.recorder.MediaManager;
@@ -107,7 +113,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     protected static final int ITEM_FILE = 4;
 
     protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture};
-//    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_video, R.string.attach_file};
+    //    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_video, R.string.attach_file};
     protected int[] itemdrawables = {R.drawable.hd_chat_takepic_selector, R.drawable.hd_chat_image_selector, R.drawable.hd_chat_video_selector, R.drawable.hd_chat_file_selector};
 
     protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_VIDEO, ITEM_FILE};
@@ -158,7 +164,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         titleName = fragmentArgs.getString(Config.EXTRA_TITLE_NAME);
         //在父类中调用了initView和setUpView两个方法
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             cameraFilePath = savedInstanceState.getString("cameraFilePath");
         }
         ChatClient.getInstance().chatManager().bindChat(toChatUsername);
@@ -179,12 +185,12 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         setUserNameView();
     }
 
-    private void setUserNameView(){
-        if (ChatClient.getInstance().isLoggedInBefore()){
+    private void setUserNameView() {
+        if (ChatClient.getInstance().isLoggedInBefore()) {
             String currentUsername = ChatClient.getInstance().currentUserName();
             if (getView() != null) {
                 TextView tvUname = (TextView) getView().findViewById(R.id.tv_username);
-                if (tvUname != null){
+                if (tvUname != null) {
                     tvUname.setText(currentUsername);
                 }
             }
@@ -216,15 +222,15 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 
             @Override
             public void onBigExpressionClicked(Emojicon emojicon) {
-	            if (!TextUtils.isEmpty(emojicon.getBigIconRemotePath())) {
+                if (!TextUtils.isEmpty(emojicon.getBigIconRemotePath())) {
                     sendCustomEmojiMessage(emojicon.getBigIconRemotePath());
                 } else if (!TextUtils.isEmpty(emojicon.getIconRemotePath())) {
                     sendCustomEmojiMessage(emojicon.getIconRemotePath());
                 } else if (!TextUtils.isEmpty(emojicon.getBigIconPath())) {
-		            sendImageMessage(emojicon.getBigIconPath());
-	            } else if (!TextUtils.isEmpty(emojicon.getIconPath())) {
+                    sendImageMessage(emojicon.getBigIconPath());
+                } else if (!TextUtils.isEmpty(emojicon.getIconPath())) {
                     sendImageMessage(emojicon.getIconPath());
-	            }
+                }
             }
 
             @Override
@@ -247,29 +253,29 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
     ChatManager.VisitorWaitListener visitorWaitListener = new ChatManager.VisitorWaitListener() {
-	    @Override
-	    public void waitCount(final int num) {
-		    if (getActivity() == null){
-			    return;
-		    }
-		    getActivity().runOnUiThread(new Runnable() {
-			    @Override
-			    public void run() {
-				    if (num > 0){
-					    tvTipWaitCount.setVisibility(View.VISIBLE);
-					    tvTipWaitCount.setText(getString(R.string.current_wait_count, num));
-				    }else{
-					    tvTipWaitCount.setVisibility(View.GONE);
-				    }
-			    }
-		    });
-	    }
+        @Override
+        public void waitCount(final int num) {
+            if (getActivity() == null) {
+                return;
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (num > 0) {
+                        tvTipWaitCount.setVisibility(View.VISIBLE);
+                        tvTipWaitCount.setText(getString(R.string.current_wait_count, num));
+                    } else {
+                        tvTipWaitCount.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
     };
 
     ChatManager.AgentInputListener agentInputListener = new ChatManager.AgentInputListener() {
         @Override
         public void onInputState(final String input) {
-            if (getActivity() == null){
+            if (getActivity() == null) {
                 return;
             }
             getActivity().runOnUiThread(new Runnable() {
@@ -311,7 +317,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 
             @Override
             public void onClick(View v) {
-                if(getActivity() != null){
+                if (getActivity() != null) {
                     getActivity().finish();
                 }
             }
@@ -369,6 +375,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
     protected void onMessageListInit() {
+
         messageList.init(toChatUsername, chatFragmentListener != null ?
                 chatFragmentListener.onSetCustomChatRowProvider() : null);
         //设置list item里的控件的点击事件
@@ -378,7 +385,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (!inputMenu.isVoiceRecording()){//录音时，点击列表不做操作
+                if (!inputMenu.isVoiceRecording()) {//录音时，点击列表不做操作
                     hideKeyboard();
                     inputMenu.hideExtendMenuContainer();
                 }
@@ -387,6 +394,8 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         });
 
         isMessageListInited = true;
+
+
     }
 
     protected void setListItemClickListener() {
@@ -560,7 +569,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 
         @Override
         public void onExtendMenuItemClick(int itemId, View view) {
-            if (getActivity() == null){
+            if (getActivity() == null) {
                 return;
             }
             if (chatFragmentListener != null) {
@@ -688,15 +697,15 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
-                if (cursor != null){
+            } finally {
+                if (cursor != null) {
                     cursor.close();
                 }
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             filePath = uri.getPath();
         }
-        if (filePath == null){
+        if (filePath == null) {
             return;
         }
         File file = new File(filePath);
@@ -712,7 +721,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_SAVE_IS_HIDDEN, isHidden());
-        if (cameraFilePath != null){
+        if (cameraFilePath != null) {
             outState.putString("cameraFile", cameraFilePath);
         }
     }
@@ -744,7 +753,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 //            e.printStackTrace();
 //        }
         if (!CommonUtils.isExitsSdcard()) {
-            Toast.makeText(this.getActivity(),  R.string.sd_card_does_not_exist, 0).show();
+            Toast.makeText(this.getActivity(), R.string.sd_card_does_not_exist, Toast.LENGTH_SHORT).show();
         } else {
             File cameraFile = new File(PathUtil.getInstance().getImagePath(), ChatClient.getInstance().getCurrentUserName() + System.currentTimeMillis() + ".jpg");
             this.cameraFilePath = cameraFile.getAbsolutePath();
@@ -878,7 +887,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     // 发送消息方法
     //=============================================
     protected void sendTextMessage(String content) {
-        if (content != null && content.length() > 1500){
+        if (content != null && content.length() > 1500) {
             Toast.makeText(getContext(), R.string.message_content_beyond_limit, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -889,7 +898,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
     protected void sendVoiceMessage(String filePath, int length) {
-        if (TextUtils.isEmpty(filePath)){
+        if (TextUtils.isEmpty(filePath)) {
             return;
         }
         Message message = Message.createVoiceSendMessage(filePath, length, toChatUsername);
@@ -899,11 +908,11 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
     protected void sendImageMessage(String imagePath) {
-        if (TextUtils.isEmpty(imagePath)){
+        if (TextUtils.isEmpty(imagePath)) {
             return;
         }
         File imageFile = new File(imagePath);
-        if (!imageFile.exists()){
+        if (!imageFile.exists()) {
             return;
         }
 
@@ -914,7 +923,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
     protected void sendCustomEmojiMessage(String imagePath) {
-        if (TextUtils.isEmpty(imagePath)){
+        if (TextUtils.isEmpty(imagePath)) {
             return;
         }
 
@@ -932,7 +941,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         messageList.refreshSelectLastDelay(MessageList.defaultDelay);
     }
 
-    protected void sendLocationMessage(double latitude, double longitude, String locationAddress, String toChatUsername){
+    protected void sendLocationMessage(double latitude, double longitude, String locationAddress, String toChatUsername) {
         Message message = Message.createLocationSendMessage(latitude, longitude, locationAddress, toChatUsername);
         attachMessageAttrs(message);
         ChatClient.getInstance().chatManager().sendMessage(message);
@@ -947,14 +956,14 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     }
 
 
-    public void attachMessageAttrs(Message message){
-        if (visitorInfo != null){
+    public void attachMessageAttrs(Message message) {
+        if (visitorInfo != null) {
             message.addContent(visitorInfo);
         }
-        if (queueIdentityInfo != null){
+        if (queueIdentityInfo != null) {
             message.addContent(queueIdentityInfo);
         }
-        if (agentIdentityInfo != null){
+        if (agentIdentityInfo != null) {
             message.addContent(agentIdentityInfo);
         }
 
@@ -965,7 +974,6 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         super.onPause();
         MediaManager.pause();
     }
-
 
 
 }
