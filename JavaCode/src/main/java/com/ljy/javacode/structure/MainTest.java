@@ -645,7 +645,7 @@ public class MainTest {
     }
 
     private static void testLinkList() {
-        LinkList linkList = new LinkList();
+        LinkList<String> linkList = new LinkList<>();
         for (int i = 0; i < 10; i++) {
             linkList.insertFirst("data_" + i);
             linkList.display();
@@ -703,7 +703,6 @@ public class MainTest {
                 queue.display();
             }
         }
-        System.out.println("peekFront:" + queue.peekFront());
         System.out.println("peekFront:" + queue.peekFront());
         System.out.println("peekFront:" + queue.peekFront());
         System.out.println("peekFront:" + queue.peekFront());

@@ -1,18 +1,31 @@
 package com.ljy.javacode.effectiveJava;
 
+import com.ljy.javacode.effectiveJava.anno.Test;
 import com.ljy.javacode.effectiveJava.bean.Person;
+import com.ljy.javacode.structure.hash.HashTable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by ljy on 2018/6/15.
@@ -35,16 +48,270 @@ public class MainTest {
                     testBinaryCompatibility();
                     break;
                 case "fanxing":
+                    //泛型测试
                     testFanXing();
                     break;
                 case "enum":
+                    //枚举测试
                     testEnum(Sex.MAN, Animal.DOG);
+                    break;
+                case "anno":
+                    //注解测试
+                    testAnno();
+                    break;
+                case "method":
+                    testMethod();
+                    break;
+                case "general":
+                    testGeneral();
                     break;
                 default:
                     break;
             }
         }
 
+    }
+
+    private static void testGeneral() {
+        //需求：把listKey，listValue放到map中：
+        List<String> listKey = new ArrayList<>();
+        List<String> listValue = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+        //iterator遍历集合,像下面这样写会有什么问题呢？
+        for (Iterator<String> i = listKey.iterator(); i.hasNext(); )
+            for (Iterator<String> j = listValue.iterator(); j.hasNext(); )//这一层我们一般是复制上面一行，容易忘记修改i.hasNext()
+                map.put(i.next(), j.next());//这一行执行了太多此的j.next()
+        //优化：用for-each代替
+        for (String key : listKey)
+            for (String value : listValue)
+                map.put(key, value);
+        System.out.println("模拟随机出Integer.MIN_VALUE情况：" + Math.abs(Integer.MIN_VALUE) % 4);
+
+//        double num = 1.00;
+//        int count = 0;
+//        for (double i = .10; num >= i; i += .10) {
+//            num-=i;
+//            count++;
+//            System.out.println("num:"+num);
+//        }
+//        System.out.println("count:"+count);
+        final BigDecimal temp=new BigDecimal(".10");
+        int count=0;
+        BigDecimal num=new BigDecimal("1.00");
+        for (BigDecimal i=temp;num.compareTo(i)>=0;i=i.add(temp)){
+            num=num.subtract(i);
+            System.out.println("num:"+num);
+            count++;
+        }
+        System.out.println("count:"+count);
+
+    }
+
+    public static class ThreadLocal{
+        private ThreadLocal(){}
+        private static Map<String,Object> map=new HashMap<>();
+        public static void set(String key,Object value){
+            map.put(key,value);
+        }
+
+        public static Object get(String key){
+            return map.get(key);
+        }
+    }
+
+    public static class ThreadLocal2{
+        private ThreadLocal2(){}
+        private static Map<Key,Object> map=new HashMap<>();
+
+        public static class Key{}
+
+        public static Key getKey(){
+            return new Key();
+        }
+
+        public static void set(Key key,Object value){
+            map.put(key,value);
+        }
+
+        public static Object get(Key key){
+            return map.get(key);
+        }
+    }
+
+    public static final Random rnd = new Random();
+
+    /**
+     * 求n以内的随机数
+     */
+    public static int random(int n) {
+        return Math.abs(rnd.nextInt()) % n;
+    }
+
+    private static void testMethod() {
+
+        Date start = new Date(1991 - 1900, 2 - 1, 14);
+        Date end = new Date(2018 - 1900, 6 - 1, 1);
+        Period period = new Period(start, end);
+        end.setYear(1970 - 1900);
+        System.out.println(period.toString());
+
+        Anim[] anims = {new Anim(), new Cat(), new TomCat()};
+        for (int i = 0; i < anims.length; i++) {
+            System.out.println("重写.name:" + anims[i].name());
+            System.out.println("重载.name:" + Anim.name(anims[i]));
+        }
+
+        System.out.println("重载.name:" + Anim.name(new Anim()));
+        System.out.println("重载.name:" + Anim.name(new Cat()));
+        System.out.println("重载.name:" + Anim.name(new TomCat()));
+
+        System.out.println("Anim.name:" + Anim.name);
+        System.out.println("Cat.name:" + Cat.name);
+
+
+        Set<Integer> set = new TreeSet<>();
+        List<Integer> list = new ArrayList<>();
+        for (int i = -3; i < 3; i++) {
+            set.add(i);
+            list.add(i);
+        }
+        System.out.println("111-->" + set + "_" + list);
+        for (int i = 0; i < 3; i++) {//期望去掉0，1，2
+            set.remove(i);
+            list.remove(i);
+            list.remove(Integer.valueOf(i));
+        }
+        System.out.println("222-->" + set + "_" + list);
+    }
+
+    public void foo() {
+    }
+
+    public void foo(int a1) {
+    }
+
+    public void foo(int a1, int a2) {
+    }
+
+    public void foo(int a1, int a2, int a3) {
+    }
+
+    public void foo(int a1, int a2, int a3, int... ans) {
+    }
+
+    public static class Anim {
+        public static String name = "ANIM";
+
+        public String name() {
+            return "animal";
+        }
+
+        public static String name(Anim anim) {
+            return "Anim";
+        }
+
+        public static String name(Cat cat) {
+            return "Cat";
+        }
+
+        public static String name(TomCat tomCat) {
+            return "TomCat";
+        }
+    }
+
+    public static class Cat extends Anim {
+        public static String name = "CAT";
+
+        @Override
+        public String name() {
+            return "cat";
+        }
+    }
+
+    public static class TomCat extends Cat {
+        @Override
+        public String name() {
+            return "tom cat";
+        }
+
+
+    }
+
+    public static final class Period {
+        private final Date start;
+        private final Date end;
+
+        public Period(Date start, Date end) {
+            this.start = new Date(start.getTime());
+            this.end = new Date(end.getTime());
+            //注意应先进行保护性拷贝，再对拷贝后的对象进行有效性检查，可以避免"危险阶段"期间从另一个线程改变类的参数
+            //危险阶段：指从检查参数开始，到拷贝参数之间的时间段
+            if (this.start.compareTo(this.end) > 0)
+                throw new IllegalArgumentException("start 不应该在 end 之后");
+        }
+
+        public Date getStart() {
+            return new Date(start.getTime());
+        }
+
+        public Date getEnd() {
+            return new Date(end.getTime());
+        }
+
+        private static final SimpleDateFormat dateFormat;
+
+        static {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+
+        @Override
+        public String toString() {
+            return "Period{" +
+                    "start=" + dateFormat.format(start) +
+                    ", end=" + dateFormat.format(end) +
+                    '}';
+        }
+    }
+
+    private static void testAnno() {
+        Class testClass = MainTest.class;
+        for (Method m : testClass.getDeclaredMethods()) {
+            if (m.isAnnotationPresent(Test.class)) {
+                //System.out.println("methodName:"+m.getName()+"_Anno:"+m.getAnnotation(Test.class).toString());
+                try {
+                    m.invoke(null);
+                } catch (Throwable throwable) {
+                    Throwable exc = throwable.getCause();
+                    Class<? extends Exception>[] excTypes = m.getAnnotation(Test.class).value();
+                    for (Class<? extends Exception> excType : excTypes) {
+                        if (excType.isInstance(exc)) {
+                            System.out.println("触发了" + excType.getSimpleName() + ",msg:" + exc.getLocalizedMessage());
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    @Test(NullPointerException.class)
+    private static void m1() {
+        System.out.println("m1");
+    }
+
+    @Test(NullPointerException.class)
+    private static void m2() {
+        throw new NullPointerException("空指针了");
+    }
+
+    @Test({NullPointerException.class, IndexOutOfBoundsException.class})
+    private static void m3() {
+        throw new RuntimeException("报错了哦");
+    }
+
+    @Test(NullPointerException.class)
+    private void m4() {
+        System.out.println("m4");
     }
 
     private static void testEnum(Sex sex, Animal animal) {
@@ -300,7 +567,7 @@ public class MainTest {
         }
     }
 
-    private static <E> void testFanXing() {
+    public static void testFanXing() {
         printList(Arrays.asList(new int[]{1, 2, 3}));
         printList(mList);
 //        printObjectList(mList);

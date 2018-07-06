@@ -20,14 +20,36 @@ public class ArrayUtil {
 
     /**
      * 对数组的两个元素换位
+     *
+     * @param array 目标数组
+     * @param i     需要交换的索引i
+     * @param j     需要交换的另一个索引j
+     * @throws NullPointerException           if array is null
+     * @throws ArrayIndexOutOfBoundsException if i|j is more than array.length-1
      */
-    private void swap(int[] array, int i, int j) {
+    public static void swapPublic(int[] array, int i, int j) {
+        if (array == null)
+            throw new NullPointerException("数组不能是空");
+        if (i >= array.length - 1 || j >= array.length - 1)
+            throw new ArrayIndexOutOfBoundsException("需要交换的索引应在数组长度范围内");
         if (i == j)
             return;
         array[i] = array[i] + array[j];
         array[j] = array[i] - array[j];
         array[i] = array[i] - array[j];
     }
+
+    private void swap(int[] array, int i, int j) {
+        //断言失败将抛出AssertionError
+        assert array != null;
+        assert i < array.length && j < array.length;
+        if (i == j)
+            return;
+        array[i] = array[i] + array[j];
+        array[j] = array[i] - array[j];
+        array[i] = array[i] - array[j];
+    }
+
 
     /**
      * 打印数组
@@ -93,7 +115,6 @@ public class ArrayUtil {
 
     /**
      * 直接插入排序
-     * <p>
      * 将待排序的数据元素按其关键字值的大小插入到前面的有序序列中
      */
     public void insertSort(int[] array) {
@@ -439,7 +460,7 @@ public class ArrayUtil {
         for (int i = 0; i < array.length; i++)
             vectorHeap.insert(array[i], null);
         for (int i = 0; i < array.length; i++)
-            array[array.length-1-i] = vectorHeap.remove().key;
+            array[array.length - 1 - i] = vectorHeap.remove().key;
         print(array);
     }
 

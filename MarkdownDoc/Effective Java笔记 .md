@@ -1365,4 +1365,241 @@
     3. 可以使用java内置的空集合避免自己创建的开销：Collections.emptyList(),Collections.emptyMap(),Collections.emptySet();
     
 44. 为所有导出的API元素编写文档注释
+    - 为了正确的编写API文档，必须在每个被导出的类，接口，构造器，方法和域声明之前增加一个文档注释，方便用javadoc导出api文档
+    - 方法的文档注释应该简洁的描述出它和客户端之间的约定。
+    
+### 通用程序设计
+
+45. 将局部变量的作用域最小化
+    - 优点：增强代码的可读性和可维护性，并降低出错的可能性
+    - 最有力的方法就是在第一次使用它的地方声明，几乎每个局部变量的声明都应该包含一个初始化的表达式，
+    如果还没有足够的信息进行初始化，就应该推迟这个声明；
+    - for（i，each）循环都支持声明循环变量，所以当循环终止后不再需要循环变量的内容时，for循环就优先于while循环；
+    
+46. for-each循环优先于for-i循环
+    - 使用(集合)迭代器iterator或(数组)for-i的循环变量，由于循环变量会使用多次，且容易和外部的变量搞混，导致出错；
+      for-each则隐藏了循环变量，避免了混乱和出错的可能。
+    - 性能优势，对于数组索引的边界值只计算一次。
+    - 对比下面代码
+    ````
+    //需求：把listKey，listValue放到map中：
+    List<String> listKey = new ArrayList<>();
+    List<String> listValue = new ArrayList<>();
+    Map<String, String> map = new HashMap<>();
+    //iterator遍历集合,像下面这样写会有什么问题呢？
+    for (Iterator<String> i = listKey.iterator(); i.hasNext(); )
+        for (Iterator<String> j = listValue.iterator(); j.hasNext(); )//这一层我们一般是复制上面一行，容易忘记修改i.hasNext()
+            map.put(i.next(), j.next());//这一行执行了太多此的j.next()
+    //优化：用for-each代替
+    for (String key : listKey)
+        for (String value : listValue)
+            map.put(key, value);
+    ````  
+    - for-each不仅可以遍历集合和数组，还可以遍历任何实现Iterator接口的对象
+    - 简洁性 ，预防bug，且没有性能损失
+    - 无法使用for-each情况：
+        1. 过滤：如果需要遍历集合，并删除选定的元素，就要使用显示的迭代器，以便调用其remove方法
+        2. 转换：如果需要修改集合或数组的值，就需要集合的迭代器或数组索引了
+        3. 平行迭代：如果需要并行的遍历多个集合或数组，就需要用到迭代器或数组索引
+        
+47. 了解和使用类库
+    - 看下面求随机数方法：
+    ````
+    public static final Random rnd=new Random();
+    /**
+     * 求n以内的随机数
+     */
+    public static int random(int n){
+        //生成一个随机数，取绝对值，再%n
+        return Math.abs(rnd.nextInt())%n;
+    }
+    ````
+    这个方法表面看起来是没有什么问题的，然而，实际上却有三个缺点：
+        1. 如果n是2的乘方，一段周期后，它生成的随机数将重复
+        2. 如果n不是2的乘方，则平均起来，有些数出现的更加频繁，尤其n比较大时
+        3. 极少数情况下会返回一个指定范围外的数，如生成的随机数为Integer.MIN_VALUE，Math.abs会返回负数MIN_VALUE，如下：
+        ````
+        System.out.println("模拟随机出Integer.MIN_VALUE情况："+Math.abs(Integer.MIN_VALUE)%11);
+        ````
+    修正方案是使用Random的nextInt(int n)方法；
+    而如果要自己修正就需要了解伪随机数生成器，数论和2的求补算法的相关知识；        
+    - 使用类库的优点：
+        1. 充分利用前人的知识和经验
+        2. 不必浪费时间处理与工作不太相关的底层细节
+        3. 有专人或组织维护，性能随着版本的迭代会不断提高，bug也会被逐渐发现并修复，功能也会不断丰富；
+    - 所以说不管是java还是Android，及时关注官方的api更新说明还是很有必要的，因为如果你不知道这些类库或者新增加的功能，
+    可能会花费百倍千倍的时间去写一些没有必要，甚至可能有bug的的代码，总之不要重复造轮子；
+    
+48. 如果需要精确的答案，请避免使用float和double
+    - float,double为科学计算和工程计算而设计，执行二进制浮点运算，然而它们并没有提供精确的结果，尤其不适合用于货币计算；
+    例如下面代码：
+    ````
+    double num = 1.00;
+    int count = 0;
+    for (double i = 0.10; num >= i; i += 0.10) {
+        num-=i;
+        count++;
+        System.out.println("num:"+num);
+    }
+    System.out.println("count:"+count);
+    
+    //输出结果
+    num:0.9
+    num:0.7
+    num:0.3999999999999999
+    count:3
+    ````
+    修正方案：用BigDecimal代替double
+    ````
+    final BigDecimal temp=new BigDecimal(".10");
+    int count=0;
+    BigDecimal num=new BigDecimal("1.00");
+    for (BigDecimal i=temp;num.compareTo(i)>=0;i=i.add(temp)){
+        num=num.subtract(i);
+        System.out.println("num:"+num);
+        count++;
+    }
+    System.out.println("count:"+count);
+    
+    //输出结果
+    num:0.90
+    num:0.70
+    num:0.40
+    num:0.00
+    count:4
+    ````
+    - 然而BigDecimal用起来比较麻烦，而且效率和性能要低(要创建BigDecimal对象)
+    另一种方法是使用int或long代替（根据具体数值大小决定），例如上面例子中的数值都*100。
+    - BigDecimal还有一个优点就是可以完全控制舍入，并提供了8种舍入模式
+    - 还有一点就是9位数以内用int，18位以内用long，超过18位就必须用BigDecimal了
+    
+49. 基本类型优先于装箱基本类型
+    - 基本类型只有值，而装箱基本类型不同的对象可以有相同值，相同值的可以是不同的对象
+    - 基本类型只有功能值，装箱基本类型还可以为null
+    - 基本类型更节省时间和空间
+    - 任何情况下，当一项操作中混合使用基本类型和装箱基本类型时，装箱基本类型就会自动拆箱
+    如Integer i； if(i==1){...}，会NullPointerException，正是由于拆箱时发现i==null；
+    而且反复的装箱拆箱是会影响性能的，而且还可能导致一些你想不到的问题；
+    
+50. 如果其他类型更合适，则尽量避免使用字符串
+    - 字符串不适合代替其他的值类型（基本数据类型 & 对象引用）
+    - 字符串不适合代替枚举类型（如前面的第30条）
+    - 字符串不适合代替聚集类型（如果一个实体有多个组件，用一个字符串表示这个实体通常是很不恰当的）
+    - 字符串不适合代替能力表
+        - 例如想设计一个线程局部变量ThreadLocal：
+        ````
+        public class ThreadLocal{
+            private ThreadLocal(){}
+            private static Map<String,Object> map=new HashMap<>();
+            public static void set(String key,Object value){
+                map.put(key,value);
+            }
+            
+            public static Object get(String key){
+                return map.get(key);
+            }
+        }
+        ````
+        像上面这样写可以，但是又一个前提是key不能重复，如果多个线程（无意或故意的）用了相同的key，就会导致这个变量被
+        多个线程共享，安全性很差；
+        可以想下面这样,各线程通过getKey获取key，再以这个key进行变量的存取：
+        ````
+        public static class ThreadLocal2{
+            private ThreadLocal2(){}
+            private static Map<Key,Object> map=new HashMap<>();
+            
+            public static class Key{}
+            
+            public static Key getKey(){
+                return new Key();
+            }
+            
+            public static void set(Key key,Object value){
+                map.put(key,value);
+            }
+    
+            public static Object get(Key key){
+                return map.get(key);
+            }
+        }
+        ````
+        当然如果有兴趣也可以看一些java.util.ThreadLocal的实现
+    
+51. 当心字符串连接的性能
+    - 我们使用字符串经常这样写"String name = "Mr."+"刘"；",很方便，如果只是少量的使用确实可以；
+    - 但是：为连接n个字符串而重复的使用字符串连接操作符(+),需要n的平方级的时间。
+    因为字符串是不可变的，+操作要创建新的对象，并拷贝要相加的两个对象；
+    - 为了获得可以接受的性能，请用StringBuilder替代String；相加次数越多，性能的差距是成平方级增长的；
+    若有兴趣可以写个for循环打印时间戳试一下；
+    - 这一条其实我们刚入行时就都已经知道了，主要是平时开发过程中要注意应用；
+
+52. 通过接口引用对象
+    - 如果有合适的接口类型存在，那么对于参数，返回值，变量和域来说，就都应该使用接口类型进行声明；
+      只有当用构造器创建某个对象时，才需要真正的引用这个对象的类；
+      如: List list = new ArrayList();或 public void methodA(List list){...}
+    - 养成用接口作为类型的习惯，你的程序将更加灵活；（例如有新的实现可以提供更好的性能，可以方便的进行更换）
+    - 如果依赖域现实的任何特殊属性，就要在声明变量的地方给这些需求建立相应的文档说明；
+    - 不适合的情况：
+        - 值类String，BigInteger等，一般是final的
+        - 对象属于给于类的框架，就应该使用基类（一般是抽象类），如java.util.TimerTask抽象类
+        - 类提供类接口不存在的额外方法，切程序依赖于这些额外方法，如LinkedHashMap
+        
+53. 接口优先于反射机制
+    - 核心反射机制java.lang.reflect,提供了"通过程序来访问关于已装载的类的信息"的能力；
+    如获得Constructor，Method，Field；
+    - 然而也要付出相应的代价：
+        - (将编译期错误推迟到了运行时)丧失了编译时类型检查的好处，包括异常检查，且调用不存在或不可访问的方法时，将在运行时失败；
+        - 执行反射所需要的代码非常笨拙和冗长，写着乏味，读着困难；
+        - 性能损失，调用反射方法比普通方法慢了许多；
+    - 反射功能通常只是在设计时被用到，普通的应用程序在运行时不应该以反射的方式访问对象；
+    - 有些复杂的应用程序需要使用到反射机制，如浏览器，对象监视器，代码分析工具，解释型的内嵌式系统，
+      他们必须用到编译时无法获取的类，但是存在适当的接口或者超类，这种情况，可以通过反射创建实例，
+      通过接口或超类以正常的方式访问这些实例，如果所用构造器不带参数，可以考试使用Class.newInstance,
+      而非java.lang.reflect;
+    
+54. 谨慎的使用本地方法
+    - JNI(Java Native Interface)允许java程序调用本地方法(native method, 指本地程序语言c/c++编写的方法)；
+    - native方法的三种用途
+        - 提供"访问特定于平台的机制"的能力，如访问注册表，文件锁
+        （随着ava的发展已经在逐渐完善这些功能，如java,util.prefs提供了注册表的功能，SystemTray提供访问桌面系统托盘区的能力）
+        - 提供访问遗留代码库的能力，从而可以访问遗留数据
+        - 通过本地语言编写程序中注重性能的部分，提高程序性能（不值得提倡，随着ava的发展性能已经被不断的优化了）
+    - native方法的缺点：
+        - 本地语言是不安全的，所以，使用本地方法的应用程序也不再能避免受内存毁坏错误的影响；
+        - 本地语言是平台相关的，所以，使用本地方法的程序也不再是可自由移植的；
+        - 比较难调试，
+        - 进入和退出本地代码时，需要一定的开销，所以如果只是使用本地代码做少量工作，反而可能降低性能
+        - 需要"胶合代码"的本地方法编写起来单调乏味；
+      
+55. 谨慎的进行优化
+    - 3条优化相关的格言
+        - 很多计算上的过失都被归咎于效率，而不是任何其他原因，甚至包括盲目的做傻事；
+        - 不要去计较效率上的一些小小的得失，在97%的情况下，不成熟的优化才是一切问题的根源      
+        - 优化方面应该遵守两条规则：1. 不要优化；2. (仅针对专家)还是不要进行优化
+        （可能你认为程序慢的地方并没有问题；可以使用性能剖析工具检测代码）
+    - 总结：优化弊大于利，特别是不成熟的优化；
+    - 要努力编写好的程序而不是快的程序，不要因为性能而牺牲合理的结构；
+    （再多底层的优化也无法弥补算法选择的不当）
+    - 但必须在设计过程中考虑到性能问题：
+        - 避免那些限制性能的设计决策，尤其是API，线路层wire-level协议，永久数据格式） 
+        - api设计对性能的影响：
+            - 公有类型可变，会导致大量不必要的保护性拷贝；
+            - 适合用复合模式时却使用继承，会导致与超类永远束缚在一起，限制子类性能；
+            - 使用实现类型代替接口，会把程序束缚在具体的实现上，即使将来有更优的实现也无法使用；
+            
+56. 遵守普遍接受的命名惯例
+    - 包名：以组织的Internet域名开头，且顶级域名放前面，如com.ljy; 且不应以java,javax开头；
+    - 类和接口名：一个或多个单词组成（通常是名词或形容词），每个单词首字母大写，尽量避免使用缩写，尤其是你自己创造的缩写；
+    - 方法和域的名称：一个或多个单词（方法通常用动词，动词短语或形容词），除第一个单词外首字母大写；
+    - 常量域：唯一推荐使用下划线的情形；
+    - 类型参数名称：通常由单个字母组成，常用的一般由五种：T表示任意的类型，E表示集合的元素类型，K和V表示映射的键和值，X表示异常；
+      （过个时可以这样：T1,T2,T3...）
+    
+     
+      
+    
+    
+    
+    
+    
     
