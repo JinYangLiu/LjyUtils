@@ -1594,7 +1594,180 @@
     - 常量域：唯一推荐使用下划线的情形；
     - 类型参数名称：通常由单个字母组成，常用的一般由五种：T表示任意的类型，E表示集合的元素类型，K和V表示映射的键和值，X表示异常；
       （过个时可以这样：T1,T2,T3...）
-    
+
+### 异常
+
+57. 只针对异常的情况才使用异常
+    ```
+    private static void testException() {
+        int[] range={1,2,3,4,5,6};
+        try {
+            int i=0;
+            while (true)
+                System.out.println("i="+range[i++]);
+        }catch (ArrayIndexOutOfBoundsException e){
+        }
+    }
+    ```
+    - 上面代码有什么问题呢？
+        - 试图通过抛出异常并忽略的方式终止无限循环；意图避免for循环的越界检查
+        - 然而：
+            1. 异常机制的设计初衷适用于不正常的情形，so，很少有JVM对其进行优化；
+            2. 把代码放在try-cache中阻止了现代JVM实现本来可能要执行的某些特定优化；
+            3. for遍历并不会导致冗余的检查，有些现代的JVM会将它们优化掉；
+        - 上面的代码模糊了代码意图，降低了性能，还不能保证正常工作，
+            例如循环体中的计算过程调用了一个方法，这个方法执行了对某个不想关的数组的越界访问，
+            出发异常，而该try语句块会忽略掉这个bug，增加了调试过程的复杂性；
+    - 对api设计的启发:设计良好的api不应该强迫它的客户端为了正常的控制流而使用异常;
+        例如Iterator有个hasNext方法可以判断是否终止循环,如果没有提供,可能用户就会不得不使用上面的代码实现了;
+
+    - 总之,异常就是为了异常情况下使用而设计,不要用于普通的控制流,也不要编写迫使别人这样做的API;
+
+58. 对可恢复的情况使用受检异常,对编程错误使用运行时异常
+    - java的三种可抛出结构(throwable):
+        - 受检异常(checked exception)
+        - 运行时异常(run-time exception)
+        - 错误(error)
+    - 如果期望调用者能够适当的恢复，则通过抛出受检异常,强迫调用者在一个catch子句中处理改异常或者将其传播出去;
+    - api的设计者让api用户面对受检的异常,以此强制用户从这个异常条件中回复;
+        用户可以忽略这样的强制要求,只需要捕获并忽略即可,但这往往不是一个好办法;
+        如File,io流操作是常见的IOException,FileNotFoundException。
+
+     - 另外两种则是不需要，也不应该被捕获的
+     - 用运行时异常表明编程错误；大多数表示前提违例( precondition violation)；
+        前提违例是指api用户没有遵守api规范建立的约定，如ArrayIndexOutOfBoundsException,NullPointerException；
+     - 错误被jvm保留用于表示资源不足，约束失败，或其他使程序无法继续执行的条件；
+        因此最好不要实现任何新的Error子类
+
+    - api设计者往往会忘记，异常也是个完全意义上的对象，可以在它上面定义任意方法，
+        这些方法主要用于为捕获异常的代码提供额外的信息，受检的异常往往指明了可恢复的条件，
+        所以对于这样的异常，提供一些辅助方法尤为重要，可以帮助调用者获得一些有助于恢复的信息
+
+59. 避免不必要的使用受检异常
+
+    - 受检异常强迫程序员处理，大大增强了可靠性
+    - 过分的使用受检的异常会使api使用起来非常不方便（要做try-catch处理或抛出）
+    - 所以设计api时要谨慎使用受检异常，如果使用api的程序员无法做的比下面的更好，那么使用未受检的异常更为合适；
+    ```
+    1.
+    try{
+        ...
+    } catch(TheCheckedException e){
+        throw new AssertionError();//Can't happen!
+    ｝
+    2.
+    try{
+        ...
+    } catch(TheCheckedException e){
+        e.printStackTrace();//on well,we lose!
+        System.exit(1);
+    ｝
+    ```
+    其实仔细回想一下，之前没少写上面这种代码，呵呵~~
+    - 应该问问自己，是否有别的途径来避免使用受检异常
+    - 一种解决方法是：把抛出异常的方法分成两个方法，其中一个返回boolean，
+    即使用if判断来处理是否抛出异常的两种情况，就如之前提过的Iterator有个hasNext方法；
+    (但是这样可能会失去强制约束，api使用者不一定会调用如Iterator.hasNext()这种方法,
+    这就需要完善的api说明文档来规范使用者的调用了)
+
+60. 优先使用标准的异常
+    - 专家与菜鸟的一个主要区别: 高度的代码重用,这是一条通用规则,异常也不例外,
+    本条目将讨论常见的可重用异常(未受检);
+    - 重用现有异常的好处:
+        1. 使api更加易于学习和使用(通用,习惯用法);
+        2. 对用到这些api的程序而言,可读性会更好(不会出现很多不熟悉的异常);
+        3. 异常类越少,内存印记(footprint)就越小,装载这些类的时间开销就越少;
+    - 如果希望增加更多的失败-捕获信息,可以把现有的异常进行子类化
+    - 常用异常:
+        - IllegalArgumentException: 非法参数（调用者传参不合适时）
+        ```
+         public void setGVPAdapter(GVPAdapter adapter) {
+            if (null == adapter) {
+                throw new IllegalArgumentException("适配器不能为空");
+            }
+            ...
+        }
+        ```
+        - IllegalStateException：非法状态（被调用的程序中某个对象的状态不满足程序运行需求）
+        ```
+        public View getFooterView(int position) {
+            if (mFooterViewInfos.isEmpty()) {
+                throw new IllegalStateException("you must add a FooterView before!");
+            }
+            return mFooterViewInfos.get(position).view;
+        }
+        ```
+        - NullPointerException: 这个就很常用了, 某个不允许为空的对象或参数为空时
+        - IndexOutOfBoundsException: 这个也很熟悉了,操作数组时经常会遇到他的子类
+        ```
+         /**
+         * 对数组的两个元素换位
+         *
+         * @param array 目标数组
+         * @param i     需要交换的索引i
+         * @param j     需要交换的另一个索引j
+         * @throws NullPointerException           if array is null
+         * @throws ArrayIndexOutOfBoundsException if i|j is more than array.length-1
+         */
+        public static void swapPublic(int[] array, int i, int j) {
+            if (array == null)
+                throw new NullPointerException("数组不能是空");
+            if (i >= array.length - 1 || j >= array.length - 1)
+                throw new ArrayIndexOutOfBoundsException("需要交换的索引应在数组长度范围内");
+            if (i == j)
+                return;
+            array[i] = array[i] + array[j];
+            array[j] = array[i] - array[j];
+            array[i] = array[i] - array[j];
+        }
+        ```
+        - ConcurrentModificationException: 如果一个对象被设计为专用于单线程或与外部同步机制配合使用,
+            一旦发现它正在或已经被并发的修改,就应该抛出这个异常;
+        - UnsupportedOperationException: 对象不支持用户请求的方法；
+
+61. 抛出与抽象相对应的异常
+    - 如果方法抛出的异常与它所执行的任务没有明显的联系，将会使人不知所措；
+    当放过传递由低层抽象抛出的异常时，往往会发生这种情况，这也让实现细节污染了更高层的api；
+    - 异常转译：更高层的实现应该捕获低层的异常，同时抛出可以按照高层抽象进行解释的异常；
+    ```
+        //取自AbstractSequentialList：
+        public E get(int index) {
+            try {
+                return listIterator(index).next();
+            } catch (NoSuchElementException exc) {
+                throw new IndexOutOfBoundsException("Index: "+index);
+            }
+        }
+    ```
+    - 异常链：如果低层异常对于调试导致高层异常的问题非常有帮助，
+    可以将低层异常传到高层异常，高层异常提供访问方法（Throwable.getCause()）来获取低层异常：
+    ```
+    try{
+        ...//todo
+    }catch(LowerLevelException cause){
+        throw new HigherLevelException(cause);
+    }
+
+    //高层异常的构造器将原因传到支持链的超级构造器
+    class HigherLevelException extends Exception{
+        HigherLevelException(Throwable cause){
+            super(cause);
+        }
+    }
+    ```
+    - 处理来自低层的异常最好的做法是:在调用低层方法之前确保他们会执行成功,从而避免他们抛出异常,如检查参数的有效性;
+    - 如果无法避免,次选方案是,让高层来悄悄绕开这些异常,从而将高层方法的调用者与低层问题隔离,可以使用适当的记录机制将异常记录下来,有助于管理员调查问题;
+
+62. 每个方法抛出的异常都要有文档
+    - 始终要单独的声明受检的异常,并利用javadoc的@throws标记,准确的记录下抛出每个异常的条件;
+    - 一个方法需要抛出多个异常类时,不要用这些异常的超类或Exception,Throwable,代替,这样不仅没有提供"这个方法能够抛出哪些异常"的指导信息,
+    而且大大妨碍了该方法的使用,因为它实际上掩盖了该方法在同样的执行环境下可能抛出的任何其他异常;
+    - 未受检异常最好也使用javadoc的@throws标签记录,但不要使用throws关键字将未受检的异常包含在方法的声明中
+    - 如果一个类中的许多方法处于同样的原因而抛出同一个异常,该类的文档注释中对这个异常建立文档也是可以的;
+    如"All methods in this class throw a NullPointerException if a null object reference is passed in any parameter";
+
+63. 在细节消息中包含能捕获失败的信息
+    - 为了捕获失败,异常的细节信息应该包含所有"对该异常有贡献"的参数和域的值; 
      
       
     
