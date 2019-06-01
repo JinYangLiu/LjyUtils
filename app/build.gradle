@@ -302,7 +302,7 @@ dependencies {
 
     //walle
     compile 'com.meituan.android.walle:library:1.1.6'
-    compile 'com.android.support:design:27.1.1'
+    compile rootProject.ext.dependencies.design
 
     //AspectJ
     compile 'org.aspectj:aspectjrt:1.8.13'

@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion  '26.0.2'
+    compileSdkVersion rootProject.ext.android.VERSION_COMPILE_SDK
+    buildToolsVersion rootProject.ext.android.VERSION_BUILD_TOOLS
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion rootProject.ext.android.VERSION_MIN_SDK
+        targetSdkVersion rootProject.ext.android.VERSION_TARGET_SDK
         versionCode 8
         versionName "1.1.7"
     }
@@ -33,7 +33,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:26.0.2'
+    compile rootProject.ext.dependencies.support_v4
     compile 'com.github.bumptech.glide:glide:3.7.0'
 //    compile 'com.easemob:kefu-sdk:1.1.7.final'
     compile 'com.easemob:kefu-sdk-lite:1.1.7.final'//不包含实时音视频的 ,可以减少apk大小
